@@ -1,0 +1,49 @@
+name: Deploy Hexo to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+    pull_request:
+
+jobs:
+  pages:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Cache NPM dependencies
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-npm-cache
+          restore-keys: |
+
+            ${{ runner.OS }}-npm-cache
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Clean & Build
+        run: npm run clean:generate
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/master' }}
+        with:
+          personal_token: ${{ secrets.PERSONAL_TOKEN }}
+          external_repository: pablomagro/pablomagro.github.io
+          publish_branch: gh-pages
+          publish_dir: ./public
+          allow_empty_commit: true
+          keep_files: true

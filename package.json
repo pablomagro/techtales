@@ -1,0 +1,52 @@
+{
+  "name": "pablo-blog-website",
+  "description": "Pablo's Blog Website.",
+  "version": "0.1.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://pablomagro@bitbucket.org/mydevelopments/pablomagro.github.io.git"
+  },
+  "author": "Pablo Magro",
+  "email": "pmagas@gmail.com",
+  "url": "",
+  "license": "MIT",
+  "hexo": {
+    "version": "6.3.0"
+  },
+  "dependencies": {
+    "hexo": "6.3.0",
+    "hexo-browsersync": "0.3.0",
+    "hexo-deployer-git": "^4.0.0",
+    "hexo-generator-archive": "2.0.0",
+    "hexo-generator-category": "2.0.0",
+    "hexo-generator-feed": "3.0.0",
+    "hexo-generator-index": "3.0.0",
+    "hexo-generator-search": "2.4.3",
+    "hexo-generator-seo-friendly-sitemap": "0.2.1",
+    "hexo-generator-sitemap": "3.0.1",
+    "hexo-generator-tag": "2.0.0",
+    "hexo-renderer-ejs": "2.0.0",
+    "hexo-renderer-marked": "6.0.0",
+    "hexo-renderer-stylus": "2.1.0",
+    "hexo-server": "3.0.0"
+  },
+  "devDependencies": {
+    "rimraf": "4.1.2"
+  },
+  "scripts": {
+    "preclean": "([ ! -d \"./node_modules/rimraf\" ] && npm i rimraf -E) || exit 0",
+    "clean": "npm run rimraf -- doc coverage dist || rimraf node_modules || npm cache verify",
+    "clean:install": "npm run clean && npm install",
+    "clean:generate": "hexo clean && hexo generate",
+    "deploy": "hexo clean && hexo generate && hexo deploy",
+    "fix:vulnerabilities": "npm audit fix",
+    "watch": "hexo server --draft --open",
+    "rimraf": "rimraf",
+    "version": "",
+    "postversion": "git push --tags",
+    "version:major": "npm version major -m 'Upgrade to version %s'",
+    "version:minor": "npm version minor -m 'Upgrade to version %s'",
+    "version:patch": "npm version patch -m 'Upgrade to version %s'"
+  }
+}

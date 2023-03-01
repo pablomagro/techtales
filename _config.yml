@@ -1,0 +1,126 @@
+# Hexo Configuration
+## Docs: https://hexo.io/docs/configuration.html
+## Source: https://github.com/hexojs/hexo/
+
+# Site
+## Giving the website a name, blog author, email, etc
+title: "Technical Tips to Revitalize Your Devices and Memory"
+subtitle: Pablo Magro's Blog (Developer)
+description: Some tech things to refresh and don't forget
+author: Pablo Magro Gaspar
+email: pmagas@gmail.com
+language: en
+timezone: Pacific/Auckland
+
+# URL
+## Configuring a public web address.
+## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
+url: https://pmagas.serveblog.net
+# url: https://github.com/pablomagro/techtales.git
+root: /
+permalink: :year/:month/:day/:title/
+permalink_defaults:
+
+# Directory
+source_dir: source
+public_dir: public
+tag_dir: tags
+archive_dir: archives
+category_dir: categories
+code_dir: downloads/code
+i18n_dir: :lang
+skip_render:
+
+# Writing
+new_post_name: :title.md # File name of new posts
+default_layout: post
+titlecase: false # Transform title into titlecase
+external_link.enable: true # Open external links in new tab
+filename_case: 0
+render_drafts: false
+post_asset_folder: false
+relative_link: false
+future: true
+highlight:
+  enable: true
+  line_number: true
+  auto_detect: false
+  tab_replace:
+
+# Category & Tag
+default_category: uncategorized
+category_map:
+tag_map:
+
+# Archives
+## 2: Enable pagination
+## 1: Disable pagination
+## 0: Fully Disable
+archive: 0
+category: 0
+tag: 2
+
+# Date / Time format
+## Hexo uses Moment.js to parse and display date
+## You can customize the date format as defined in
+## http://momentjs.com/docs/#/displaying/format/
+date_format: D MMM YYYY
+time_format: HH:mm:ss
+
+# Pagination
+## Set per_page to 0 to disable pagination
+per_page: 5
+pagination_dir: page
+
+# Disqus comments
+disqus_shortname: pablomagro
+
+# Extensions
+## Plugins: https://hexo.io/plugins/
+## Themes: https://hexo.io/themes/
+theme: landscape
+
+# RSS
+feed:
+  type: atom
+  path: atom.xml
+  limit: 10
+
+# Deployment
+## Docs: https://hexo.io/docs/deployment.html
+deploy:
+  type: git
+  # repo: https://github.com/pablomagro/pablomagro.github.io.git
+  repo: git@github.com:pablomagro/pablomagro.github.io.git/
+  branch: gh-pages # Before master
+  # name: pablomagro
+  message: "Docs updated: {{ now('YYYY-MM-DD HH:mm:ss') }})"
+
+# Marked renderer
+marked:
+  gfm: true
+  pedantic: false
+  sanitize: false
+  tables: true
+  breaks: false
+  smartLists: true
+  smartypants: true
+
+# hexo-generator-search
+search:
+  path: search.xml
+  field: post
+
+# hexo-generator-seo-friendly-sitemap
+sitemap:
+  path: sitemap.xml
+  hostname: https://pmagas.serveblog.net
+  prettyURLs: true
+  generate:
+    frequency: daily
+    time: '04:30'
+  exclude:
+    - /drafts/
+    - /404.html
+  searchExclude:
+    - /drafts/

@@ -1,0 +1,54 @@
+# Coverage directory used by tools like istanbul.
+/coverage/
+
+# Compiled output.
+/dist
+/dist-server
+/public/__build__/
+/src/*/__build__/
+/__build__/**
+/public/dist/
+/src/*/dist/
+/e2e/reports/screenshots
+/e2e/reports/videos
+.webpack.json
+/tmp
+/out-tsc
+*.log
+
+# Dependencies.
+/node_modules
+
+# IDEs and editors.
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode.
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+
+# System Files.
+.DS_Store
+.deploy*/
+.directory
+.directory
+Icon?
+Thumbs.db
+db.json
+node_modules/
+public/
+.deploy_git/
+*.log
+*.swp
+
+# SSH key files
+*.pem
