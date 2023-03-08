@@ -29,8 +29,8 @@ jobs:
           path: node_modules
           key: ${{ runner.OS }}-npm-cache
           restore-keys: |
-
             ${{ runner.OS }}-npm-cache
+
       - name: Install Dependencies
         run: npm install
 
@@ -45,5 +45,3 @@ jobs:
           external_repository: pablomagro/pablomagro.github.io
           publish_branch: gh-pages
           publish_dir: ./public
-          allow_empty_commit: true
-          keep_files: true
