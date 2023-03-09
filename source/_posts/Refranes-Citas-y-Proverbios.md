@@ -1,13 +1,10 @@
 ---
 layout: citas
-title: Citas, Dichos, Proverbios y Refranes
+title: Refranes, Citas y Proverbios
 date: 2023-03-09 07:30:15
 tags:
 categories:
-  - Refranes
-  - Citas
-  - Dichos
-  - Proverbios
+  - Refranes, Citas, Proverbios
 ---
 
 ## Refranes
@@ -44,10 +41,6 @@ categories:
 1. En mayo crece el tallo.
 1. Fui donde no debí ¡y cómo salí!.
 
-## Proverbios
-
-1. Nunca permitas que tus pies vayan por delante de tus zapatos. `Proverbio escocés`.
-
 ## Citas
 
 > El alma es aquello por lo que vivimos, sentimos y pensamos.
@@ -61,3 +54,7 @@ categories:
 
 > If a man has a strong faith he can indulge in the luxury of skepticism.
 > -- Friedrich Nietzsche
+
+## Proverbios
+
+1. Nunca permitas que tus pies vayan por delante de tus zapatos. `Proverbio escocés`.
