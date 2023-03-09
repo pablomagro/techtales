@@ -4,7 +4,7 @@
 
 # Site
 ## Giving the website a name, blog author, email, etc
-title: "Technical Tips to Revitalize Your Devices and Memory"
+title: 'Technical Tips to Revitalize Your Devices and Memory'
 subtitle: Pablo Magro's Blog (Developer)
 description: Some tech things to refresh and don't forget
 author: Pablo Magro Gaspar
@@ -15,7 +15,7 @@ timezone: Pacific/Auckland
 # URL
 ## Configuring a public web address.
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: https://pmagas.serveblog.net
+url: https://blog.pablo-magro-gaspar.site
 # url: https://github.com/pablomagro/techtales.git
 root: /
 permalink: :year/:month/:day/:title/
@@ -90,10 +90,8 @@ feed:
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  # repo: https://github.com/pablomagro/pablomagro.github.io.git
   repo: git@github.com:pablomagro/pablomagro.github.io.git/
-  branch: gh-pages # Before master
-  # name: pablomagro
+  branch: gh-pages
   message: "Docs updated: {{ now('YYYY-MM-DD HH:mm:ss') }})"
 
 # Marked renderer
@@ -114,7 +112,7 @@ search:
 # hexo-generator-seo-friendly-sitemap
 sitemap:
   path: sitemap.xml
-  hostname: https://pmagas.serveblog.net
+  hostname: https://blog.pablo-magro-gaspar.site
   prettyURLs: true
   generate:
     frequency: daily
