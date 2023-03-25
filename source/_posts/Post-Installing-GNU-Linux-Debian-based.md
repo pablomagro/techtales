@@ -126,7 +126,7 @@ usr/share/fonts/truetype/msttcorefonts/comicbd.ttf: Comic Sans MS:style=Bold,Neg
 Keep in mind I am using debian based distro and KDE, for instance some packages names don't be able to fix with your current distro.
 
 ```bash
-sudo apt install unrar rar vlc smplayer mplayer curl vim mesa-utils htop lm-sensors screen kde-config-touchpad sysv-rc-conf transmission subtitleeditor pavucontrol gthumb tree
+sudo apt install unrar rar curl vim mesa-utils htop lm-sensors screen kde-config-touchpad sysv-rc-conf transmission subtitleeditor pavucontrol gthumb tree
 ```
 
 ### Browsers
@@ -510,13 +510,12 @@ sudo apt install -y p7zip p7zip-full unrar-free unzip
 
 ## 14. Multimedia
 
-* **amarok** - Easy to use media player based on the KDE Platform.
 * **smplayer** - Complete front-end for MPlayer and mpv.
 * **vlc** - Multimedia player and streamer.
 * **soundconverter** - GNOME application to convert audio files into other formats.
 
 ```bash
-sudo apt install -y mplayer smplayer vlc amarok soundconverter
+sudo apt install -y smplayer mplayer vlc soundconverter audacious
 ```
 
 ## 15. Install shutter
@@ -537,7 +536,7 @@ sudo apt install -y shutter
 * **inxi** - full featured system information script
 
 ```bash
-sudo apt install -y faketime htop lshw inxi pdftk wget curl net-tools filezilla neofetch qapt-deb-installer aptitude intel-microcode lm-sensors
+sudo apt install -y faketime htop duf ufw lshw inxi pdftk wget curl net-tools filezilla neofetch qapt-deb-installer aptitude intel-microcode lm-sensors
 ```
 
 Use examples:
@@ -667,7 +666,6 @@ HISTSIZE=
 HISTFILESIZE=
 HISTCONTROL=ignoreboth
 ```
-
     HISTSIZE
         The number of commands to remember in the command history (see HISTORY below). If the value is 0, commands are not saved in the history list.  Numeric  values less  than zero result in every command being saved on the history list (there is no limit). The shell sets the default value to 500 after reading any startup files.
 
@@ -809,11 +807,200 @@ Finally if you need anything of the following: Support for USB 2.0 and USB 3.0 d
 * **fortunes** - Data files containing fortune cookies. Configuration [here](https://wiki.debian.org/fortune).
 
 ```bash
-apt install fortunes fortunes-es
+sudo apt install fortunes fortunes-es
 ```
 
-[deb-multimedia]: http://www.deb-multimedia.org/
-[screen]: https://www.gnu.org/software/screen/manual/screen.html
-[nodejs]: https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
-[Lynis]: https://cisofy.com/lynis/
-[baloo]: https://community.kde.org/Baloo/Configuration
+* **Kpatience** - Solitaire card game.
+
+```bash
+sudo apt install kpat
+```
+
+---
+
+## Update 25 March 2023
+
+As returnning Debian 12 with the testing version, after almost two years using Fedora and being impossible to install OpenSuse. I update my new founds, new interesting stuff and forgotten things.
+
+```bash
+OS: Debian GNU/Linux 12 (bookworm) x86_64
+Host: Z490 VISION G -CF
+Kernel: 6.1.0-6-amd64
+Uptime: 11 hours, 22 mins
+Packages: 2917 (dpkg), 9 (flatpak)
+Shell: bash 5.2.15
+Resolution: 1920x1080, 1920x1080
+DE: Plasma 5.27.2
+WM: KWin
+WM Theme: MonochromeBlur
+Theme: [Plasma], Breeze [GTK2/3]
+Icons: [Plasma], Papirus-Dark [GTK2/3]
+Terminal: vscode
+CPU: Intel i9-10900F (20) @ 5.200GHz
+GPU: NVIDIA GeForce GTX 1650 SUPER
+Memory: 11545MiB / 32015MiB
+```
+
+## Uninstall no needed stuff.
+
+For example the Debian desktop environment
+
+```
+sudo taskselect
+```
+
+and then deselect: Debian desktop environment (although the installation you can select it, it's selected :)), uninstalling a whole bunch of stuff that is seemigly important to make the system widelight and lean.
+
+## Install nala pacakage manager
+
+An enhanced user-friendly tool for managing apt packages. Features of Nala:
+
+- Parallel downloads.
+- Checks for the fastest mirrors and uses the fastest 3 by default to speed up downloads.
+- Each command you execute will be stored as Nala history with a unique ID.
+- Compatible with Fish and Zsh.
+- Makes Apt more human-readable than ever.
+
+```bash
+sudo apt install -y nala
+```
+
+## Check Fasters Mirrors
+
+### Nala
+To fetch the fastest mirrors, you’d need to utilize the fetch utility. First, it will determine whether you are using Debian or Ubuntu and then list the fastest mirrors:
+
+```bash
+sudo nala fetch
+```
+
+### install netselect-apt
+
+Permit us to automatically select the fastest mirrors that are closest to us.
+
+```bash
+sudo nala install netselect-apt
+```
+
+Go to the mirror list and select the fastest mirror.
+
+```bash
+# -c: countery
+# -n: non free repositories
+
+sudo netselect-apt -c NZ -n bookworm
+
+...
+Of the hosts tested we choose the fastest valid for http:
+        http://mirror.fsmg.org.nz/debian/
+
+Writing sources.list.
+Done.
+```
+
+## Zram compressed swap
+
+To setup fast swap ram for SSD disk not having a swap partition.
+
+```bash
+sudo nala install systemd-zram-genererator
+```
+
+Then let the system new about the new swap service.
+
+```bash
+sudo systemdctl daemon-reload
+```
+
+and the start the systemctl service:
+
+```bash
+sudo systemdctl start /dev/zram0
+```
+
+finally check there now is swap (it's not a partition, it's region on RAM that's compressed and it's very fast and secure as it wiped in eahc reboot).
+
+
+```bash
+free -g
+```
+
+## Virutalization
+
+The virt-manager application is a desktop user interface for managing virtual machines through libvirt. It primarily targets KVM VMs, but also manages Xen and LXC (linux containers).
+
+```bash
+sudo nala install virt-manager
+```
+
+## Flatpak
+
+Enable flatpaks for further testing for the Discover utility in the app manager.
+
+```bash
+sudo nala install plasma-discover-backend-flatpak
+```
+
+It's very handy for installing flatpaks, then for the Discover app enable flatpaks:
+
+Settings -> Add Flathub (on the top right corner)
+
+Stand by until the Flatpak arises in the top left corner.
+
+Logout and login and try it from the Discover app and search and isntall: system monitoring center.
+
+then check already installed flatpaks:
+
+```bash
+flatpak list
+```
+
+## Distrobox
+
+For cotainer management and podman, as you can run podman as rootless container and can play aroutn with your container sandboses without affecting the rest of the system.
+
+```bash
+sudo nala install distrobox
+```
+
+Test it
+
+```bash
+distrobox-create --name ubuntults --image ubuntu:22.04
+...
+distrobox enter ubuntults
+...
+cat /etc/os-release
+PRETTY_NAME="Ubuntu 22.04.2 LTS"
+NAME="Ubuntu"
+VERSION_ID="22.04"
+VERSION="22.04.2 LTS (Jammy Jellyfish)"
+VERSION_CODENAME=jammy
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=jammy
+
+sudo apt update
+Hit:1 http://archive.ubuntu.com/ubuntu jammy InRelease
+Hit:2 http://security.ubuntu.com/ubuntu jammy-security InRelease
+Hit:3 http://archive.ubuntu.com/ubuntu jammy-updates InRelease
+Hit:4 http://archive.ubuntu.com/ubuntu jammy-backports InRelease
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+All packages are up to date.
+```
+
+Pretty cool eh!
+
+## References
+
+1. [deb-multimedia](http://www.deb-multimedia.org/)
+1. [screen](https://www.gnu.org/software/screen/manual/screen.html)
+1. [nodejs](https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions)
+1. [Lynis](https://cisofy.com/lynis/)
+1. [baloo](https://community.kde.org/Baloo/Configuration)
