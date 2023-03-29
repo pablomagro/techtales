@@ -187,6 +187,26 @@ PS1='\[\033[0;32m\]\[\033[0m\033[0;32m\]\u\[\033[0;36m\] @ \[\033[0;36m\]\h \w\[
 unset color_prompt force_color_prompt
 ```
 
+v2 27 March 2023
+
+```bash
+# Drop this into your .zshrc or .bashrc file:
+git_prompt() {
+    local branch="$(git symbolic-ref HEAD 2> /dev/null | cut -d'/' -f3-)"
+    local branch_truncated="${branch:0:30}"
+
+    if (( ${#branch} > ${#branch_truncated} )); then
+        branch="${branch_truncated}..."
+    fi
+
+    [ -n "${branch}" ] && echo " (${branch})"
+}
+
+PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\[\033[33m\]$(git_prompt)▶\[\033[00m\]'
+```
+
+References are gotten from [Add a Git Branch to Your Prompt with a Few Lines of Shell Scripting](https://nickjanetakis.com/blog/add-a-git-branch-to-your-prompt-with-a-few-lines-fo-shell-scriptingt) and [ChatGPT](https://chat.openai.com/chat)
+
 ### Productive aliases
 
 #### Common aliases
@@ -533,10 +553,11 @@ sudo apt install -y shutter
 * **neofetch** - Shows Linux System Information with Distribution Logo.
 * **qapt-deb-installer** - tool for installing deb files.
 * **net-tools** - NET-3 networking toolkit.
-* **inxi** - full featured system information script
+* **inxi** - Full featured system information script
+* **baoba** - Check folder sizes and vailable disk space.
 
 ```bash
-sudo apt install -y faketime htop duf ufw lshw inxi pdftk wget curl net-tools filezilla neofetch qapt-deb-installer aptitude intel-microcode lm-sensors
+sudo apt install -y faketime htop duf ufw lshw inxi pdftk wget curl net-tools filezilla neofetch qapt-deb-installer aptitude intel-microcode lm-sensors baoba
 ```
 
 Use examples:
@@ -810,7 +831,7 @@ Finally if you need anything of the following: Support for USB 2.0 and USB 3.0 d
 sudo apt install fortunes fortunes-es
 ```
 
-* **Kpatience** - Solitaire card game.
+* **KPatience** - KPatience is a compendium of several well known patience card games, ranging from the well known Klondike and Freecell, to lesser known games such as Grandfather's Clock and Mod3. In all there are 12 variations for you to while away time.
 
 ```bash
 sudo apt install kpat
@@ -920,12 +941,11 @@ sudo systemdctl start /dev/zram0
 
 finally check there now is swap (it's not a partition, it's region on RAM that's compressed and it's very fast and secure as it wiped in eahc reboot).
 
-
 ```bash
 free -g
 ```
 
-## Virutalization
+## Virtualization
 
 The virt-manager application is a desktop user interface for managing virtual machines through libvirt. It primarily targets KVM VMs, but also manages Xen and LXC (linux containers).
 
