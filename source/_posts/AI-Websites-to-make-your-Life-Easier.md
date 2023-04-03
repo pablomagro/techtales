@@ -2,92 +2,53 @@
 title: AI Websites to make your Life Easier
 date: 2023-02-16 21:33:13
 tags:
-  - General, Utilities, Coding
+  - Websites
 categories:
-  - AI, Websites
+  - AI
 ---
 
-1. **GhatGPT**
-   - Website: [openai.com/blog/chatgpt](https://openai.com/blog/chatgpt/)
-   - Description: Answers anything.
+## Communication & Meetings
+- Fireflies AI: Automatically record and search your meetings with AI. [Fireflies AI](https://fireflies.ai/)
 
-   <!-- ![GhatGPT landing page screenshot](../images/ghatgpt_screenshot.png) -->
+## Content Creation & Management
+- Quinvio AI: Create video presentations using AI. [Quinvio AI](https://www.quinvio.com/)
+- BotSheets AI: Turn chats into spreadsheets automatically with AI. [BotSheets AI](https://botsheets.com/)
+- Supercreator AI: Create short form videos 10x faster with AI. [Supercreator AI](https://supercreator.com/)
+- Blend AI: Create professional product visuals in seconds. [Blend AI](https://blend.ai/)
+- AI Image Enlarger: Enlarge and upscale your images without losing quality. [AI Image Enlarger](https://imglarger.com/)
+- Ghostwryter: An AI writing assistant made just for Google Docs. [Ghostwryter](https://www.ghostwryter.io/)
+- Looka AI: Design a logo for your brand, website, or company swag with AI. [Looka AI](https://looka.com/)
+- MagicaI AI: Save multiple hours by automating boring and repetitive tasks. [MagicaI AI](https://magical.ai/)
+- Ellie AI: An email writing assistant that learns from your writing style. [Ellie AI](https://www.ellie.ai/)
+- Resume Worded AI: 10x your resume and LinkedIn profile. [Resume Worded AI](https://resumeworded.com/)
 
-2. **Writesonic**
-   - Website: [writesonic.com](https://writesonic.com/)
-   - Description: Best AI Writer for Creating art work.
+## Research & Productivity
+- Glean AI: An AI tool to find exactly what you need. [Glean AI](https://glean.co/)
+- Quotify: AI-powered tool to extract meaningful quotes from books and articles. [Quotify](https://quotify.it/)
+- Wordtune: Summarize documents and identify key points with AI. [Wordtune](https://www.wordtune.com/)
+- Scispace AI: Your AI research assistant to save hours every day. [Scispace AI](https://scispace.net/)
 
-3. **Runway**
-   - Website: [unwayml.com](https://unwayml.com/)
-   - Description: Everything you need to make anything you want.
+## Creative Arts
+- DALL*E 2: Create art from text. [DALL*E 2](https://openai.com/dall-e-2/)
+- Inkscape: Free alternative to Adobe Illustrator. [Inkscape](https://inkscape.org/)
+- Diagram: Create icons from text. [Diagram](https://diagram.com/)
+- Synthesia: Avatar with speech. Create videos from plain text in minutes. [Synthesia](https://synthesia.io/)
+- Unfakepng: Convert fake PNGs. [Unfakepng](https://unfakepng.com/)
 
-4. **Unfakepng**
-   - Website: [unfakepng.com](https://unfakepng.com/)
-   - Description: Convert fake PNGs.
+## Personal Assistance & Memory
+- Heyday: An AI powered memory assistant. [Heyday](https://heyday.ai/)
 
-   <!-- ![Unfakepng landing page screenshot](../images/unfakepng_screenshot.png) -->
+## Trips
+- Roam Around: Create an itinerary for a city that spans several days. [Roam Around](https://www.roamaround.io/)
 
-5. **Inkscape**
-   - Website: [inkscape.org](https://inkscape.org/)
-   - Description: Free alternative to Adobe Illustrator.
+## Writing & Communication
+- Murf AI: Make studio quality voice overs from input text in seconds. [Murf AI](https://www.murf.ai/)
 
-   <!-- ![Inkscape landing page screenshot](inkscape_screenshot.png) -->
+## Plagiarism Checker
+- Plag: The first AI-driven plagiarism checker. [Plag](https://plag.ai/)
 
-6. **Natural Reader**
-   - Website: [bit.ly/naturaltts](https://bit.ly/naturaltts)
-   - Description: Convert text to natural AI voices.
-
-   <!-- ![Natural Reader landing page screenshot](natural_reader_screenshot.png) -->
-
-7. **Diagram**
-   - Website: [diagram.com](https://diagram.com/)
-   - Description: Create Icon from text.
-
-   <!-- ![Diagram landing page screenshot](diagram_screenshot.png) -->
-
-8. **synthesia**
-   - Website: [synthesia.io](https://synthesia.io/)
-   - Description: Avatar with speech. Create videos from plain text in minutes.
-
-   <!-- ![synthesia landing page screenshot](synthesia_screenshot.png) -->
-
-9. **DALL*E 2**
-   - Website: [openai.com/dall-e-2](https://openai.com/dall-e-2/)
-   - Description: Create art from text.
-
-   <!-- ![DALL*E 2 landing page screenshot](dalle_screenshot.png) -->
-
-10. **Plag**
-   - Website: [plag.ai](https://plag.ai/)
-   - Description: The first AI-driven plagiarism checker.
-
-   <!-- ![Plag landing page screenshot](plag_screenshot.png) -->
-
-11. **Fetch**
-   - Website: [fetch.ai](https://fetch.ai/)
-   - Description: AI money project. Autonomous Agent technology.
-
-   <!-- ![Fetch landing page screenshot](fetch_screenshot.png) -->
-
-12. **Roam Around**
-   - Website: [fetch.ai](https://www.roamaround.io//)
-   - Description: Create an itinerary for a city that spans several days.
-
-# Coding Websites
-
-1. **JavaScript & Node.js Testing best practices**
-   - Website: [javascript-testing-best-practices](https://github.com/goldbergyoni/javascript-testing-best-practices)
-   - Description: This is a guide for JavaScript & Node.js reliability from A-Z. It summarizes and curates for you dozens of the best blog posts, books, and tools the market has to offer
-
-2. **OverApi.com**
-   - Website: [overapi.com](https://overapi.com/)
-   - Description: Collects all the cheat sheets.
-
-3. **medusa**
-   - Website: [medusaJS.com](https://medusaJS.com/)
-   - Description: Headless e-commerce engine. the Open Source logo Shopify -> Alternative
-
-<!-- 4. **Responsibility**
-   - Website: [Responsibility.app](https://responsibility.app/)
-   - Description: Open-sources responsive previews. -->
+## Miscellaneous
+- Fetch: AI money project. Autonomous Agent technology. [Fetch](https://fetch.ai/)
+- Riverside.fm: Record a radio-like podcast and let your listeners call in. [Riverside.fm](https://riverside.fm/)
+- Stockimg.AI: Generate stock images, wallpapers, and other visual assets. [Stockimg.ai](https://stockimg.ai/)
 
