@@ -1,4 +1,3 @@
-
 ---
 title: Git Documentation
 tags:
@@ -9,25 +8,25 @@ categories:
 date: 2016-09-13 16:13:32
 ---
 
-<ul>
-  <li>[--set-upstream](#--set-upstream)</li>
-  <li>[How to undo last commit in Git?](#how-to-undo-last-commit-in-git?)</li>
-  <li>[How would you skip a git hook?](#how-would-you-skip-a-git-hook?)</li>
-  <li>[Save uncommitted changes with git stash](#save-uncommitted-changes-with-git-stash)</li>
-  <li>[Navigate git command pager output with Unix less command](#navigate-git-command-pager-output-with-unix-less-command)</li>
-  <li>[View commit history with git log](#view-commit-history-with-git-log)</li>
-  <li>[Compare file changes with git diff](#compare-file-changes-with-git-diff)</li>
-  <li>[Show who changed a line last with git blame](#show-who-changed-a-line-last-with-git-blame)</li>
-  <li>[Use semantic versioning with git tag](#use-semantic-versioning-with-git-tag)</li>
-  <li>[Clean up commits with git rebase](#clean-up-commits-with-git-rebase)</li>
-  <li>[Diagnose which commit broke something with git bisect](#diagnose-which-commit-broke-something-with-git-bisect)</li>
-  <li>[Run scripts on git events with git hooks](#run-scripts-on-git-events-with-git-hooks)</li>
-  <li>[Configure global settings with git config](#configure-global-settings-with-git-config)</li>
-  <li>[Configure global settings with git config](#configure-global-settings-with-git-config)</li>
-  <li>[Remove all unnecessary git tracking with a global .gitignore file](#remove-all-unnecessary-git-tracking-with-a-global-.gitignore-file)</li>
-</ul>
+# List of contents
 
-## --set-upstream
+1. [--set-upstream](#--set-upstream)
+1. [How to undo last commit in Git?](#how-to-undo-last-commit-in-git?)
+1. [How would you skip a git hook?](#how-would-you-skip-a-git-hook?)
+1. [Save uncommitted changes with git stash](#save-uncommitted-changes-with-git-stash)
+1. [Navigate git command pager output with Unix less command](#navigate-git-command-pager-output-with-unix-less-command)
+1. [View commit history with git log](#view-commit-history-with-git-log)
+1. [Compare file changes with git diff](#compare-file-changes-with-git-diff)
+1. [Show who changed a line last with git blame](#show-who-changed-a-line-last-with-git-blame)
+1. [Use semantic versioning with git tag](#use-semantic-versioning-with-git-tag)
+1. [Clean up commits with git rebase](#clean-up-commits-with-git-rebase)
+1. [Diagnose which commit broke something with git bisect](#diagnose-which-commit-broke-something-with-git-bisect)
+1. [Run scripts on git events with git hooks](#run-scripts-on-git-events-with-git-hooks)
+1. [Configure global settings with git config](#configure-global-settings-with-git-config)
+1. [Remove unnecessary git tracking with .gitignore file](#Remove-unnecessary-git-tracking-with-.gitignore-file)
+1. [Remove all unnecessary git tracking with a global .gitignore file](#remove-all-unnecessary-git-tracking-with-a-global-.gitignore-file)
+
+## --set-upstream <a id="--set-upstream"></a>
 
     git branch --set-upstream <remote-branch>
 
@@ -50,7 +49,7 @@ For more details, checkout this [detailed explanation about upstream branches an
 
 [Rules are different for git push and git pull][2].
 
-## How to undo last commit in Git
+## How to undo last commit in Git? <a id="how-to-undo-last-commit-in-git?"></a>
 
 ```bash
 $ git commit -m "Something terribly misguided"              (1)
@@ -74,7 +73,7 @@ Beware however that if you have added any new changes to the index, using commit
 
 Reference link [here from stackoverflow][3] and [here from git][4].
 
-## How would you skip a git hook
+## How would you skip a git hook? <a id="how-would-you-skip-a-git-hook?"></a>
 
 I have found some scenerarios where linters did not work correclty, and for instance I had to bypassed them.
 
@@ -85,7 +84,7 @@ Below option bypasses the pre-commit and pre-push.
 
 See also [githooks](https://git-scm.com/docs/githooks).
 
-## Save uncommitted changes with git stash
+## Save uncommitted changes with git stash <a id="save-uncommitted-changes-with-git-stash"></a>
 
 Sometimes when we are working we need a way to pause and switch gears to deal with something more critical; often when this happens we aren't ready to create a ``git commit``; instead, we can use ``git stash`` to save our uncommitted changes locally, switch branches and fix the critical issue, switch back to our incomplete feature, and finally run ``git stash apply`` to get our unfinished changes back into our branch without affecting the rest of the codebase. Below it shows a real world example of doing this with a critical bug.
 
@@ -124,7 +123,7 @@ git stash apply
 # Can get CONFLICTS, and they can be fixed as normal similar when merging.
 ```
 
-## Navigate git command pager output with Unix less command
+## Navigate git command pager output with Unix less command <a id="navigate-git-command-pager-output-with-unix-less-command"></a>
 
 When using a git command that can have a large amount of output (like ``git log``, ``git diff``, or ``git blame``), Git opens the command output in our terminal "pager"; on most modern Unix-based systems, the default pager will be "[less](https://en.wikipedia.org/wiki/Less_(Unix))". Learning a few less commands will help us deal with this git command output that opens in the pager. Below it shows some of the most useful of the less commands:
 
@@ -132,7 +131,7 @@ When using a git command that can have a large amount of output (like ``git log`
 
 It covers some of the most critical less commands; there are more commands available. A good chunk of the commands (and "motions") of the Unix pagers are also used by vi (or vim) and other Unix programs.
 
-## View commit history with git log
+## View commit history with git log <a id="view-commit-history-with-git-log"></a>
 
 It's often helpful to view the history of a code project; with Git, we can use the ``git log`` command to view all commits in our repo. This lets us view information about each commit like the commit id (for use in other git commands), author, author's email, and commit message. We can format the git log commit output to display more or less information or filter to specific commits using ``git log {arguments}``.
 
@@ -141,7 +140,7 @@ git log {arguments}
 # Terminal page
 ```
 
-## Format commit history with git log arguments
+### Format commit history with git log arguments
 
 When running the `git log` command, we can pass in options as arguments to _format_ the data shown for each commit.
 Below it shows how to use the `oneline`, `decorate`, `graph`, `stat`, and `p` options with `git log`.
@@ -157,7 +156,7 @@ git log --online --graph
 git log --stat --online
 ```
 
-## Filter commit history with git log arguments
+### Filter commit history with git log arguments
 
 It will walk through using a bunch of options to filter our `git log` commits to a more meaningful set (`-n`, `--after`, `--before`, `--author`, `--grep`, `-S`, `-G`, `--no-merges`, `{ref}..{ref}`, {`files}`). We will also show how all of the formatting and filtering options can be composed together to query exactly what you are looking for in your commit history.
 
@@ -187,13 +186,13 @@ git log -3 -i --author="pmagas" README.md
 git log -S"Math" --after="2 months ago" --oneline --stat
 ```
 
-## Compare file changes with git diff
+## Compare file changes with git diff <a id="compare-file-changes-with-git-diff"></a>
 
 It can be helpful to see the changes between two sets of code; `git diff` lets us do this by comparing two Git references and outputting the differences between them. Below it shows how to use `git diff` along with the `--stat`, `--cached`, `HEAD`, `origin/master`, `file(s)/dir(s)` options.
 
 ``git diff``: Show changes between two references; by default it uses the last commit, and the current working directory.
 
-## Practical examples for git diff
+### Practical examples for git diff
 
 ```bash
 git diff # Check what exa has changed.
@@ -207,7 +206,7 @@ git diff origin/master # Show all changes locally that they haven't been merged 
 git diff origin/master getRandomString.js # Only diff of an specific file(s).
 ```
 
-## Show who changed a line last with git blame
+## Show who changed a line last with git blame <a id="show-who-changed-a-line-last-with-git-blame"></a>
 
 When working on a file, we often want to know who made certain changes last; we can use git blame to see details about the last modification of each line in a file. Below it shows and example of using `git blame` to see who made the last change on a line in a file, and then we use the output of `git blame` to use in other tools like `git log` to see the full context of why the change was made and what other parts of the code base were effected at the same time as the line from `git blame`.
 
@@ -223,7 +222,7 @@ git blame README.js
 git log 15eeb90 -p
 ```
 
-## Use semantic versioning with git tag
+## Use semantic versioning with git tag <a id="use-semantic-versioning-with-git-tag"></a>
 
 Using `git tag` we can create references to commits that are immutable; this is usually used for making public releases. Below show how to use `git tag` and go over common Semantic Versioning (AKA semver) conventions.
 
@@ -252,7 +251,7 @@ git tag -a v2.0.1
 0 - Minor release, no breaking code changes, new functionality and maybe some bug fixes.
 0 - Patch release, small bug fixes.
 
-## Clean up commits with git rebase
+## Clean up commits with git rebase <a id="clean-up-commits-with-git-rebase"></a>
 
 Sometimes its nice to clean up commits before merging them into your main code repo; below it goes over using `git rebase` to `squash` commits together and then rename the condensed commit message.
 
@@ -291,7 +290,7 @@ git rebase --abort
 
 git rebase It is *DESTRUCTIVE*, change the git history, we shouldn't use rebase in code already pushed in the master branch.
 
-## Diagnose which commit broke something with git bisect
+## Diagnose which commit broke something with git bisect <a id="diagnose-which-commit-broke-something-with-git-bisect"></a>
 
 Sometimes you find a bug in your project that has been around for a while without being noticed; it can be hard to track down where that bug was introduced and why just by searching through logs and diffs. Git has a slick tool called `git bisect` that can be used to find out which commit introduced problem in our code - it creates a binary search where the programmer can mark each search commit as `good` or `bad`; by the end of the bisect, Git shows you exactly which commit introduced the issue. Below it walks through an example of using `git bisect` from start to finish.
 
@@ -314,7 +313,7 @@ Sometimes you find a bug in your project that has been around for a while withou
 
 ```
 
-## Run scripts on git events with git hooks
+## Run scripts on git events with git hooks <a id="run-scripts-on-git-events-with-git-hooks"></a>
 
 Git lets us run scripts on git events like `pre-commit`, `pre-rebase`, `post-commit`, `post-merge`, `post-checkout`, etc. You can do this by adding an executable file to the `./git/hooks` directory which has a name matching the git hook name. Below it walks through this process by setting up a `pre-commit` hook which runs our `npm test` and `npm run lint` npm scripts to ensure we don't have any failing tests or lint errors before committing
 
@@ -349,7 +348,7 @@ git config --global core.editor vim
 git config --list
 ```
 
-## Remove unnecessary git tracking with .gitignore files
+## Remove unnecessary git tracking with .gitignore file <a id="Remove-unnecessary-git-tracking-with-.gitignore-file"></a>
 
 Most projects have automatically generated files or folders from the operating system, applications, package managers etc. Usually, we don't want to include these types of things in our remote repos because they can clutter the git history/storage and are not applicable to everyone that works on the project. Below it shows how to create a `.gitignore` file to ignore files and folders from being tracked by git.
 
@@ -369,7 +368,7 @@ npm-debug.log
 cache
 ```
 
-## Remove all unnecessary git tracking with a global .gitignore file
+## Remove all unnecessary git tracking with a global .gitignore file <a id="remove-all-unnecessary-git-tracking-with-a-global-.gitignore-file"></a>
 
 If you regularly use code editors, GUI tools or other programs that automatically create files and folders, you may want to set up a global `.gitignore` file which will apply to every repo on your machine. Below it shows how to do that by creating a `.gitignore_global` file with the dotfiles in our `~/` root directory, and then link it to all git repos using our global `.gitconfig`.
 
