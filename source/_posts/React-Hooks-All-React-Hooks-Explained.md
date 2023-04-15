@@ -1,21 +1,21 @@
 ---
 title: React Hooks - All React Hooks Explained
 date: 2023-04-15 09:31:01
-tags:
-  - React
 categories:
+  - React
+tags:
   - Hooks
 ---
 
 # [Built-in React Hooks](https://react.dev/reference/react)
 
-Hooks are a new addition in React 16.8. They let you use state and other React features without writing a class. Tey are build-in in the chore of React.
+Hooks are a new addition in [React 16.8](https://legacy.reactjs.org/blog/2019/02/06/react-v16.8.0.html). They let you use state and other React features without writing a class. Tey are build-in in the chore of React.
 
 One of the benefits of React is that it does for you, if you determine some sort of system to manage the state of the application
 
 Changing the state of the application and as you change the state of the application the webpage itself re-renders automatically to show the new values.
 
-# List of Extensions
+# List of Hooks
 
 1. [State Hooks](#state-hooks)
    1. [useState](#useState)
@@ -23,15 +23,15 @@ Changing the state of the application and as you change the state of the applica
 1. [Effect Hooks](#Effect-Hooks)
    1. [useEffect](#useEffect)
    1. [useLayoutEffect](#useLayoutEffect)
-1. [Ref Hooks](#Ref-Hooks)
+1. [Ref H ooks](#Ref-Hooks)
    1. [useRef](#useRef)
-1. [Context Hooks](#context-hooks)
+1. [Context Hooks](#Context-Hooks)
    1. [useContext](#useContext)
 1. [Performance Hooks](performance-hooks)
    1. [useMemo](#useMemo)
    1. [useCallback](#useCallback)
 1. [Other Hooks](#other-hooks)
-   1. *[useDebugValue](#useDebugValue)
+   1. [useDebugValue](#useDebugValue)
 
 
 ## [State Hooks](https://react.dev/reference/react#state-hooks)<a id="state-hooks"></a>
@@ -235,7 +235,7 @@ function LayoutEffectTutorial() {
   - [I’m getting an error: ”useLayoutEffect does nothing on the server”](https://react.dev/reference/react/useLayoutEffect#im-getting-an-error-uselayouteffect-does-nothing-on-the-server)
 
 
-## [Ref Hooks](https://react.dev/reference/react#effect-hooks)<a id="Ref-Hooks"></a>
+## [Ref Hooks](https://react.dev/reference/react#effect-hooks) <a id="Ref-Hooks"></a>
 
 *Refs* let a component [hold some information that isn’t used for rendering,](https://react.dev/learn/referencing-values-with-refs) like a DOM node or a timeout ID. Unlike with state, updating a ref does not re-render your component. Refs are an “escape hatch” from the React paradigm. They are useful when you need to work with non-React systems, such as the built-in browser APIs.
 
@@ -287,13 +287,13 @@ Creating a some short of to-do application, clear an input file when submitted t
 
 ---
 
-## [**Context Hooks**](https://react.dev/reference/react#context-hooks)<a name="context-hooks"></a>
+## [Context Hooks](https://react.dev/reference/react#context-hooks) <a name="Context-Hooks"></a>
 
 *Context* lets a component [receive information from distant parents without passing it as props.](https://react.dev/learn/passing-props-to-a-component) For example, your app’s top-level component can pass the current UI theme to all components below, no matter how deep.
 
 - [useContext](https://react.dev/reference/react/useContext) reads and subscribes to a context.
 
-### [**useContext**](https://react.dev/reference/react/useContext)<a name="useContext"></a>
+### [**useContext**](https://react.dev/reference/react/useContext) <a name="useContext"></a>
 
 To share value through disconnected components, we can create a context object.
 
@@ -349,7 +349,7 @@ function ReactHooksExplained () {
   - [I am always getting undefined from my context although the default value is different](https://react.dev/reference/react/useContext#i-am-always-getting-undefined-from-my-context-although-the-default-value-is-different)
 
 
-## [**Performance Hooks**](https://react.dev/reference/react#performance-hooks)<a name="performance-hooks"></a>
+## [**Performance Hooks**](https://react.dev/reference/react#performance-hooks) <a name="performance-hooks"></a>
 
 A common way to optimize re-rendering performance is to skip unnecessary work. For example, you can tell React to reuse a cached calculation or to skip a re-render if the data has not changed since the previous render.
 
@@ -365,7 +365,7 @@ To prioritize rendering, use one of these Hooks:
 - [useTransition](https://react.dev/reference/react/useTransition) lets you mark a state transition as non-blocking and allow other updates to interrupt it.
 - [useDeferredValue](https://react.dev/reference/react/useDeferredValue) lets you defer updating a non-critical part of the UI and let other parts update first.
 
-### [**useMemo**](https://react.dev/reference/react/useMemo)<a name="useMemo"></a>
+### [**useMemo**](https://react.dev/reference/react/useMemo) <a name="useMemo"></a>
 
 useMemo is a React Hook that lets you cache the result of a calculation between re-renders.
 
@@ -404,7 +404,7 @@ return (
   - [Every time my component renders, the calculation in useMemo re-runs](https://react.dev/reference/react/useMemo#every-time-my-component-renders-the-calculation-in-usememo-re-runs)
   - [I need to call useMemo for each list item in a loop, but it’s not allowed](https://react.dev/reference/react/useMemo#i-need-to-call-usememo-for-each-list-item-in-a-loop-but-its-not-allowed)
 
-### [**useCallback**](https://react.dev/reference/react/useCallback)<a name="useCallback"></a>
+### [**useCallback**](https://react.dev/reference/react/useCallback) <a name="useCallback"></a>
 useCallback is a React Hook that lets you cache a function definition between re-renders.
 
 #### An example of useCallback
@@ -433,14 +433,14 @@ return <> <SomeChild handler={showCount}></SomeChild>  </>
 
 ---
 
-## [**Other Hooks**](https://react.dev/reference/react#other-hooks)<a name="other-hooks"></a>
-These Hooks are mostly useful to library authors and aren’t commonly used in the application code.
+## **Other Hooks** <a name="other-hooks"></a>
+These [Hooks]((https://react.dev/reference/react#other-hooks)) are mostly useful to library authors and aren’t commonly used in the application code.
 
 - [useDebugValue](https://react.dev/reference/react/useDebugValue) lets you customize the label React DevTools displays for your custom Hook.
 - [useId](https://react.dev/reference/react/useId) lets a component associate a unique ID with itself. Typically used with accessibility APIs.
 - [useSyncExternalStore](https://react.dev/reference/react/useSyncExternalStore) lets a component subscribe to an external store.
 
-### [**useDebugValue**](https://react.dev/reference/react/useDebugValue)<a name="useDebugValue"></a>
+### [**useDebugValue**](https://react.dev/reference/react/useDebugValue) <a name="useDebugValue"></a>
 useDebugValue is a React Hook that lets you add a label to a custom Hook in [React DevTools.](https://react.dev/learn/react-developer-tools)
 
     useDebugValue(value, format?)
