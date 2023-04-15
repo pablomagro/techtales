@@ -23,7 +23,7 @@ Changing the state of the application and as you change the state of the applica
 1. [Effect Hooks](#Effect-Hooks)
    1. [useEffect](#useEffect)
    1. [useLayoutEffect](#useLayoutEffect)
-1. [Ref H ooks](#Ref-Hooks)
+1. [Ref Hooks](#Ref-Hooks)
    1. [useRef](#useRef)
 1. [Context Hooks](#Context-Hooks)
    1. [useContext](#useContext)
@@ -187,8 +187,12 @@ function ChatRoom({ roomId }) {
 
 ## [**useLayoutEffect**](https://react.dev/reference/react/useLayoutEffect)<a id="useLayoutEffect"></a>
 
-**Pitfall**
-useLayoutEffect can hurt performance. Prefer [useEffect](https://react.dev/reference/react/useEffect) when possible.
+<h2 style="color: red; font-weight: bold;">Pitfall:
+ <span style="color: white; font-weight: normal;">useLayoutEffect can hurt performance. Prefer  <a href="[Ref-Hooks](https://react.dev/reference/react/useEffect)">useEffect</a> when possible</span>
+</h2>
+
+## Warning: !This is an important message!
+
 
 - **Similar** to **useEffect** but
 - **RUNS** after render, but before pointing the script.
@@ -203,29 +207,35 @@ useLayoutEffect is a version of [useEffect](https://react.dev/reference/react/us
 Call ``useLayoutEffect`` perform the layout measurements before the browser repaints the screen:
 
 ```JavaScript
-import { useLayoutEffect, useEffect, useRef } from "react";
+import React, { useState, useLayoutEffect, useRef } from 'react';
 
-function LayoutEffectTutorial() {
-  const inputRef = useRef(null);
+function MyComponent() {
+  const [width, setWidth] = useState(0);
+  const ref = useRef(null);
 
-  // Similar to useEffect, but
-  // RUNS after render, but before pointing the script.
-  // CAUTION blocks visual updates until your callback is finished
+  /* ***************************************************************
+   * Similar to useEffect, but
+   * RUNS after render, but before pointing the script.
+   * CAUTION blocks visual updates until your callback is finished
+   * *************************************************************** */
+
+  // Use useLayoutEffect to measure the width of the element
   useLayoutEffect(() => {
-    console.log(inputRef.current.value);
-  }, []);
-
-  useEffect(() => {
-    inputRef.current.value = "HELLO";
+    if (ref.current) {
+      const newWidth = ref.current.getBoundingClientRect().width;
+      setWidth(newWidth);
+    }
   }, []);
 
   return (
-    <div>
-      <input ref={inputRef} value="Effect Layout" />
+    <div ref={ref}>
+      This element has a width of {width}px.
     </div>
   );
 }
 ```
+
+Note that `useLayoutEffect` should be used sparingly, as it can negatively impact the performance of your application if used excessively or inefficiently. You should only use `useLayoutEffect` when you need to perform a measurement or layout calculation that affects the visual appearance of your application.
 
 - [Reference](https://react.dev/reference/react/useLayoutEffect#reference)
   - [useLayoutEffect(setup, dependencies?)](https://react.dev/reference/react/useLayoutEffect#useinsertioneffect)
@@ -252,27 +262,29 @@ useRef is a React Hook that lets you reference a value that’s not needed for r
       const ref = useRef(initialValue)
 
 #### An example of using useRef
+Use the `useRef` hook in a React component to store a reference to a DOM element:
 
 ```JavaScript
-import React, {  } from "react";
+import React, { useRef } from 'react';
 
-function UseRef() {
+function MyComponent() {
   const inputRef = useRef(null);
 
-  const onClick = () => {
-    console.log(inputRef.current.value);
-    inputRef.current.value = "";
+  function handleButtonClick() {
+    // Focus the input element
     inputRef.current.focus();
-  };
+  }
 
   return (
     <div>
       <input type="text" placeholder="Example..." ref={inputRef} />
-      <button onClick={onClick}>Change Name</button>
+      <button onClick={handleButtonClick}>Focus input</button>
     </div>
   );
 }
 ```
+
+By using the `useRef` hook to store a reference to the input element, we can avoid the need to rely on DOM queries or selectors to manipulate the input element, which can be slower and less reliable. Instead, we can directly access the input element using the `current` property of the `inputRef` object.
 
 - [Reference](https://react.dev/reference/react/useRef#reference)
   - [useRef(initialValue)](https://react.dev/reference/react/useRef#useref)
@@ -408,16 +420,39 @@ return (
 useCallback is a React Hook that lets you cache a function definition between re-renders.
 
 #### An example of useCallback
+In this example, the `ChildComponent` receives the `onClick` prop from the `ParentComponent` and uses it to handle a click event on a button element. Because the `onClick` prop is a memoized callback function, the `ChildComponent` can safely use it without needing to worry about unnecessary re-renders due to changes in the function reference.
 
 ```javascript
 // Maybe we want to memoize the function, passing the function to multiple child components,
-// especially with bit lists, wrapping the function with avoid unnecessary re-rendering in the child components
+// especially with big lists, wrapping the function with avoid unnecessary re-rendering in the child components
 // because is using always the same function object.
-const showCount = useCallback(() => {
-  alert(`Count ${count}`)
-}, [count])
 
-return <> <SomeChild handler={showCount}></SomeChild>  </>
+import React, { useState, useCallback } from 'react';
+import ChildComponent from './ChildComponent';
+
+function ParentComponent() {
+  const [count, setCount] = useState(0);
+
+  // Define a memoized callback function using the useCallback hook
+  const handleClick = useCallback(() => {
+    setCount(prevCount => prevCount + 1);
+  }, []);
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <ChildComponent onClick={handleClick} />
+    </div>
+  );
+}
+
+function ChildComponent({ onClick }) {
+  return (
+    <button onClick={onClick}>
+      Click me!
+    </button>
+  );
+}
 ```
 
 - [Reference](https://react.dev/reference/react/useCallback#reference)
