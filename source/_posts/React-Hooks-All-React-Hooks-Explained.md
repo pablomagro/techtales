@@ -1,5 +1,5 @@
 ---
-title: React Hooks - All React Hooks Explained
+title: React Hooks - Some React Hooks Explained
 date: 2023-04-15 09:31:01
 categories:
   - React
@@ -30,6 +30,7 @@ Changing the state of the application and as you change the state of the applica
 1. [Performance Hooks](performance-hooks)
    1. [useMemo](#useMemo)
    1. [useCallback](#useCallback)
+   1. [useDeferredValue](#useDeferredValue)
 1. [Other Hooks](#other-hooks)
    1. [useDebugValue](#useDebugValue)
 
@@ -313,7 +314,7 @@ To share value through disconnected components, we can create a context object.
 
       const value = useContext(SomeContext)
 
-#### An example of using useContext
+#### Examples of using useContext
 
 ```JavaScript
 import { createContext, useContext } from "react";
@@ -345,6 +346,23 @@ function ReactHooksExplained () {
       <MoodEmoji />
     </MoodContext.Provider>
   );
+}
+```
+```javascript
+const ThemeContext = React.createContext('light');
+
+const Display = () => {
+ const theme = useContext(ThemeContext);
+ return <div
+        style={{
+        background: theme === 'dark' ? 'black' : 'papayawhip',
+        color: theme === 'dark' ? 'white' : 'palevioletred',
+        width: '100%',
+        minHeight: '200px'
+        }}
+    >
+        {'The theme here is ' + theme}
+    </div>
 }
 ```
 
@@ -465,6 +483,82 @@ function ChildComponent({ onClick }) {
 - [Troubleshooting](https://react.dev/reference/react/useCallback#troubleshooting)
   - [Every time my component renders, useCallback returns a different function](https://react.dev/reference/react/useCallback#every-time-my-component-renders-usecallback-returns-a-different-function)
   - [I need to call useCallback for each list item in a loop, but it’s not allowed](https://react.dev/reference/react/useCallback#i-need-to-call-usememo-for-each-list-item-in-a-loop-but-its-not-allowed)
+
+### [**useDeferredValue**](https://react.dev/reference/react/useDeferredValue) <a name="useDeferredValue"></a>
+
+The `useDeferredValue` Hook is a new addition to React 18 and it lets you defer updating a part of the UI.
+
+      const deferredValue = useDeferredValue(value)
+
+`useDeferredValue` allows you to defer the rendering of a value until a future point in time, which can be incredibly useful in situations where you want to avoid unnecessary rendering.
+
+```javascript
+const [valueToDefer, setValueToDefer] = useState("")
+const deferredValue = useDeferredValue(valueToDefer)
+
+return (
+  <p>{deferredValue}</p>
+  )
+```
+
+By using the `useDeferredValue` Hook, you can avoid this problem by deferring the rendering of the search results until the user stops typing. This is similar to how *debouncing* works; it can dramatically improve performance.
+
+The following example shows how to use the `useDeferredValue` Hook to simulate a debouncing pattern retrieving Star War's characters names.
+
+```javascript
+import { useDeferredValue, useEffect, useState } from "react"
+
+function UseDeferredHook() {
+  const [searchQuery, setSearchQuery] = useState('')
+  const deferredSearchQuery = useDeferredValue(searchQuery)
+  const [resultQuery, setResultQuery] = useState([])
+
+  useEffect(() => {
+    async function fetchPeople() {
+      if (!searchQuery) {
+        setResultQuery([])
+        return
+      }
+
+      const response = await fetch(`https://swapi.dev/api/people/?search=${deferredSearchQuery}`)
+      const { results } = await response.json()
+      setResultQuery(results)
+    }
+
+    fetchPeople()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deferredSearchQuery])
+
+  function handleOnChange(event: any) {
+    setSearchQuery(event.target.value)
+  }
+
+  return (
+    <div>
+      <input type="input" placeholder="Type a character" value={searchQuery} onChange={handleOnChange} />
+      <ul>
+        {resultQuery && (resultQuery.map((person : any) => (
+          <li key={person.name}>{person.name}</li>
+        )))}
+      </ul>
+    </div>
+  )
+}
+
+export default UseDeferredHook
+```
+
+In this example, it's using the `useState` hook to manage the `searchQuery` state, which holds the user's search input. We're also using the `useDeferredValue` hook to create a `deferredSearchQuery` variable, which we pass to the Star Wars API search endpoint after a 1 second delay.
+
+- [Reference](https://react.dev/reference/react/useDeferredValue#reference)
+  - [useDeferredValue(value)](https://react.dev/reference/react/useDeferredValue#usedeferredvalue)
+- [Usage](https://react.dev/reference/react/useDeferredValue#usage)
+  - [Showing stale content while fresh content is
+        > loading](https://react.dev/reference/react/useDeferredValue#showing-stale-content-while-fresh-content-is-loading)
+  - [Indicating that the content is
+        > stale](https://react.dev/reference/react/useDeferredValue#indicating-that-the-content-is-stale)
+  - [Deferring re-rendering for a part of the
+        > UI](https://react.dev/reference/react/useDeferredValue#deferring-re-rendering-for-a-part-of-the-ui)
 
 ---
 
