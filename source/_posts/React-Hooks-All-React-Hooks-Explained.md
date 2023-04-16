@@ -189,11 +189,8 @@ function ChatRoom({ roomId }) {
 ## [**useLayoutEffect**](https://react.dev/reference/react/useLayoutEffect)<a id="useLayoutEffect"></a>
 
 <h2 style="color: red; font-weight: bold;">Pitfall:
- <span style="color: white; font-weight: normal;">useLayoutEffect can hurt performance. Prefer  <a href="[Ref-Hooks](https://react.dev/reference/react/useEffect)">useEffect</a> when possible</span>
+ <span style="color: black; font-weight: normal;">useLayoutEffect can hurt performance. Prefer  <a href="[Ref-Hooks](https://react.dev/reference/react/useEffect)">useEffect</a> when possible</span>
 </h2>
-
-## Warning: !This is an important message!
-
 
 - **Similar** to **useEffect** but
 - **RUNS** after render, but before pointing the script.
