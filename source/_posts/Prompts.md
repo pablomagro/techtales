@@ -7,7 +7,7 @@ categories:
   - Open AI
 ---
 
-## 🧠 How to find better talent faster
+## How to find better talent faster
 
 ### Find the right candidates
 
@@ -21,13 +21,13 @@ categories:
 
     I am interviewing candidates for the role of [insert role]. Create an interview with 3 rounds that test for the following traits: culture fit, growth mindset, learning ability, and adaptability. Also create one technical assignment to test their technical ability. Also add in the answer key for each question so I can evaluate and grade their answers.
 
-## 🧠 How to make better decisions
+## How to make better decisions
 Need to make an important decision but don’t feel like you have all the information you need?
 
 
     I am trying to decide if I should [insert decision]. Give me a list of pros and cons that tell me why I should or shouldn't make this decision.
 
-## 🧠 How to learn anything fast
+## How to learn anything fast
 
 Want to learn a new skill but not sure where to start?
 
@@ -57,8 +57,14 @@ Use the prompt below to generate stunning portraits on Leonardo:
 
 ![Leonardo AI](https://cdn.leonardo.ai/users/a9c4fb87-7f37-4197-a753-5a3ba06ebb13/generations/1af1965c-d1bc-489a-bf08-ac58a8cd46f0/RPG_40_Design_a_black_and_white_template_for_kids_White_backgr_0.jpg "Gucci Young Woman")
 
+## How to generate beautiful shots
+
+Use the prompt below to generate a picture of an elderly Spanish woman with a dog in Leonardo:
+
+    Medium-full shot of an elderly Spanish woman with deep wrinkles and a warm smile, petting a golden retriever in Retiro park, wearing a bright pastel floral blazer made of linen, sun glasses, natural afternoon light reflecting off her eyeglasses, shot on Agfa Vista 200, side-angle view, 4k --ar 16:9 --stylize 1000 --v 5
+
 ---
-# AI tools to supercharge your productivity
+# 🧠 AI tools to supercharge your productivity
 
 ## [AI Scout](hhttps://aiscout.net/) - AI Directory
 Free AI tool directory featuring hundreds of AI tools across dozens of categories, empowering businesses, developers, students, and freelancers to easily discover and compare the latest AI apps.
@@ -89,3 +95,12 @@ Try it [here](https://learnsmarter.ai/).
 
 ## [tl;dv](https://tldv.io/)
 tl;dv is here to transcribe, summarize, and mark key moments in your calls in 20+ languages. Try it [here](https://tldv.io/)
+
+## [Artflow AI](https://app.artflow.ai/)
+Artflow allows users to create unique animated stories using AI-generated assets, characters, and scenes. It has an easy-to-use interface that transforms storytelling into an effortless and enjoyable experience. Try it [here](https://app.artflow.ai/)
+
+## [Fini AI](https://www.usefini.com/)
+An AI tool to transform your knowledge base into an AI chat agent for customer support, providing instant answers and a seamless user experience without any integration required. Try it [here](https://www.usefini.com/).Scribe (sponsored)
+
+## [Scribe](https://scribehow.com/)
+Scribe AI automates the most dreaded part of your job: documenting processes. Scribe AI automatically creates SOPs, help centers, new user guides, and process overviews for any business process. Try it [here](https://scribehow.com/).
