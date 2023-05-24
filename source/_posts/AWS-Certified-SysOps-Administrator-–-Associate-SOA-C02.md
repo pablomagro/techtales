@@ -166,15 +166,37 @@ Create a backup plan in AWS Backup. Assign resources by resource ID, selecting a
 ## EBS
 
 ### To set up a backup strategy for an Amazon Elastic Block Store (Amazon EBS) volume storing a custom database on an Amazon EC2 instance, the following action should be taken:
-
 Create an Amazon Data Lifecycle Manager (Amazon DLM) policy to take a snapshot of the EBS volume on a recurring schedule.
 
 ``Explanation``: Amazon Data Lifecycle Manager (Amazon DLM) allows you to create automated snapshot lifecycle policies for your Amazon EBS volumes. By creating an Amazon DLM policy, you can define the desired backup schedule and retention period for the EBS volume. The policy will then automatically create snapshots according to the defined schedule. This ensures that regular backups are taken and can be used for data recovery if needed.
+
+### EBS volumes deleted with the `TerminateInstances` API call continue to show for some time on AWS Config console
+Terminated Amazon EC2 instances use the ``DeleteOnTermination`` attribute for each attached EBS volume to determine to delete the volume. Amazon EC2 deletes the Amazon EBS volume that has the ``DeleteOnTermination`` attribute set to true, but it does not publish the ``DeleteVolume`` API call. This is because AWS Config uses the DeleteVolume API call as a trigger with the rule, and the resource changes aren't recorded for the EBS volume. The EBS volume still shows as compliant or noncompliant.
+
+AWS Config performs a baseline every six hours to check for new configuration items with the ResourceDeleted status. The AWS Config rule then removes the deleted EBS volumes from the evaluation results.
+
+### SSD-backed volumes (IOPS-intensive)
+
+## Provisioned IOPS SSD (io2 Block Express, io2 & `io1`) volumes
+Provisioned IOPS SSD volumes are designed to deliver a maximum of 256,000 IOPS, 4,000 MB/s of throughput, and 64 TiB in size per volume1. io2 Block Express is the latest generation of the Provisioned IOPS SSD volumes that delivers 4x higher throughput, IOPS, and capacity than regular io2 volumes, along with sub-millisecond latency – at the same price as io2. io2 Block Express provides highest block storage performance for the largest, most I/O- intensive, mission-critical deployments of Oracle, Microsoft SQL Server, SAP HANA, and SAS Analytics
+
+#### General purpose SSD (``gp3 and gp2``) volumes
+General-purpose volumes are backed by solid-state drives (SSDs) and are suitable for a broad range of transactional workloads, virtual desktops, medium sized single instance databases, latency sensitive interactive applications, dev/test environments, and boot volumes.
+
+### HDD-backed volumes (MB/s-intensive)
+
+### Throughput optimized HDD (``st1``) volumes
+ST1 is backed by hard disk drives (HDDs) and is ideal for frequently accessed, throughput intensive workloads with large datasets and large I/O sizes, such as MapReduce, Kafka, log processing, data warehouse, and ETL workloads.
+
+### Cold HDD (``sc1``) volumes
+SC1 is backed by hard disk drives (HDDs) and provides the lowest cost per GB of all EBS volume types. It is ideal for less frequently accessed workloads with large, cold datasets.
 
 ### Changing the instance type
 1. The possibility to resize an instance depends on whether the root device is an EBS volume. If it is, you can easily change the instance size by modifying its instance type, also known as resizing. However, if the root device is an instance store volume, you need to migrate your application to a new instance with the desired instance type.
 2. Before changing the instance type of your Amazon EBS-backed instance, you must stop it. AWS will then move the instance to new hardware, but the instance ID will remain the same.
 3. If your instance belongs to an Auto Scaling group, the Amazon EC2 Auto Scaling service considers the stopped instance as unhealthy and may terminate it, launching a replacement instance instead. To avoid this, you can temporarily suspend the scaling processes for the group while resizing your instance.
+
+Reference: [Amazon EBS features](https://aws.amazon.com/ebs/features/)
 
 ## S3
 
@@ -193,6 +215,11 @@ S3 Replication Time Control (S3 RTC) helps you meet compliance or business requi
 
 Reference: [Using S3 Replication Time Control](https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication-time-control.html#using-s3-events-to-track-rtc)
 
+## Amazon S3 Access Points
+Allow you to `create unique entry points for accessing your S3 buckets`. Each access point can have its own access policy, allowing you to control access at a granular level. By using access points, you can assign specific permissions to each application or team accessing the shared bucket without affecting other applications. This helps in maintaining access control and minimizing the risk of unintended changes to the bucket policy.
+
+Reference: [Amazon S3 Access Points](https://aws.amazon.com/s3/features/access-points/)
+
 ### Logs
 
 ####  S3 Server Access Logging
@@ -204,8 +231,16 @@ By default, logging is disabled. When logging is enabled, logs are saved to a bu
 
 Reference: [Using Amazon S3 access logs to identify requests](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-s3-access-logs-to-identify-requests.html)
 
-## As a Website
+### As a Website
 If you use an Amazon S3 bucket configured as a website endpoint, ``you must set it up with CloudFront as a custom origin``. You can’t use the origin access identity feature. However, you can restrict access to content on a custom origin by setting up custom headers and configuring your origin to require them.
+
+## [AWS OpsHub](https://docs.aws.amazon.com/snowball/latest/developer-guide/aws-opshub.html)
+The Snow Family Devices offers a user-friendly tool, AWS OpsHub for Snow Family, that you can use to manage your devices and local AWS services. You use AWS OpsHub on a client computer to perform tasks such as unlocking and configuring single or clustered devices, transferring files, and launching and managing instances running on Snow Family Devices. You can use AWS OpsHub to manage both the Storage Optimized and Compute Optimized device types and the Snow device. The AWS OpsHub application is available at no additional cost to you.
+
+AWS OpsHub takes all the existing operations available in the Snowball API and presents them as a graphical user interface. This interface helps you quickly migrate data to the AWS Cloud and deploy edge computing applications on Snow Family Devices.
+
+When your Snow device arrives at your site, you download, install, and launch the AWS OpsHub application on a client machine, such as a laptop. After installation, you can unlock the device and start managing it and using supported AWS services locally. AWS OpsHub provides a dashboard that summarizes key metrics such as storage capacity and active instances on your device. It also provides a selection of AWS services that are supported on the Snow Family Devices. Within minutes, you can begin transferring files to the device.
+
 
 ## IAM
 
@@ -238,10 +273,13 @@ Elastic Load Balancing application load balancers add a trace ID to incoming HTT
 
 `Load balancers do not send data to X-Ray`, and do not appear as a node on your service map.
 
-## ELB access logs
-ELB access logs is an optional feature of Elastic Load Balancing that is disabled by default. The access logs capture detailed information about requests sent to your load balancer. Each log contains information such as the time the request was received, the client's IP address, latencies, request paths, and server responses. You can use these access logs to analyze traffic patterns and troubleshoot issues. Each access log file is automatically encrypted using SSE-S3 before it is stored in your S3 bucket and decrypted when you access it. You do not need to take any action; the encryption and decryption is performed transparently.
+### ELB access logs
+ELB access logs is an optional feature of Elastic Load Balancing that is disabled by default. The access logs capture detailed information about requests sent to your load balancer. Each log contains information such as the time the request was received, the client's IP address, latencies, request paths, and server responses. You can use these access logs to analyze traffic patterns and troubleshoot issues. Each access log file is automatically encrypted using SSE-S3 before it is stored in your S3 bucket and decrypted when you access it. You do not need to take any action; the encryption and decryption is performed transparently
 
 Reference: [Access logs for your Application Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-access-logs.html)
+
+### CloudTrail logs
+`Elastic Load Balancing` is `integrated` with `AWS CloudTrail`, a service that provides a record of actions taken by a user, role, or an AWS service in Elastic Load Balancing. `CloudTrail captures` all `API calls for Elastic Load Balancing as events`. The calls captured include calls from the AWS Management Console and code calls to the Elastic Load Balancing API operations.
 
 ## Amazon Machine Images (AMIs)
 
@@ -321,6 +359,23 @@ All current generation instance types support enhanced networking, except for T2
 ## Cost Allocation Tags
 A tag is a label that you or AWS assigns to an AWS resource. Each tag consists of a key and a value. For each resource, each tag key must be unique, and each tag key can have only one value. You can use tags to organize your resources, and cost allocation tags to track your AWS costs on a detailed level. After you activate cost allocation tags, AWS uses the cost allocation tags to organize your resource costs on your cost allocation report, to make it easier for you to categorize and track your AWS costs.
 
+## Aurora DB
+
+### Connect to Amazon Aurora DB cluster from outside a VPC
+To connect to an Amazon Aurora DB cluster directly from outside the VPC, the instances in the cluster must meet the following requirements:
+
+1. The DB instance must have a public IP address.
+1. The DB instance must be running in a publicly accessible subnet.
+
+For Amazon Aurora DB instances, you can't choose a specific subnet. Instead, choose a DB subnet group when you create the instance. Create a DB subnet group with subnets of similar network configuration. For example, a DB subnet group for Public subnets.
+
+### Metrics to generate reports on the Aurora DB Cluster and its replicas
+1. `AuroraReplicaLagMaximum` - This metric captures the `maximum amount of lag between the primary instance and each Aurora DB instance in the DB cluster`.
+1. `AuroraBinlogReplicaLag` - This metric captures the `amount of time a replica DB cluster running` on Aurora MySQL-Compatible Edition lags behind the source DB cluster.
+This metric reports the value of the Seconds_Behind_Master field of the MySQL SHOW SLAVE STATUS command. This metric is useful for monitoring replica lag between Aurora DB clusters that are replicating across different AWS Regions.
+1. `AuroraReplicaLag` - This metric captures the `amount of lag` an Aurora replica experiences `when replicating updates from the primary instance`.
+1. `InsertLatency` - This metric captures `the average duration of insert operations`.
+
 ## Aurora Reader Endpoint
 To perform queries, you can connect to the reader endpoint, with Aurora automatically performing load-balancing among all the Aurora Replicas.
 
@@ -339,9 +394,11 @@ Systems Manager Inventory collects only metadata from your managed instances. In
 AWS OpsWorks is a `configuration management service` that provides managed instances of `Chef` and `Puppet`.
 
 ## AWS Personal Health Dashboard
-AWS Personal Health Dashboard provides alerts and remediation guidance when AWS is experiencing events that may impact you. While the Service Health Dashboard displays the general status of AWS services, Personal Health Dashboard gives you a personalized view into the performance and availability of the AWS services underlying your AWS resources.
+AWS Personal Health Dashboard provides `alerts and remediation guidance when AWS is experiencing events that may impact you`. While the Service Health Dashboard displays the general status of AWS services, Personal Health Dashboard gives you a personalized view into the performance and availability of the AWS services underlying your AWS resources.
 
 What’s more, Personal Health Dashboard proactively notifies you when AWS experiences any events that may affect you, helping provide quick visibility and guidance to help you minimize the impact of events in progress, and plan for any scheduled changes, such as AWS hardware maintenance.AWS Inspector
+
+The `AWS Health API provides` programmatic `access` to the `AWS Health information` that appears in the AWS Personal Health Dashboard. You can use the API operations to get information about events that might affect your AWS services and resources.
 
 ## AWS Inspector
 Amazon Inspector is an automated security assessment service that helps you `test` the `network accessibility` of your Amazon EC2 instances and the `security state of your applications running on the instances`.
@@ -386,3 +443,38 @@ Reference: [Dedicated Hosts](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide
 
 ## AWS Organizations
 If you have created an organization in AWS Organizations, you can also create a trail that will log all events for all AWS accounts in that organization. This is referred to as an organization trail.
+
+## AWS CloudHSM (Hardware Security Module)
+AWS CloudHSM provides dedicated `hardware security` modules to store and `manage cryptographic keys securely`. It offers FIPS 140-2 Level 3 validated HSMs, which are ideal for meeting compliance requirements. With CloudHSM, you have full control over the key lifecycle and can perform key operations within the HSM, ensuring strong security and compliance for your keys.
+
+## AWS Service Catalog
+AWS Service Catalog allows organizations to create and manage catalogs of IT services that are approved for use on AWS. These IT services can include everything from virtual machine images, servers, software, and databases to complete multi-tier application architectures. AWS Service Catalog allows you to centrally manage deployed IT services and your applications, resources, and metadata. This helps you achieve consistent governance and meet your compliance requirements while enabling users to quickly deploy only the approved IT services they need.
+
+#### [Sharing and Importing Portfolios](https://docs.aws.amazon.com/servicecatalog/latest/adminguide/catalogs_portfolios_sharing.html)
+To make your Service Catalog products available to users who are not in your AWS accounts, such as users who belong to other organizations or to other AWS accounts in your organization, you share your portfolios with them. You can share in several ways, including `account-to-account` sharing, `organizational` sharing, and `deploying catalogs using stack sets`.
+
+Before you share your products and portfolios to other accounts, you must decide whether you want to share a reference of the catalog or to deploy a copy of the catalog into each recipient account. Note that if you deploy a copy, you must redeploy if there are updates you want to propagate to the recipient accounts.
+
+You can use stack sets to deploy your catalog to many accounts at the same time. If you want to share a reference (an imported version of your portfolio that stays in sync with the original), you can use account-to-account sharing or you can share using AWS Organizations.
+
+## Amazon EFS
+
+### Enforce creation that is encrypted at rest
+* Use the `elasticfilesystem:Encrypted` IAM condition key in AWS IAM identity-based policies to mandate users for creating only encrypted-at-rest Amazon EFS file systems
+
+You can create an AWS Identity and Access Management (IAM) identity-based policy to control whether users can create Amazon EFS file systems that are encrypted at rest. The Boolean condition key elasticfilesystem:Encrypted specifies the type of file system, encrypted or unencrypted, that the policy applies to. You use the condition key with the elasticfilesystem:CreateFileSystem action and the policy effect, allow or deny, to create a policy for creating encrypted or unencrypted file systems.
+
+* Define `Service Control Policies (SCPs)` inside `AWS Organizations` to enforce EFS encryption for all AWS accounts in your organization.
+
+Service control policies (SCPs) are a type of organization policy that you can use to manage permissions in your organization. SCPs offer central control over the maximum available permissions for all accounts in your organization.
+
+An SCP restricts permissions for IAM users and roles in member accounts, including the member account's root user. If a user or role has an IAM permission policy that grants access to an action that is either not allowed or explicitly denied by the applicable SCPs, the user or role can't perform that action. You can also define service control policies (SCPs) inside AWS Organizations to enforce EFS encryption for all AWS accounts in your organization.
+
+## Amazon Inspector
+It is an automated security assessment `service` that `helps improve the security and compliance` of `applications deployed on AWS`.
+
+## AWS Control Tower
+Offers the easiest way to `set up` and `govern` a `secure, multi-account AWS environment`. It establishes a landing zone that is based on the best-practices blueprints and enables governance using guardrails you can choose from a pre-packaged list. The landing zone is a well-architected, multi-account baseline that follows AWS best practices. Guardrails implement governance rules for security, compliance, and operations.
+
+## AWS WAF (Web Application Firewall)
+AWS WAF is a web application firewall that lets you monitor the HTTP and HTTPS requests that are forwarded to an Amazon `CloudFront` distribution, an Amazon `API Gateway` REST API, an `Application Load Balancer`, or an `AWS AppSync GraphQL API`.
