@@ -14,10 +14,10 @@ categories:
 ### Alarms
 CloudWatch alarms allow you to monitor metrics and trigger actions based on defined thresholds. In this case, you can create a CloudWatch alarm that monitors the CPU utilization metric of the EC2 instance. When the CPU utilization reaches 100%, the alarm will be triggered, and you can configure actions such as sending notifications or executing automated actions to address the unresponsiveness issue.
 
-### For each production EC2 instance, create an Amazon CloudWatch alarm for Status Check Failed: System. Set the alarm action to recover the EC2 instance. Configure the alarm notification to be published to an Amazon Simple Notification Service (Amazon SNS) topic.
+### `👀` For each production EC2 instance, create an `Amazon CloudWatch alar`m for Status `Check Failed: System`. Set the alarm action to `recover the EC2 instance`. Configure the alarm notification to be published to an Amazon Simple Notification Service (Amazon SNS) topic.
 
-``Explanation``: By creating a `CloudWatch alarm` for Status Check Failed: System, you can` automate the recovery task of EC2 instances` (stop, terminate,
-reboot, or recover your Amazon EC2 instances). When the system health check fails for an EC2 instance, the alarm will be triggered and perform the configured action to recover the instance. This eliminates the need for manual intervention. Additionally, configuring the alarm to publish notifications to an SNS topic allows you to receive notifications whenever a system health check fails.
+``Explanation``: By creating a `CloudWatch alarm` for Status `Check Failed: System`, you can` automate the recovery task of EC2 instances` (`stop, terminate,
+reboot, or recover your Amazon EC2 instances`). When the system health check fails for an EC2 instance, the alarm will be triggered and perform the configured action to recover the instance. This eliminates the need for manual intervention. Additionally, configuring the alarm to publish notifications to an SNS topic allows you to receive notifications whenever a system health check fails.
 
 ### Metrics
 
@@ -25,10 +25,10 @@ reboot, or recover your Amazon EC2 instances). When the system health check fail
 ``NetworkIn`` ``and NetworkOut``
 
 #### Identify the processing power required
-``CPUUtilization`` specifies the percentage of allocated EC2 compute units that are currently in use on the instance. This metric identifies the processing power required to run an application on a selected instance. This metric is expressed in Percent.
+`👀` ``CPUUtilization`` specifies the percentage of allocated EC2 compute units that are currently in use on the instance. This metric identifies the `processing power required` to `run` an `application on a selected instance`. This metric is expressed in Percent.
 
 #### Number of users.
-``ActiveConnectionCount`` This metric `represents` the `total number of concurrent TCP connections active` from clients to the load balancer and from the load balancer to targets.
+`👀` ``ActiveConnectionCount`` This metric `represents` the `total number of concurrent TCP connections active` from clients to the load balancer and from the load balancer to targets.
 
 #### RAMUtilization is `NOT available as` an `EC2 metric`
 ``RAMUtilization`` You can publish your own metrics to CloudWatch using the AWS CLI or an API. You can view statistical graphs of your published metrics with the AWS Management Console. Metrics produced by AWS services are standard resolution by default.
@@ -73,6 +73,11 @@ CloudWatch Synthetics canaries collect data on metrics like response time, laten
 #### Reference
 [https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor-check-reference.html](https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor-check-reference.html)
 
+### Publish custom metrics to CloudWatch.
+You can publish your own metrics to CloudWatch using the AWS CLI or an API. You can view statistical graphs of your published metrics with the AWS Management Console. CloudWatch stores data about a metric as a series of data points. Each data point has an associated time stamp. You can even publish an aggregated set of data points called a statistic set.
+
+The `put-metric-data` ``command`` publishes metric data to Amazon CloudWatch, which associates it with the specified metric. If the specified metric does not exist, CloudWatch creates the metric which can take up to fifteen minutes for the metric to appear in calls to `ListMetrics`.
+
 ## CloudTrail
 
 ### Q. To ensure that SysOps administrators can easily verify that the CloudTrail log files have not been deleted or changed, the following action should be taken:
@@ -83,13 +88,27 @@ Enable `CloudTrail log file integrity validation` when the trail is created or u
 ## `*Q` [AWS Artifact](https://docs.aws.amazon.com/artifact/latest/ug/what-is-aws-artifact.html)
 AWS Artifact `keeps compliance-related reports and agreements`.
 
-## `*Q` AWS Config
+## 👀 `*Q` AWS Config
 AWS Config `keeps track of` the `configuration` of `your AWS resources and their relationships to other resources`. It can also `evaluate` those AWS `resources for compliance`. This service uses rules that can be configured to evaluate AWS resources against desired configurations.
-E.g. can track `changes` to `CloudFormation stacks`.
+
+For example,
+- can track `changes` to _`CloudFormation stacks`_.
+
+AWS Config can track changes to CloudFormation stacks. A CloudFormation stack is a collection of AWS resources that you can manage as a single unit. With AWS Config, you can review the historical configuration of your CloudFormation stacks and review all changes that occurred to them.
+
+For more information about how AWS Config can track changes to CloudFormation deployments, see `cloudformation-stack-drift-detection-check`.
+
+- there are AWS Config `rules` that `check` whether or not your _`Amazon S3 buckets have logging enabled`_ or your `IAM users have an MFA device enabled`.
 
 AWS Config provides a number of AWS managed rules that address a wide range of security concerns such as checking if you `encrypted` your Amazon Elastic Block Store (Amazon EBS) volumes, tagged your resources appropriately, and enabled multi-factor authentication (MFA) for root accounts.
 
 AWS Config is a service that enables you to assess, audit, and evaluate the configurations of your AWS resources. It provides detailed inventory and configuration history of your resources, as well as configuration change notifications. With AWS Config, you can track the configuration of your S3 bucket, including its bucket policy.
+
+AWS Config rules use AWS Lambda functions to perform the compliance evaluations, and the Lambda functions return the compliance status of the evaluated resources as compliant or noncompliant. The non-compliant resources are remediated using the remediation action associated with the AWS Config rule. With the Auto-Remediation feature of AWS Config rules, the remediation action can be executed automatically when a resource is found non-compliant.
+
+`AWS Config Auto Remediation feature` has auto remediate feature for any non-compliant S3 buckets using the following AWS Config rules:
+s3-bucket-logging-enabled s3-bucket-server-side-encryption-enabled s3-bucket-public-read-prohibited s3-bucket-public-write-prohibited
+These AWS Config rules act as controls to prevent any non-compliant S3 activities.
 
 ## `*Q` [AWS Inspector](https://aws.amazon.com/inspector/)
 Amazon Inspector is `used for security compliance of instances and applications`.
@@ -100,6 +119,14 @@ An Amazon Inspector assessment report can be generated for an assessment run onc
 
 You can select from two types of report for your assessment, a findings report or a full report. The findings report contains an executive summary of the assessment, the instances targeted, the rules packages tested, the rules that generated findings, and detailed information about each of these rules along with the list of instances that failed the check. The full report contains all the
 information in the findings report and additionally provides the list of rules that were checked and passed on all instances in the assessment target.
+
+`👀`
+
+```TODO
+Correct. Amazon Inspector discovers potential security issues by using security rules to analyze AWS resources. Amazon Inspector also integrates with AWS Security Hub to provide a view of your security posture across multiple AWS accounts.
+
+For more information about Amazon Inspector, see Amazon Inspector Classic Assessment Templates and Assessment Runs.
+```
 
 ## `*Q` [AWS Trusted Advisor](https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html)
 Trusted Advisor provides real-time guidance to help users follow AWS best practices to provision their resources
@@ -404,21 +431,15 @@ The default is to `terminate` Spot Instances when they are interrupted.
 ### `*Q` [Spot Fleet Config Cost Optimization](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/how-spot-fleet-works.html)
 Using `lowestPrice` allocation `strategy` a Spot Fleet automatically deploys the lowest price combination of instance types and Availability Zones based on the current Spot price across the number of Spot pools specified. You can use this combination to avoid the most expensive Spot Instances.
 
-### Recover impaired instances
-A Systems Manager Automation document defines the Automation workflow (the actions that Systems Manager performs on your managed instances and AWS resources). Automation includes several pre-defined Automation documents that you can use to perform common tasks like restarting one or more EC2 instances or creating an Amazon Machine Image (AMI).
-
-Use the ``AWSSupport-ExecuteEC2Rescue`` document to recover impaired instances.
-
 ### `*Q` Get public IP address
 EC2 instances in AWS have `metadata` associated with them that can be accessed from within the instance. This metadata includes information about the instance, such as its IP address, instance type, security groups, and more.
 
 Can make an HTTP GET request to a specific URL provided by the instance metadata service. The URL is http://169.254.169.254/latest/meta-data/public-ipv4.
 
-## Detailed monitoring
+## 👀👀 EC2 Detailed monitoring
 `Metrics are the fundamental concept in CloudWatch`. A metric represents a time-ordered set of data points that are published to CloudWatch. Think of a metric as a variable to monitor, and the data points as representing the values of that variable over time.
 
 `By default, your instance is enabled for basic monitoring`. You can optionally enable detailed monitoring. After you enable `detailed monitoring`, the Amazon EC2 console displays monitoring graphs with a `1-minute period` for the instance. .In `Basic monitoring`, data is available automatically in `5-minute periods` at no charge
-
 
 
 Reference: [Enable or turn off detailed monitoring for your instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-cloudwatch-new.html)
@@ -450,10 +471,10 @@ Reference: [AWS Storage Gateway](https://aws.amazon.com/storagegateway/)
 ## Posts
 1. `RDP traffic`: Port 3389, TCP protocol.
 
-## AWS Directory Services
-service that automatically creates an AWS security group in your VPC with network rules for traffic in and out of AWS managed domain controllers. The default inbound rules allow traffic from any source (0.0.0.0/0) to ports required by Active Directory. These rules do not introduce security vulnerabilities, as traffic to the domain controllers is limited to traffic from your VPC, other peered VPCs, or networks connected using AWS Direct Connect, AWS Transit Gateway or Virtual Private Network.
+## 👀 AWS Directory Services
+service that automatically `creates` an AWS `security group` in your VPC with network rules for traffic in and out of AWS managed domain controllers. The default inbound rules `allow traffic from any source (0.0.0.0/0) to ports required by Active Directory`. These rules do not introduce security vulnerabilities, as traffic to the domain controllers is limited to traffic from your VPC, other peered VPCs, or networks connected using AWS Direct Connect, AWS Transit Gateway or Virtual Private Network.
 
-`By default`, AWS Directory Services creates security groups that `allow unrestricted access`, which can be `flagged as a security concern. To address this issue, you need to review the security group rules and make necessary adjustments to restrict access based on your specific requirements and security best practices.
+`By default`, AWS Directory Services creates security groups that _`allow unrestricted access`_, which can be `flagged as a security concern. To address this issue, you need to review the security group rules and make necessary adjustments to restrict access based on your specific requirements and security best practices.
 
 Using `AWS Trusted Advisor` can provide additional insights into security best practices and potential misconfigurations, but it may not specifically highlight the security group issue related to AWS Directory Services.
 
@@ -468,8 +489,8 @@ All current generation instance types support enhanced networking, except for T2
 ## Cost Allocation Tags
 A tag is a label that you or AWS assigns to an AWS resource. Each tag consists of a key and a value. For each resource, each tag key must be unique, and each tag key can have only one value. You can use tags to organize your resources, and cost allocation tags to track your AWS costs on a detailed level. After you activate cost allocation tags, AWS uses the cost allocation tags to organize your resource costs on your cost allocation report, to make it easier for you to categorize and track your AWS costs.
 
-## `*Q` [AWS Resource Groups Tag Editor](https://docs.aws.amazon.com/ARG/latest/userguide/tag-editor.html)
-With Resource Groups, you can create, maintain, and view a collection of resources that share common tags. Tag Editor manages tags across services and AWS Regions. Tag Editor can perform a global search and can edit a large number of tags at one time.
+## 👀 `*Q` [AWS Resource Groups Tag Editor](https://docs.aws.amazon.com/ARG/latest/userguide/tag-editor.html)
+With Resource Groups, you can create, maintain, and view a collection of resources that share common tags. Tag Editor manages `tags across services and AWS Regions`. Tag Editor can perform a global search and can edit a large number of tags at one time.
 
 ## Aurora DB
 
@@ -488,10 +509,10 @@ This metric reports the value of the Seconds_Behind_Master field of the MySQL SH
 1. `AuroraReplicaLag` - This metric captures the `amount of lag` an Aurora replica experiences `when replicating updates from the primary instance`.
 1. `InsertLatency` - This metric captures `the average duration of insert operations`.
 
-## Aurora Reader Endpoint
-To perform queries, you can connect to the reader endpoint, with Aurora automatically performing load-balancing among all the Aurora Replicas.
+## 👀  Aurora Reader Endpoint
+To `perform queries`, you can connect to the reader endpoint, with Aurora automatically performing load-balancing among all the Aurora `Replicas`.
 
-A reader endpoint for an Aurora DB cluster provides load-balancing support for read-only connections to the DB cluster. Use the reader endpoint for read operations, such as queries. By processing those statements on the read-only Aurora Replicas, this endpoint reduces the overhead on the primary instance. It also helps the cluster to scale the capacity to handle simultaneous SELECT queries, proportional to the number of Aurora Replicas in the cluster. Each Aurora DB cluster has one reader endpoint.
+A reader endpoint for an Aurora DB cluster provides load-balancing support for read-only connections to the DB cluster. Use the reader endpoint `for read operations`, such as queries. By processing those statements on the read-only Aurora Replicas, this endpoint reduces the overhead on the primary instance. It also helps the cluster to scale the capacity to handle simultaneous SELECT queries, proportional to the number of Aurora Replicas in the cluster. Each Aurora DB cluster has one reader endpoint.
 
 Reference:[Amazon Aurora connection management](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.Endpoints.html)
 
@@ -500,21 +521,14 @@ Reference:[Amazon Aurora connection management](https://docs.aws.amazon.com/Amaz
 ### [RDS storage autoscaling](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PIOPS.StorageTypes.html#USER_PIOPS.Autoscaling)
 With RDS storage autoscaling, you can set the desired maximum storage limit. Autoscaling will manage the storage size. RDS storage autoscaling monitors actual storage consumption and then scales capacity automatically when actual utilization approaches the provisioned storage capacity.
 
-## `*Q` AWS Systems Manager Inventory
-AWS Systems Manager Inventory provides visibility into your `Amazon EC2` and _`on-premises`_ computing environment. You can use Inventory to `collect metadata` from your `managed instances`. You can store this metadata in a central Amazon Simple Storage Service (Amazon S3) bucket, and then use built-in tools to query the data and quickly determine which instances are running the software and configurations required by your software policy, and which instances need to be updated. You can configure Inventory on all of your managed instances by using a one-click procedure. You can also configure and view inventory data from multiple AWS Regions and AWS accounts.
-
-If the pre-configured metadata types collected by Systems Manager Inventory don't meet your needs, then you can create custom inventory. `Custom inventory` is simply a JSON file with information that you provide and add to the managed instance in a specific directory. When Systems Manager Inventory collects data, it captures this custom inventory data.
-
-Systems Manager Inventory collects only metadata from your managed instances. Inventory doesn't access proprietary information or data.
-
-### `*Q` Enable Enhanced Monitoring
+### `👀` `*Q` Enable Enhanced Monitoring
 Amazon RDS provides `metrics` in real time for the operating system (OS) that your DB instance runs on. You can view the metrics for your DB instance using the console. Also, you can consume the Enhanced Monitoring JSON output from Amazon CloudWatch Logs in a monitoring system of your choice.
 
 ## OpsWorks
 AWS OpsWorks is a `configuration management service` that provides managed instances of `Chef` and `Puppet`.
 
-## `*Q` AWS Personal Health Dashboard
-AWS Personal Health Dashboard provides `alerts and remediation guidance when AWS is experiencing events that may impact you`. While the Service Health Dashboard displays the general status of AWS services, Personal Health Dashboard gives you a personalized view into the performance and availability of the AWS services underlying your AWS resources.
+## 👀 `*Q` AWS Personal Health Dashboard
+AWS Personal Health Dashboard provides `alerts` and _`remediation guidance`_ when AWS is experiencing `events that may impact you`. While the Service Health Dashboard displays the general status of AWS services, Personal Health Dashboard gives you a personalized view into the _performance and availability_ of the AWS services underlying your AWS resources.
 
 What’s more, Personal Health Dashboard proactively notifies you when AWS experiences any events that may affect you, helping provide quick visibility and guidance to help you minimize the impact of events in progress, and plan for any scheduled changes, such as AWS hardware maintenance.AWS Inspector
 
@@ -523,7 +537,7 @@ The `AWS Health API provides` programmatic `access` to the `AWS Health informati
 ## `*Q` AWS Service Health Dashboard
 Publishes the most up-to-the-minute information on the status and availability of all AWS services in tabular form for all Regions that AWS is present in. You can check on this page [https://status.aws.amazon.com/](https://status.aws.amazon.com/) to get current status information.
 
-## Cost Allocation Tags
+## 👀 Cost Allocation Tags - Account Level
 A tag is a label that you or AWS assigns to an AWS resource. Each tag consists of a key and a value. For each resource, each tag key must be unique, and each tag key can have only one value. You can use tags to organize your resources, and cost allocation tags to track your AWS costs on a detailed level. After you activate cost allocation tags, AWS uses the cost allocation tags to organize your resource costs on your cost allocation report, to make it easier for you to categorize and track your AWS costs.
 
 ## [Protecting data using encryption](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingEncryption.html)
@@ -599,9 +613,11 @@ To connect your Amazon EFS file system to your Amazon EC2 instance, you `must cr
 
 Reference: [Creating security groups](https://docs.aws.amazon.com/efs/latest/ug/accessing-fs-create-security-groups.html)
 
-## Amazon Inspector
+## 👀 Amazon Inspector
 It is an automated security assessment `service` that `helps improve the security and compliance` of `applications deployed on AWS`.
-Amazon Inspector checks for `unintended network accessibility` of your Amazon EC2 instances and vulnerabilities on those EC2 instances.
+Amazon Inspector `checks` for `unintended network accessibility` of your Amazon EC2 instances and _`vulnerabilities`_ on those EC2 instances.
+
+Amazon Inspector also `integrates` with `AWS Security Hub` to provide a `view` of your `security posture across multiple AWS accounts`.
 
 ## AWS Control Tower
 Offers the easiest way to `set up` and `govern` a `secure, multi-account AWS environment`. It establishes a landing zone that is based on the best-practices blueprints and enables governance using guardrails you can choose from a pre-packaged list. The landing zone is a well-architected, multi-account baseline that follows AWS best practices. Guardrails implement governance rules for security, compliance, and operations.
@@ -625,24 +641,23 @@ DNS Resolution is used to enable resolution of public DNS hostnames to private I
 ### Classic Load Balancer
 
 #### Metrics
-`SpilloverCount` represents the total `number of requests` that were `rejected` `because` the surge `queue` is `full`.
-
+`👀` `SpilloverCount` represents the total `number of requests` that were `rejected` `because` the surge `queue` is `full`.
 To solve this use-case, you need to configure the Auto Scaling groups to scale your instances based on the `SurgeQueueLength` metric.
 
-## [Traffic Mirroring](https://docs.aws.amazon.com/vpc/latest/mirroring/what-is-traffic-mirroring.html)
-Traffic Mirroring provides the ability to create a copy of a packet flow to examine the contents of a packet. This feature is useful for `threat monitoring`, `content inspection`, and `troubleshooting`.
+## `👀` [Traffic Mirroring](https://docs.aws.amazon.com/vpc/latest/mirroring/what-is-traffic-mirroring.html)
+`Traffic Mirroring provides` the ability to create a copy of a packet flow to examine the contents of a packet. This feature is useful for `threat monitoring`, `content inspection`, and `troubleshooting`.
 
 A packet is truncated to the `MTU` value when both of the following are true:
 
 - The traffic `mirror target is a standalone instance`.
-- The traffic `packet size from the mirror source is greater than the MTU size for the traffic mirror target`.
+- The traffic `packet size from the mirror source is greater` than the MTU size for the traffic mirror `target`.
 
 ## `*Q` [SAML federation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_saml.html)
 - `SAML federation between AWS and` the corporate `Active Directory and mapping Active Directory groups to IAM groups` is the recommended way to make access more secure and streamlined.
 
 ---
 
-## IMPORTANT NOTE
+## 👀 IMPORTANT NOTES 👀
 
 ### By default, Amazon EC2 and Amazon VPC use the IPv4 addressing protocol
 Amazon EC2 and Amazon VPC support both the IPv4 and IPv6 addressing protocols. By default, Amazon EC2 and Amazon VPC use the IPv4 addressing protocol; you can't disable this behavior. When you create a VPC, you must specify an IPv4 CIDR block (a range of private IPv4 addresses). You can optionally assign an IPv6 CIDR block to your VPC and subnets, and assign IPv6 addresses from that block to instances in your subnet.
@@ -686,7 +701,7 @@ Amazon Macie `only supports S3 as a data source`.
 ## Access Analyzer
 helps you identify the resources in your organization and accounts, such as Amazon S3 buckets or IAM roles, shared with an external entity. This lets you identify unintended access to your resources and data, which is a security risk. Access Analyzer identifies resources shared with external principals by using logic-based reasoning to analyze the resource-based policies in your AWS environment. For each instance of a resource shared outside of your account, Access Analyzer generates a finding.
 
-## OJO
+## 👀
 You can allow IAM users or roles in one AWS account to use a customer master key (CMK) in a different AWS account. You can add these permissions when you create the CMK or change the permissions for an existing CMK.
 
 `To permit the usage of a CMK to users and roles in another account, you must use two different types of policies`:
@@ -694,10 +709,59 @@ You can allow IAM users or roles in one AWS account to use a customer master key
 1. The key policy for the CMK must give the external account (or users and roles in the external account) permission to use the CMK. The key policy is in the account that owns the CMK.
 2. IAM policies in the external account must delegate the key policy permissions to its users and roles. These policies are set in the external account and give permissions to users and roles in that account.
 
-
 The cfn-signal helper script signals AWS CloudFormation to indicate whether Amazon EC2 instances have been successfully created or updated. If you install and configure software applications on instances, you can signal AWS CloudFormation when those software applications are ready.
-
-
 
 You use the cfn-signal script in conjunction with a CreationPolicy or an Auto Scaling group with a WaitOnResourceSignals update policy. When AWS CloudFormation creates or updates resources with those policies, it suspends work on the stack until the resource receives the requisite number of signals or until the timeout period is exceeded. For each valid signal that AWS CloudFormation receives, AWS CloudFormation publishes the signals to the stack events so that you track each signal.
 
+## `👀` `*Q` Collect information about the service costs of each developer
+- The AWS-generated _tag_ `createdBy` defines and applies to supported AWS resources for cost allocation purposes. To use the AWS-generated tags, a management account owner must activate it in the Billing and Cost Management console. When a management account owner activates the tag, it is also activated for all member accounts.
+- `Cost Explorer` is a tool that enables you to view and `analyze your costs and usage`. You can explore your usage and costs using the main graph, the Cost Explorer cost and usage reports, or the Cost Explorer RI reports.
+
+AWS Cost Explorer provides the following prebuilt reports:
+
+– EC2 `RI Utilization %` offers relevant data to identify and act on opportunities to increase your Reserved Instance usage efficiency. It’s calculated by dividing Reserved Instance used hours by total Reserved Instance purchased hours.
+
+– EC2 `RI Coverage %` shows how much of your overall instance usage is covered by Reserved Instances. This lets you make informed decisions about when to purchase or modify a Reserved Instance to ensure maximum coverage. It’s calculated by dividing Reserved Instance used hours by total EC2 On-Demand and Reserved Instance hours.
+
+## Systems Manager
+
+👀 AWS Systems Manager provides a unified, centralized way to manage both your Amazon EC2 instances and on-premises servers (including `Raspbian` systems). It offers a wide range of capabilities, including `inventory management`, `patch management`, `automation`, and `configuration management`, allowing you to efficiently manage your hybrid infrastructure from a single console. With Systems Manager, you can maintain consistent configurations, apply patches, and automate administrative tasks for your on-premises servers, just like you would for your EC2 instances.
+
+### 👀 [Fleet Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/fleet.html)
+Helps you remotely `manage` your `server fleet` that runs on `AWS` or on `premises`. With Fleet Manager, you can gather data from individual instances to perform common troubleshooting and management tasks from a single console. However, you cannot use Fleet Manager to upload a script to start or stop instances.
+
+### Recover impaired instances
+A Systems Manager `Automation document` defines the `Automation workflow` (the actions that Systems Manager performs on your managed instances and AWS resources). Automation includes several pre-defined Automation documents that you can use to perform common tasks like restarting one or more EC2 instances or creating an Amazon Machine Image (AMI).
+
+Use the ``AWSSupport-ExecuteEC2Rescue`` document to recover impaired instances.
+
+### 👀 AWS Systems Manager Inventory
+AWS Systems Manager Inventory provides visibility into your `Amazon EC2` and _`on-premises`_ computing environment. You can use Inventory to `collect metadata` from your `managed instances`. You can store this metadata in a central Amazon Simple Storage Service (Amazon S3) bucket, and then use built-in tools to query the data and quickly determine which instances are running the software and configurations required by your software policy, and which instances need to be updated. You can configure Inventory on all of your managed instances by using a one-click procedure. You can also configure and view inventory data from multiple AWS Regions and AWS accounts.
+
+If the pre-configured metadata types collected by Systems Manager Inventory don't meet your needs, then you can create custom inventory. `Custom inventory` is simply a JSON file with information that you provide and add to the managed instance in a specific directory. When Systems Manager Inventory collects data, it captures this custom inventory data.
+
+Systems Manager Inventory collects only metadata from your managed instances. Inventory doesn't access proprietary information or data.
+
+## `👀`[EC2Rescue](https://docs.aws.amazon.com/systems-manager/latest/userguide/automation-ec2rescue.html)
+EC2Rescue can help you diagnose and troubleshoot problems on Amazon EC2 Linux and Windows Server instances. You can run the tool manually, as described in Using EC2Rescue for Linux Server and Using EC2Rescue for Windows Server. Or, you can run the tool automatically by using Systems Manager Automation and the AWSSupport-ExecuteEC2Rescue document. The AWSSupport-ExecuteEC2Rescue document is designed to perform a combination of Systems Manager actions, AWS CloudFormation actions, and Lambda functions that automate the steps normally required to use EC2Rescue.
+
+EC2Rescue for EC2 Windows is a convenient, straightforward, GUI-based troubleshooting tool that can be run on your Amazon EC2 Windows Server instances to troubleshoot operating system-level issues and collect advanced logs and configuration files for further analysis. EC2Rescue simplifies and expedites the troubleshooting of EC2 Windows instances.
+
+## Service Control Policies
+
+### Groups
+Can be granted permissions using access control policies - Groups can be granted permissions using access control policies. This makes it easier to manage permissions for a collection of users, rather than having to manage permissions for each user.https://docs.aws.amazon.com/IAM/latest/UserGuide/id_groups.html
+
+---
+Activate a `cost allocation` tag that is named Department in the `AWS Billing` and `Cost Management console in the Organizations management account`. Use a tag policy to mandate a Department tag on new resources.
+
+Correct. You must activate a tag in the Billing and Cost Management console before viewing the expense by cost allocation tag. You should mandate the use of tags to ensure that the resources are tagged correctly.
+
+https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_tag-policies.html
+
+---
+Use the `AWS Resource Groups` Tag Editor to identify resources that are not tagged in each account. Apply a tag that is named Department to any untagged resources.
+
+With Resource Groups, you can create, maintain, and view a collection of resources that share common tags. Tag Editor manages tags across services and AWS Regions. Tag Editor can perform a global search and can edit a large number of tags at one time.
+
+For more information about resource groups and tagging, see Tag Editor.
