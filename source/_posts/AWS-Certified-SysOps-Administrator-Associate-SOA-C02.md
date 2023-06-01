@@ -199,12 +199,14 @@ Reference: [Enable outbound IPv6 traffic using an egress-only internet gateway](
 ### Carrier gateway
 A Carrier gateway is a highly available virtual appliance that ``provides outbound IPv6 internet connectivity for instances in your VPC``. It acts as a gateway between your VPC and the internet, `allowing` IPv6 `traffic` to flow `in and out` of your `VPC`. By configuring a Carrier gateway, you can enable outbound communication over IPv6 for the EC2 instances in the private subnets while keeping them isolated from direct internet access.
 
-## Security Group
+## Security Groups
 
 ### The reason for the issue where the new EC2 instances are unable to mount the Amazon EFS file system in a new Availability Zone could be:
 The security group for the mount target does not allow inbound NFS connections from the security group used by the EC2 instances.
 
 ``Explanation``: When mounting an Amazon EFS file system from EC2 instances, the security group associated with the mount target should allow inbound NFS (Network File System) connections from the security group used by the EC2 instances. By default, the security group associated with the mount target allows inbound connections from the default security group of the VPC. If the EC2 instances are using a different security group, it needs to be added to the mount target's security group's inbound rules to allow NFS connections.
+
+👀 - Only support `allow` rules. You have to allow incoming traffic from your customers to your instances
 
 ## CloudFormation
 
@@ -701,7 +703,7 @@ Use the AWS Task Orchestrator and Executor (AWSTOE) application `to orchestrate 
 Enabling the Origin Shield ``feature`` in `CloudFront` helps reduce the load on the origin server by `adding` an additional `caching layer` _between_ `CloudFront edge locations` and `the origin. It improves cache hit ratios and reduces the number of requests hitting the origin by serving content from the Origin Shield cache.
 
 ## 👀 AWS Cost
-In ``AWS Cost`` ``and Usage Reports``, you can choose to have AWS `publish billing reports` to an `Amazon Simple Storage` Service (Amazon S3) bucket that you own. You can receive reports that break down your costs by the hour or month, by product or product resource, or by tags that you define yourself. AWS updates the report in your bucket once a day in a comma-separated value (CSV) format. You can view the reports using spreadsheet software such as Microsoft Excel or Apache OpenOffice Calc or access them from an application using the Amazon S3 API.
+In ``AWS Cost`` and ``Usage Reports``, you can choose to have AWS `publish billing reports` to an `Amazon Simple Storage` Service (Amazon S3) bucket that you own. You can receive reports that break down your costs by the hour or month, by product or product resource, or by tags that you define yourself. AWS updates the report in your bucket once a day in a comma-separated value (CSV) format. You can view the reports using spreadsheet software such as Microsoft Excel or Apache OpenOffice Calc or access them from an application using the Amazon S3 API.
 
 ## AWS Database Migration Service (DMS)
 
@@ -766,6 +768,8 @@ If the pre-configured metadata types collected by Systems Manager Inventory don'
 
 Systems Manager Inventory collects only metadata from your managed instances. Inventory doesn't access proprietary information or data.
 
+## 👀 Run Command
+
 ## `👀`[EC2Rescue](https://docs.aws.amazon.com/systems-manager/latest/userguide/automation-ec2rescue.html)
 EC2Rescue can help you diagnose and troubleshoot problems on Amazon EC2 Linux and Windows Server instances. You can run the tool manually, as described in Using EC2Rescue for Linux Server and Using EC2Rescue for Windows Server. Or, you can run the tool automatically by using Systems Manager Automation and the AWSSupport-ExecuteEC2Rescue document. The AWSSupport-ExecuteEC2Rescue document is designed to perform a combination of Systems Manager actions, AWS CloudFormation actions, and Lambda functions that automate the steps normally required to use EC2Rescue.
 
@@ -791,6 +795,42 @@ With Resource Groups, you can create, maintain, and view a collection of resourc
 For more information about resource groups and tagging, see Tag Editor.
 
 
----
-## Billing Preferences
-The management account of an organization can change this setting by turning off RI (Reserved Instances) sharing for `an individual member account`.
+##  👀 Billing Preferences
+The management account of an organization can change this setting by turning off `RI` (Reserved Instances) sharing for `an individual member account` the more suitable service is AWS WAF
+
+##  👀 AWS Shield Advanced
+is more suitable to be used against `distributed denial of service (DDoS`) attacks but not for common web exploits such as `cross-site scripting`, `SQL injection`, and `brute-force HTTP flood attacks`.
+
+
+## 👀 A placement group
+is a logical `grouping` of `instances` `within` a `single Availability Zone`. By placing the EC2 instances in a placement group, you can ensure that the instances are physically located close to each other, which can significantly `reduce network latency between them`. This can `improve the performance` of inter-instance communication and reduce the overall latency in data transfer.
+
+## 👀 Network Firewall
+You can use Network Firewall to monitor and protect your Amazon VPC traffic in a number of ways, including the following:
+– Pass traffic through only from known AWS service domains or IP address endpoints, such as Amazon S3.
+– Use custom `lists of known bad domains to limit the types of domain names that your applications can access`.
+– Perform `deep packet inspection` DPI on traffic entering or leaving your VPC.
+– Use stateful protocol detection to filter protocols like HTTPS, independent of the port used.
+
+## 👀 Access Analyzer
+helps you identify the resources in your organization and accounts, such as Amazon S3 buckets or IAM roles, `shared with an external entity`. This lets you identify unintended access to your resources and data, which is a security risk. Access Analyzer `identifies resources shared` with `external principals` by using logic-based reasoning to analyze the resource-based policies in your AWS environment. For each instance of a resource shared outside of your account, Access Analyzer generates a finding.
+
+## 👀 Tags with AWS Organizations
+
+- Use ``AWS Service Catalog`` to tag the provisioned resources with corresponding unique identifiers for portfolio, product, and users:
+AWS ``Service Catalog`` allows you to create and manage catalogs of IT services that are approved for use within your `organization`. When provisioning resources through AWS Service Catalog, you can define `tags` that are automatically applied to the provisioned resources. By leveraging this feature, you can ensure consistent tagging across different accounts and resources.
+
+- Use ``AWS Systems Manager`` __``Automation``__ to automatically add `tags` to your `provisioned` resources:
+AWS ``Systems Manager Automation provides a way to automate common operational tasks across AWS resources. You can create automation workflows that include tagging resources with the desired set of tags. By utilizing Systems Manager Automation, you can enforce consistent tagging practices during resource creation.
+
+## 👀 `AWS Artifact`
+is a service that provides `on-demand` access to AWS `compliance` reports and other relevant documents.
+
+## 👀 AWS Service Catalog
+provides a ``TagOption library``. A TagOption is a key-value pair managed in AWS Service Catalog. It is not an AWS tag but serves as a template for creating an AWS tag based on the TagOption.
+
+The TagOption library makes it easier to enforce the following:
+
+– A consistent `taxonomy`
+– Proper tagging of AWS Service Catalog resources
+– Defined, user-selectable options for allowed tags
