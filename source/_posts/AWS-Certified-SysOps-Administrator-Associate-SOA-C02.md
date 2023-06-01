@@ -102,7 +102,7 @@ For more information about how AWS Config can track changes to CloudFormation de
 
 AWS Config provides a number of AWS managed rules that address a wide range of security concerns such as checking if you `encrypted` your Amazon Elastic Block Store (Amazon EBS) volumes, tagged your resources appropriately, and enabled multi-factor authentication (MFA) for root accounts.
 
-AWS Config is a service that enables you to assess, audit, and evaluate the configurations of your AWS resources. It provides detailed inventory and configuration history of your resources, as well as configuration change notifications. With AWS Config, you can track the configuration of your S3 bucket, including its bucket policy.
+👀 AWS Config is a service that `enables` you to `assess`, `audit`, and `evaluate` the `configurations` of your `AWS resources`. It provides detailed `inventory` and `configuration` history of your resources, as well as configuration change notifications. With AWS Config, you can track the configuration of your S3 bucket, including its bucket policy.
 
 AWS Config rules use AWS Lambda functions to perform the compliance evaluations, and the Lambda functions return the compliance status of the evaluated resources as compliant or noncompliant. The non-compliant resources are remediated using the remediation action associated with the AWS Config rule. With the Auto-Remediation feature of AWS Config rules, the remediation action can be executed automatically when a resource is found non-compliant.
 
@@ -240,6 +240,22 @@ Parameters:
 By adding the `UpdatePolicy` attribute in CloudFormation and enabling the WaitOnResourceSignals property, the Auto Scaling group update process will be handled more gracefully. This approach allows CloudFormation to monitor the health and success of each instance during the update process before moving on to the next instance.
 
 Appending a health check at the end of the user data script allows the instance to signal CloudFormation that it has successfully completed its initialization. This helps ensure that the instance is fully operational before proceeding to the next instance in the Auto Scaling group update process.
+
+```yml
+    CreationPolicy:
+      ResourceSignal:
+        Count: '3'
+        Timeout: PT15M
+    UpdatePolicy:
+      AutoScalingRollingUpdate:
+        MinInstancesInService: '1'
+        MaxBatchSize: '2'
+        PauseTime: PT1M
+        WaitOnResourceSignals: 'true'
+```
+
+### 👀 `DependsOn` attribute
+With the DependsOn attribute, you can specify that the `creation` of a specific resource `follows another`. When you add a DependsOn attribute to a resource, that resource is created only after the creation of the resource specified in the DependsOn attribute.
 
 ## AWS Backup
 
@@ -527,6 +543,9 @@ Amazon RDS provides `metrics` in real time for the operating system (OS) that yo
 ## OpsWorks
 AWS OpsWorks is a `configuration management service` that provides managed instances of `Chef` and `Puppet`.
 
+### 👀 Chef Server
+You can `add nodes` automatically to your Chef Server using the `unattended method`. The recommended method of unattended (or automatic) association of new nodes is to `configure` the `Chef Client Cookbook`.
+
 ## 👀 `*Q` AWS Personal Health Dashboard
 AWS Personal Health Dashboard provides `alerts` and _`remediation guidance`_ when AWS is experiencing `events that may impact you`. While the Service Health Dashboard displays the general status of AWS services, Personal Health Dashboard gives you a personalized view into the _performance and availability_ of the AWS services underlying your AWS resources.
 
@@ -670,20 +689,19 @@ When you export your DynamoDB tables from Account A to an S3 bucket in Account B
 ## `ClientConnections` Metric
 To track the number of Amazon EC2 instances that are connected to a file system, you can monitor the Sum statistic of the ClientConnections metric. To calculate the average ClientConnections for periods greater than one minute, divide the sum by the number of minutes in the period.
 
-## AWS Budgets
-
-Give you the ability to `set custom budgets that alert you` when your costs or usage exceed (or are forecasted to exceed) your budgeted amount.
+## 👀 AWS Budgets
+Give you the ability to `set custom budgets that alert you` when your costs or `usage exceed` (or are `forecasted` to exceed) your budgeted amount.
 
 You can also use AWS Budgets to `set reservation utilization or coverage targets and receive alerts` when your utilization drops below the threshold you define. Reservation alerts are supported for `Amazon EC2, Amazon RDS, Amazon Redshift, Amazon ElastiCache, and Amazon Elasticsearch reservations`.
 
-## Q AWS Task Orchestrator and Executor (AWSTOE)
+## 👀 Q AWS Task Orchestrator and Executor (AWSTOE)
 Use the AWS Task Orchestrator and Executor (AWSTOE) application `to orchestrate complex workflows`, `modify system configurations`, and `test your systems without writing code`. This application uses a declarative document schema. Because it is a standalone application, it does not require additional server setup.
 
 ## `*Q` AwS Origin Shield
 Enabling the Origin Shield ``feature`` in `CloudFront` helps reduce the load on the origin server by `adding` an additional `caching layer` _between_ `CloudFront edge locations` and `the origin. It improves cache hit ratios and reduces the number of requests hitting the origin by serving content from the Origin Shield cache.
 
-## AWS Cost
-In AWS Cost and Usage reports, you can choose to have AWS publish billing reports to an Amazon Simple Storage Service (Amazon S3) bucket that you own. You can receive reports that break down your costs by the hour or month, by product or product resource, or by tags that you define yourself. AWS updates the report in your bucket once a day in a comma-separated value (CSV) format. You can view the reports using spreadsheet software such as Microsoft Excel or Apache OpenOffice Calc or access them from an application using the Amazon S3 API.
+## 👀 AWS Cost
+In ``AWS Cost`` ``and Usage Reports``, you can choose to have AWS `publish billing reports` to an `Amazon Simple Storage` Service (Amazon S3) bucket that you own. You can receive reports that break down your costs by the hour or month, by product or product resource, or by tags that you define yourself. AWS updates the report in your bucket once a day in a comma-separated value (CSV) format. You can view the reports using spreadsheet software such as Microsoft Excel or Apache OpenOffice Calc or access them from an application using the Amazon S3 API.
 
 ## AWS Database Migration Service (DMS)
 
@@ -697,6 +715,9 @@ Amazon Macie `only supports S3 as a data source`.
 1. `Health checks that monitor an endpoint` – You can configure a health check that monitors an endpoint that you specify either by IP address or by domain name. At regular intervals that you specify, Route 53 submits automated requests over the internet to your application, server, or other resources to verify that it’s reachable, available, and functional. Optionally, you can configure the health check to make requests similar to those that your users make, such as requesting a web page from a specific URL.
 1. `Health checks that monitor other health checks` (calculated health checks) – You can create a health check that monitors whether Route 53 considers other health checks healthy or unhealthy. One situation where this might be useful is when you have multiple resources that perform the same function, such as multiple web servers, and your chief concern is whether some minimum number of your resources are healthy. You can create a  health check for each resource without configuring notifications for those health checks. Then you can create a health check that monitors the status of the other health checks, and that notifies you only when the number of available web resources drops below a specified threshold.
 1. `Health checks that monitor CloudWatch alarms` – You can create CloudWatch alarms that monitor the status of CloudWatch metrics, such as the number of throttled read events for an Amazon DynamoDB database or the number of Elastic Load Balancing hosts that are considered healthy. After you create an alarm, you can create a health check that monitors the same data stream that CloudWatch monitors for the alarm.
+
+### “Evaluate Target Health”
+You need to set the “Evaluate Target Health” `flag` to `true` on Route 53. This way, Route 53 will check both ALB entry to ensure that your ALBs are responding.
 
 ## Access Analyzer
 helps you identify the resources in your organization and accounts, such as Amazon S3 buckets or IAM roles, shared with an external entity. This lets you identify unintended access to your resources and data, which is a security risk. Access Analyzer identifies resources shared with external principals by using logic-based reasoning to analyze the resource-based policies in your AWS environment. For each instance of a resource shared outside of your account, Access Analyzer generates a finding.
@@ -725,7 +746,10 @@ AWS Cost Explorer provides the following prebuilt reports:
 
 ## Systems Manager
 
-👀 AWS Systems Manager provides a unified, centralized way to manage both your Amazon EC2 instances and on-premises servers (including `Raspbian` systems). It offers a wide range of capabilities, including `inventory management`, `patch management`, `automation`, and `configuration management`, allowing you to efficiently manage your hybrid infrastructure from a single console. With Systems Manager, you can maintain consistent configurations, apply patches, and automate administrative tasks for your on-premises servers, just like you would for your EC2 instances.
+👀 AWS Systems Manager provides a unified, centralized way to manage both your Amazon EC2 instances and on-premises servers (including `Raspbian` systems, devices such as `Raspberry Pi` through a single interface). It offers a wide range of capabilities, including `inventory management`, `patch management`, `automation`, and `configuration management`, allowing you to efficiently manage your hybrid infrastructure from a single console. With Systems Manager, you can maintain consistent configurations, apply patches, and automate administrative tasks for your on-premises servers, just like you would for your EC2 instances.
+
+TODO
+gives you visibility and control of your infrastructure on AWS. Systems Manager provides a unified user interface so you can view operational data from multiple AWS services and allows you to automate operational tasks across your AWS resources. With Systems Manager, you can group resources, like Amazon EC2 instances, Amazon S3 buckets, or Amazon RDS instances, by application, view operational data for monitoring and troubleshooting, and take action on your groups of resources. Systems Manager simplifies resource and application management, shortens the time to detect and resolve operational problems, and makes it easy to operate and manage your infrastructure securely at scale.
 
 ### 👀 [Fleet Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/fleet.html)
 Helps you remotely `manage` your `server fleet` that runs on `AWS` or on `premises`. With Fleet Manager, you can gather data from individual instances to perform common troubleshooting and management tasks from a single console. However, you cannot use Fleet Manager to upload a script to start or stop instances.
@@ -765,3 +789,8 @@ Use the `AWS Resource Groups` Tag Editor to identify resources that are not tagg
 With Resource Groups, you can create, maintain, and view a collection of resources that share common tags. Tag Editor manages tags across services and AWS Regions. Tag Editor can perform a global search and can edit a large number of tags at one time.
 
 For more information about resource groups and tagging, see Tag Editor.
+
+
+---
+## Billing Preferences
+The management account of an organization can change this setting by turning off RI (Reserved Instances) sharing for `an individual member account`.
