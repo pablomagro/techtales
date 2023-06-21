@@ -9,6 +9,8 @@ categories:
   - AWS
 ---
 
+# Summary of concepts for AWS SysOps Administrator Certification.
+
 ## CloudWatch
 
 ### Alarms
@@ -20,6 +22,42 @@ CloudWatch alarms allow you to monitor metrics and trigger actions based on defi
 reboot, or recover your Amazon EC2 instances`). When the system health check fails for an EC2 instance, the alarm will be triggered and perform the configured action to recover the instance. This eliminates the need for manual intervention. Additionally, configuring the alarm to publish notifications to an SNS topic allows you to receive notifications whenever a system health check fails.
 
 ### Metrics
+AWS Provided metrics (AWS pushes them):
+1. ``Basic`` Monitoring (default): metrics are collected at a `5 minute` internal
+1. ``Detailed`` Monitoring (paid): metrics are collected at a `1 minute` interval
+1. Includes `CPU, Network, Disk and Status Check Metrics`
+
+Custom metric (yours to push):
+1. Basic Resolution: 1 minute resolution
+1. High Resolution: all the way to 1 second resolution
+1. Include `RAM`, application level metrics
+1. Make sure the IAM permissions on the EC2 instance role are correct !
+
+<u>**RAM is NOT included in the AWS EC2 metrics**</u>
+
+### Status Check
+Automated checks to identify `hardware` and `software issues`.
+
+System Status Checks
+* Monitors problems with AWS systems (software/hardware issues on the physical host, loss of system power, ...)
+* Check ``Personal Health Dashboard`` for any scheduled critical maintenance by AWS to your instance’s host
+* Resolution: stop and start the instance (instance migrated to a new host)
+  * Either wait for AWS to fix the host, OR
+  * Move the EC2 instance to a new host = STOP & START the instance (if EBS backed)
+Instance Status Checks
+* Monitors software/network configuration of your instance (invalid network configuration, exhausted memory, ...)
+* Resolution: reboot the instance or change instance configuration.
+
+#### Status Checks - CW Metrics & Recovery - OJO `👀`
+- CloudWatch Metrics (1 minute interval)
+  * ``StatusCheckFailed_System``
+  * ``StatusCheckFailed_Instance``
+  * ``StatusCheckFailed`` (for both)
+- Option 1: `CloudWatch Alarm`
+  * Recover EC2 instance with the same private/public IP, EIP, metadata, and Placement Group
+  * Send notifications using SNS  trigger
+- Option 2: `Auto Scaling Group`
+  * Set min/max/desired 1 to recover an instance but `won't keep the same private and elastic IP`.`
 
 #### Determine which instance use the most bandwidth
 ``NetworkIn`` ``and NetworkOut``
@@ -449,18 +487,49 @@ The default is to `terminate` Spot Instances when they are interrupted.
 ### `*Q` [Spot Fleet Config Cost Optimization](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/how-spot-fleet-works.html)
 Using `lowestPrice` allocation `strategy` a Spot Fleet automatically deploys the lowest price combination of instance types and Availability Zones based on the current Spot price across the number of Spot pools specified. You can use this combination to avoid the most expensive Spot Instances.
 
+<u>Spot Fleets allow us to automatically request Spot Instances with the lowest price</u>
+
 ### `*Q` Get public IP address
 EC2 instances in AWS have `metadata` associated with them that can be accessed from within the instance. This metadata includes information about the instance, such as its IP address, instance type, security groups, and more.
 
 Can make an HTTP GET request to a specific URL provided by the instance metadata service. The URL is http://169.254.169.254/latest/meta-data/public-ipv4.
 
-## 👀👀 EC2 Detailed monitoring
+### 👀 EC2 Detailed monitoring 👀
 `Metrics are the fundamental concept in CloudWatch`. A metric represents a time-ordered set of data points that are published to CloudWatch. Think of a metric as a variable to monitor, and the data points as representing the values of that variable over time.
 
 `By default, your instance is enabled for basic monitoring`. You can optionally enable detailed monitoring. After you enable `detailed monitoring`, the Amazon EC2 console displays monitoring graphs with a `1-minute period` for the instance. .In `Basic monitoring`, data is available automatically in `5-minute periods` at no charge
 
-
 Reference: [Enable or turn off detailed monitoring for your instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-cloudwatch-new.html)
+
+### 👀 EC2 Launch Troubleshooting 👀
+``InstanceLimitExceeded``: if you get this error, it means that you have reached your limit of `max number of vCPUs` per `region`.
+
+``InsufficientInstanceCapacity`` : if you get this error, it means `AWS does not have that enough On-Demand capacity`` in the particular AZ where
+the instance is launched
+
+``Instance Terminates Immediately`` **(goes from pending to terminated)**
+1. You've reached your EBS volume limit.
+1. An EBS snapshot is corrupt.
+1. The root EBS volume is encrypted and you do not have permissions to access the KMS key for decryption.
+1. The instance store-backed AMI that you used to launch the instance is missing a required part (an image.part.xx file).
+
+### 👀 EC2 SSH Troubleshooting 👀
+1. SG is not configured correctly
+1. NACL is not configured correctly
+1. Check the route table for the subnet (routes traffic destined outside VPC to IGW)
+1. Instance doesn’t have a public IPv4
+1. CPU load of the instance is high
+
+### EC2 Instances Purchasing Options
+1. ``On-Demand`` Instances – short workload, predictable pricing, pay by second
+1. ``Reserved`` (1 & 3 years)
+1. ``Reserved Instances`` – long workloads
+1. ``Convertible Reserved Instances`` – long workloads with flexible instances
+1. ``Savings Plans (1 & 3 years)`` –commitment to an amount of usage, long workload
+1. ``Spot Instances`` – short workloads, cheap, can lose instances (less reliable)
+1. ``Dedicated Hosts`` – book an entire physical server, control instance placement
+1. ``Dedicated Instances`` – no other customers will share your hardware
+1. ``Capacity Reservations`` – reserve capacity in a specific AZ for any duration
 
 ## AWS Storage Gateway
 AWS Storage Gateway is a set of hybrid cloud storage services that provide on-premises access to virtually unlimited cloud storage.
@@ -804,6 +873,29 @@ is more suitable to be used against `distributed denial of service (DDoS`) attac
 
 ## 👀 A placement group
 is a logical `grouping` of `instances` `within` a `single Availability Zone`. By placing the EC2 instances in a placement group, you can ensure that the instances are physically located close to each other, which can significantly `reduce network latency between them`. This can `improve the performance` of inter-instance communication and reduce the overall latency in data transfer.
+
+Sometimes you want control over the EC2 Instance placement strategy, When you create a placement group, you specify one of the following strategies for the group:
+  - ``Cluster—clusters`` instances into a `low-latency` group in a `single Availability Zone`.
+    - `Pros`: Great network (10 Gbps bandwidth between instances with Enhanced Networking enabled - recommended)
+    - `Cons`: If the rack fails, all instances fails at the same time
+    - `Use` case: Big Data job that needs to complete fast
+  - ``Spread—spreads`` instances across underlying hardware (max 7 instances per group per AZ) – critical applications
+    - `Pros`:
+      - Can span across Availability Zones (AZ)
+      - Reduced risk is simultaneous failure
+      - EC2 Instances are on different  physical hardware
+    - `Cons`:
+      - Limited to 7 instances per AZ per placement group
+    - `Use case`:
+      - Application that needs to maximize high availability
+      - Critical Applications where each instance must be isolated from failure from each other
+  - ``Partition—spreads`` instances across many different partitions (which rely on different sets of racks) within an AZ. Scales to 100s of EC2 instances per group (Hadoop, Cassandra, Kafka)
+    - Up to 7 partitions per AZ  Can span across multiple AZs in the same region
+    - Up to 100s of EC2 instances
+    - The instances in a partition do not share racks with the instances in the other partitions
+    - A partition failure can affect many EC2 but won’t affect other partitions
+    - EC2 instances get access to the partition information as metadata
+    - Use cases: HDFS, HBase, Cassandra, Kafka
 
 ## 👀 Network Firewall
 You can use Network Firewall to monitor and protect your Amazon VPC traffic in a number of ways, including the following:
