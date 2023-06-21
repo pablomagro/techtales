@@ -24,15 +24,12 @@ categories:
 ## How to make better decisions
 Need to make an important decision but don’t feel like you have all the information you need?
 
-
     I am trying to decide if I should [insert decision]. Give me a list of pros and cons that tell me why I should or shouldn't make this decision.
 
 ## How to learn anything fast
-
 Want to learn a new skill but not sure where to start?
 
     I want to get better at [insert skill]. I am a beginner and have no prior experience. Create a 30 day plan for me to learn [insert skill] from scratch.
-
 
 ## How to craft your elevator pitch
 That’s where an elevator pitch comes in handy: short and to the point, it lets the person we’re talking to understand why they should care about what we do.
@@ -50,7 +47,6 @@ Are you struggling to understand a difficult concept? Or maybe you want to expla
       Explain the concept of [insert concept or idea] in simple terms, and provide relevant examples of how it can be applied in a real-world situation. Simplify complex terms or concepts.
 
 ## How to generate stunning portraits
-
 Use the prompt below to generate stunning portraits on Leonardo:
 
     street style photo of a young woman, red gucci jacket, blue gucci shirt, wide shot, natural lighting, soho, shot on Agfa Vista 200, 4k --ar 16:9
@@ -58,10 +54,66 @@ Use the prompt below to generate stunning portraits on Leonardo:
 ![Leonardo AI](https://cdn.leonardo.ai/users/a9c4fb87-7f37-4197-a753-5a3ba06ebb13/generations/1af1965c-d1bc-489a-bf08-ac58a8cd46f0/RPG_40_Design_a_black_and_white_template_for_kids_White_backgr_0.jpg "Gucci Young Woman")
 
 ## How to generate beautiful shots
-
 Use the prompt below to generate a picture of an elderly Spanish woman with a dog in Leonardo:
 
     Medium-full shot of an elderly Spanish woman with deep wrinkles and a warm smile, petting a golden retriever in Retiro park, wearing a bright pastel floral blazer made of linen, sun glasses, natural afternoon light reflecting off her eyeglasses, shot on Agfa Vista 200, side-angle view, 4k --ar 16:9 --stylize 1000 --v 5
+
+## How to generate selfie pictures
+
+    A hyper-realistic GoPro selfie of [Character] in [Location]. --ar 3:2
+
+## How to generate hyper-realistic landscape shots
+If you want to create hyper-realistic beautiful landscape shots in Midjourney, try the prompt below:
+
+    [LOCATION] shot with Nikon D850 and Nikon AF-S NIKKOR 14-24mm f/2.8G ED lens, natural light, style of National Geographic
+
+    Doñana Spain National Park shot with Nikon D850 and Nikon AF-S NIKKOR 14-24mm f/2.8G ED lens, natural light, style of National Geographic
+
+![Leonardo AI](https://cdn.leonardo.ai/users/a9c4fb87-7f37-4197-a753-5a3ba06ebb13/generations/e252d503-9337-4e13-bbe1-5bf324d937ee/Leonardo_Creative_Doana_Spain_National_Park_shot_with_Nikon_D8_0.jpg "Doñana Spain National Park")
+
+![Leonardo AI](https://cdn.leonardo.ai/users/a9c4fb87-7f37-4197-a753-5a3ba06ebb13/generations/41147fe7-96e4-42f0-87b4-678acb5871a1/Spatial_landscape_Doana_Spain_National_Park_shot_with_Nikon_D8_0.jpg "Doñana Spain National Park")
+
+## 👀 How to create a resume to land you your dream job
+
+    Analyze [applicant's details] and construct a winning resume to apply for [job position details]. Step into the shoes of the employer and unveil the key attributes they seek in [job position details] and make the resume stand out and attract the employer.
+
+    Applicant's details = "Insert here"
+    Job position details = "Insert here"
+
+    Analyze [applicant's details] and construct a winning resume to apply for [job position
+    details]. Step into the shoes of the employer and unveil the key attributes they seek in [job position details] and make the resume stand out and attract the employer.
+
+    Applicant's details = "Name: John Doe
+    Education: Bachelors of Science in Computer Science from Royal Holloway
+    Skills: Python, C++, Angular JS, Project Planning and Execution, Team Leadership and Collaboration, Risk Management, Stakeholder Management, Problem-Solving and Decision Making, excellent communication skills and familiarity with data science.
+    Experience = Project Manager, ABC Company (May 2018 - Present)"
+
+    Job position details = "Senior Project Manager
+    Oversees strategic plan, monitoring and adapting as needed
+    Reports on project progress, offer viable solutions and opportunities as they arise
+    Implements change practices
+    Lead meetings and set expectations for the project team
+    Maintain budget
+    Reporting on projects and portfolios
+    leading cross-functional teams, coordinating resources, managing timelines, and ensuring impeccable execution of software development initiatives"
+
+## How to craft a customer-journey process
+Understanding your ideal customer’s journey in choosing your product is key when crafting a marketing strategy.
+
+Try this prompt below:
+
+      I want to create and launch [product] called [name]. Apply the "hook model" by Nir Eyal to explain the customer journey in purchasing the [product].
+
+      I want to create and launch a new soft drink called FizzPop. Apply the "hook model" by NirEyal to explain the customer journey in purchasing the drink.
+
+## ow to create an ad script
+If you want a script for an ad that you’re working on, ChatGPT can help.
+
+Try this prompt below:
+
+      Write a 1 minute advertisement script for [product], called [product name]. I want the ad to highlight the product as [intended use of the product].
+
+      Write a 1 minute advertisement script for canned water, called Eco-Water. I want the ad to highlight the product as an alternative to single use plastics as the more eco-friendly option.
 
 ---
 # 🧠 AI tools to supercharge your productivity
