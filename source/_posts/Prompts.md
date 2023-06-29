@@ -97,6 +97,11 @@ If you want to create hyper-realistic beautiful landscape shots in Midjourney, t
     Reporting on projects and portfolios
     leading cross-functional teams, coordinating resources, managing timelines, and ensuring impeccable execution of software development initiatives"
 
+## 👀 How to prepare for an interview
+Try using ChatGPT as your mock interviewer with this prompt:
+
+      Act as an interviewer. I got shortlisted for the position of a [job post] at a renowned [type of company] so I want to prepare accordingly. Don't reply to this prompt all at once, follow a conversational style so I can give you my answers too.
+
 ## How to craft a customer-journey process
 Understanding your ideal customer’s journey in choosing your product is key when crafting a marketing strategy.
 

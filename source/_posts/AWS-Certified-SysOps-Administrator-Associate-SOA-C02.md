@@ -13,15 +13,16 @@ categories:
 
 ## CloudWatch
 
-### Alarms
-CloudWatch alarms allow you to monitor metrics and trigger actions based on defined thresholds. In this case, you can create a CloudWatch alarm that monitors the CPU utilization metric of the EC2 instance. When the CPU utilization reaches 100%, the alarm will be triggered, and you can configure actions such as sending notifications or executing automated actions to address the unresponsiveness issue.
+### AWS CloudWatch Metrics
+CloudWatch provides ``metrics for every services in AWS``
 
-### `👀` For each production EC2 instance, create an `Amazon CloudWatch alar`m for Status `Check Failed: System`. Set the alarm action to `recover the EC2 instance`. Configure the alarm notification to be published to an Amazon Simple Notification Service (Amazon SNS) topic.
+- `Metric` is a variable to monitor (CPUUtilization, NetworkIn...)
+- Metrics belong to `namespaces`
+- Dimension is an attribute of a metric (instance id, environment, etc...).
+- Up to 30 dimensions per metric
+- Metrics have `timestamps`
+- Can create CloudWatch dashboards of metrics
 
-``Explanation``: By creating a `CloudWatch alarm` for Status `Check Failed: System`, you can` automate the recovery task of EC2 instances` (`stop, terminate,
-reboot, or recover your Amazon EC2 instances`). When the system health check fails for an EC2 instance, the alarm will be triggered and perform the configured action to recover the instance. This eliminates the need for manual intervention. Additionally, configuring the alarm to publish notifications to an SNS topic allows you to receive notifications whenever a system health check fails.
-
-### Metrics
 AWS Provided metrics (AWS pushes them):
 1. ``Basic`` Monitoring (default): metrics are collected at a `5 minute` internal
 1. ``Detailed`` Monitoring (paid): metrics are collected at a `1 minute` interval
@@ -34,6 +35,14 @@ Custom metric (yours to push):
 1. Make sure the IAM permissions on the EC2 instance role are correct !
 
 <u>**RAM is NOT included in the AWS EC2 metrics**</u>
+
+### Alarms
+CloudWatch alarms allow you to monitor metrics and trigger actions based on defined thresholds. In this case, you can create a CloudWatch alarm that monitors the CPU utilization metric of the EC2 instance. When the CPU utilization reaches 100%, the alarm will be triggered, and you can configure actions such as sending notifications or executing automated actions to address the unresponsiveness issue.
+
+### `👀` For each production EC2 instance, create an `Amazon CloudWatch alar`m for Status `Check Failed: System`. Set the alarm action to `recover the EC2 instance`. Configure the alarm notification to be published to an Amazon Simple Notification Service (Amazon SNS) topic.
+
+``Explanation``: By creating a `CloudWatch alarm` for Status `Check Failed: System`, you can` automate the recovery task of EC2 instances` (`stop, terminate,
+reboot, or recover your Amazon EC2 instances`). When the system health check fails for an EC2 instance, the alarm will be triggered and perform the configured action to recover the instance. This eliminates the need for manual intervention. Additionally, configuring the alarm to publish notifications to an SNS topic allows you to receive notifications whenever a system health check fails.
 
 ### Status Check
 Automated checks to identify `hardware` and `software issues`.
@@ -248,6 +257,71 @@ The security group for the mount target does not allow inbound NFS connections f
 
 ## CloudFormation
 
+### cfn-init
+- AWS::CloudFormation::Init must be in the Metadata of a resource
+- With the cfn-init script, it helps make complex EC2 configurations readable
+- The EC2 instance will query the CloudFormation service to get init data
+- Logs go to /var/log/cfn-init.log
+
+(More readable compared with user data scripts)
+
+```yml
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash -xe
+            # Get the latest CloudFormation package
+            yum update -y aws-cfn-bootstrap
+            # Start cfn-init
+            /opt/aws/bin/cfn-init -s ${AWS::StackId} -r MyInstance --region ${AWS::Region} || error_exit 'Failed to run cfn-init'
+```
+```yml
+    Metadata:
+      Comment: Install a simple Apache HTTP page
+      AWS::CloudFormation::Init:
+        config:
+          packages:
+            yum:
+              httpd: []
+          files:
+            "/var/www/html/index.html":
+              content: |
+                <h1>Hello World from EC2 instance!</h1>
+                <p>This was created using cfn-init</p>
+              mode: '000644'
+          commands:
+            hello:
+              command: "echo 'hello world'"
+          services:
+            sysvinit:
+              httpd:
+                enabled: 'true'
+                ensureRunning: 'true'
+```
+
+### cfn-signal & wait conditions
+- We still don’t know how to tell CloudFormation that the EC2 instance got properly configured after a ``cfn-init``
+
+- For this, we can use the ``cfn-signal`` script!
+  * We run cfn-signal right after cfn-init
+  * Tell CloudFormation service to keep on going or fail
+- We need to define ``WaitCondition``:
+  * Block the template until it receives a signal from cfn-signal
+  * We attach a ``CreationPolicy`` (also works on EC2, ASG)
+
+```yml
+  # Start cfn-signal to the wait condition
+  /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackId} --resource SampleWaitCondition --region ${AWS::Region}
+```
+```yml
+  SampleWaitCondition:
+    Type: AWS::CloudFormation::WaitCondition
+    CreationPolicy:
+      ResourceSignal:
+        Timeout: PT2M
+        Count: 1
+```
+
 ### StackSets
 
 #### `Use` AWS CloudFormation `StackSets for Multiple Accounts in an AWS Organization`:
@@ -256,9 +330,6 @@ Use AWS CloudFormation `StackSets` to `deploy a template` to `each account` to c
 ``Explanation``: AWS CloudFormation StackSets allows you to deploy a CloudFormation template across multiple AWS accounts. By using StackSets, you can create and manage the same IAM roles in each account within the organization. This ensures consistent deployment of roles across accounts and simplifies the management process.
 
 ``Reference``: [New: Use AWS CloudFormation StackSets for Multiple Accounts in an AWS Organization](https://aws.amazon.com/blogs/aws/new-use-aws-cloudformation-stacksets-for-multiple-accounts-in-an-aws-organization/)
-
-### `*Q` [AutoScalingRollingUpdate policy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-updatepolicy.html)
-With rolling updates, you can specify whether CloudFormation performs updates in batches or all at once for instances that are in an Auto Scaling group. The `AutoScalingRollingUpdate` policy is the only CloudFormation feature that provides such an incremental update throughout the Auto Scaling group.
 
 ### `*Q` To lunch the last AMI.
 Use the Parameters section in the template to specify the Systems Manager (SSM) Parameter, which contains the latest version of the Windows regional AMI ID.
@@ -325,6 +396,17 @@ Terminated Amazon EC2 instances use the ``DeleteOnTermination`` attribute for ea
 AWS Config performs a baseline every six hours to check for new configuration items with the ResourceDeleted status. The AWS Config rule then removes the deleted EBS volumes from the evaluation results.
 
 ### SSD-backed volumes (IOPS-intensive)
+
+### EBS Volume Types
+EBS Volumes come in 6 types
+- `gp2 / gp3` (SSD): ``General purpose`` SSD volume that balances price and performance for a wide variety of workloads.
+- `io1 / io2` (SSD): ``Highest-performance`` SSD volume for **mission-critical low-latency or high-throughput workloads**. ``Only multi-attach 16 instances at a time``
+- ``st1`` (HDD): ``Low cost`` HDD volume designed for **frequently accessed, throughput- intensive workloads**
+- ``sc1`` (HDD): ``Lowest cost`` HDD volume designed for **less frequently accessed workloads**
+
+EBS Volumes are characterized in Size | Throughput | IOPS (I/O Ops Per Sec).
+
+**``Only gp2/gp3 and io1/io2 can be used as boot volumes``**
 
 ## Provisioned IOPS SSD (io2 Block Express, io2 & `io1`) volumes
 Provisioned IOPS SSD volumes are designed to deliver a maximum of 256,000 IOPS, 4,000 MB/s of throughput, and 64 TiB in size per volume1. io2 Block Express is the latest generation of the Provisioned IOPS SSD volumes that delivers 4x higher throughput, IOPS, and capacity than regular io2 volumes, along with sub-millisecond latency – at the same price as io2. io2 Block Express provides highest block storage performance for the largest, most I/O- intensive, mission-critical deployments of Oracle, Microsoft SQL Server, SAP HANA, and SAS Analytics
@@ -403,7 +485,7 @@ Using multiple instances of the AWS Snowball client and Snowball Edge Appliances
 #### Amazon S3 Standard-Infrequent Access (S3 Standard-IA)
 S3 Standard-IA is for data that is accessed less frequently, but requires rapid access when needed. S3 Standard-IA offers the high durability, high throughput, and low latency of S3 Standard, with a low per GB storage price and per GB retrieval charge.
 
-### `*Q` Access to Amazon S3 vi Direct Connect
+### `*Q` Access to Amazon S3 via Direct Connect
 It's not possible to directly access an S3 bucket through a private virtual interface (VIF) using Direct Connect. This is true even if you have an Amazon Virtual Private Cloud (Amazon VPC) endpoint for Amazon S3 in your VPC because `VPC endpoint connections can't extend outside of a VPC`. Additionally, Amazon S3 resolves to public IP addresses, even if you enable a VPC endpoint for Amazon S3.
 
 However, you can establish access to Amazon S3 using `Direct Connect` by following these steps (This configuration doesn't require a VPC endpoint for Amazon S3, because traffic doesn't traverse the VPC):
@@ -413,12 +495,315 @@ However, you can establish access to Amazon S3 using `Direct Connect` by followi
 1. Configure an end router for use with the public virtual interface.
 
 After the BGP is up and established, the Direct Connect router advertises all global public IP prefixes, including Amazon S3 prefixes. Traffic heading to Amazon S3 is routed through the Direct Connect public virtual interface through a private network connection between AWS and your data center or corporate network.
+
+### Amazon S3 – Security 👀
+- **``User-Based``**
+  - **IAM Policies** – which API calls should be allowed for a specific user from IAM
+
+- **``Resource-Based``**
+  - **Bucket Policies** – bucket wide rules from the S3 console - ``allows cross account``
+  - **Object Access Control List (ACL)** – finer grain (can be disabled)
+  - **Bucket Access Control List (ACL)** – less common (can be disabled)
+
+- **``Note``**: an IAM principal can access an S3 object if
+  - The user IAM permissions ALLOW it OR the resource policy ALLOWS it
+  - AND there’s no explicit DENY
+
+- **``Encryption``**: encrypt objects in Amazon S3 using encryption keys
+
+### S3 Bucket Policies 👀 OJO
+- Use S3 bucket for policy to:
+  - Grant public access to the bucket
+  - Force objects to be encrypted at upload
+  - **``Grant access to another account (Cross Account)``**
+
+- Optional Conditions on:
+  - Public IP or Elastic IP (not on Private IP)
+  - Source VPC or Source VPC Endpoint – only works with VPC Endpoints
+  - CloudFront Origin Identity
+  - MFA
+
+- Examples here: https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html
+
+### S3 Performance 👀 OJO
+- **``Multi-Part upload``**:
+  - recommended for files > 100MB, must use for files > 5GB
+  - Can help parallelize uploads (speed up transfers)
+
+- **``S3 Transfer Acceleration``**
+  - Increase transfer speed by transferring  file to an AWS edge location which will  forward the data to the S3 bucket in the target region
+  - Compatible with multi-part upload
+
+### S3 Batch Operations
+Eg Encrypt un-encrypted objects.
+
+**``You can use S3 Inventory to get object list and use S3 Select to filter your objects.``**
+
+### S3 Inventory 👀 OJO
+- List objects and their corresponding metadata (alternative to S3 List API operation)
+- Usage examples:
+  - ``Audit and report on the replication and encryption status of your objects``
+  - ``Get the number of objects in an S3 bucket``
+  - ``Identify the total storage of previous object versions``
+- **Generate** daily or weekly **reports**
+- **Output files**: CSV, ORC, or Apache Parquet
+- `You can query all the data using Amazon Athena, Redshift, Presto, Hive, Spark...`
+- You can filter generated report using S3 Select
+- Use cases: `Business`, `Compliance`, `Regulatory` needs, ...
+
+### Amazon S3 Analytics – Storage Class Analysis 👀 OJO
+- Help you **``decide when to transition objects to the right storage class``**
+- Recommendations for ``Standard`` and ``Standard IA``
+- Does NOT work for One-Zone IA or Glacier
+- Report is updated daily
+- 24 to 48 hours to start seeing data analysis
+
+      Good first step to put together Lifecycle Rules
+
+### Amazon S3 Glacier - Vault Policies & Vault Lock 👀 OJO
+- Each Vault has:
+  - ONE vault access policy
+  - ONE vault lock policy
+- Vault Policies are written in JSON
+- Vault Access Policy is like a bucket policy (restrict user / account permissions)
+- Vault Lock Policy is a policy you lock, for regulatory and compliance requirements.
+  - The policy is immutable, **``it can never be changed (that’s why it’s call LOCK)``**
+  - Example 1: forbid deleting an archive if less than 1 year old
+  - Example 2: implement WORM policy (write once read many)
+
+### Glacier – Notifications for Restore Operations
+S3 Event Notifications
+ - S3 supports the restoration of objects archivedto S3 Glacier storage classes
+ - **`s3:ObjectRestore:Post`** => notify when object restoration initiated
+ - **``s3:ObjectRestore:Completed``** => notify whenobject restoration completed
+
+### Amazon S3 – Object Encryption
+You can encrypt objects in S3 buckets using one of 4 methods
+
+Server-Side Encryption (SSE)
+1. **`Server-Side Encryption with Amazon S3-Managed Keys (SSE-S3)`** – Enabled by Default
+    - Encrypts S3 objects using keys handled, managed, and owned by AWS
+    - Must set header ``"x-amz-server-side-encryption": "AES256"``
+1. **``Server-Side Encryption with KMS Keys stored in AWS KMS (SSE-KMS)``**
+    - Leverage AWS Key Management Service (AWS KMS) to manage encryption keys
+    - ust set header  ``"x-amz-server-side-encryption": "aws:kms"``
+1. **``Server-Side Encryption with Customer-Provided Keys (SSE-C)``**
+    - When you want to manage your own encryption keys
+    - `HTTPS must be used`
+1. Client-Side Encryption
+
+Amazon S3 – Force Encryption in Transit
+aws:SecureTransport
+
+## CORS
+- **``Cross-Origin Resource Sharing (CORS)``**
+- Origin = scheme (protocol) + host (domain) + port
+  - example: https://www.example.com (implied port is 443 for HTTPS, 80 for HTTP)
+- Web Browser based mechanism to allow requests to other origins while visiting the main origin
+- Same origin: http://example.com/app1 & http://example.com/app2
+- Different origins: http://www.example.com & http://other.example.com
+- The requests won’t be fulfilled unless the other origin allows for the requests, using CORS Headers (example: ``**Access-Control-Allow-Origin**``)
+
+### 👀 OJO Exam question
+- If a client makes a cross-origin request on our S3 bucket, we need to enable the correct CORS headers.
+  You can allow for a specific origin or for * (all origins)
+
+### Amazon S3 – MFA Delete
+- **MFA (Multi-Factor Authentication)** – force users to generate a code on a
+device (usually a mobile phone or hardware) before doing important operations on S3
+
+- MFA will be required to:
+  - Permanently delete an object version  Google Authenticator
+  - Suspend Versioning on the bucket
+
+- MFA won’t be required to:
+  - Enable Versioning
+  - List deleted versions
+
+- To use MFA Delete, **``Versioning must be enabled``** on the bucket
+- **``Only the bucket owner (root account) can enable/disable MFA Delete``**
+
+### S3 Access Logs
+- For audit purpose, you may want to log all access to S3 buckets
+- Any request made to S3, from any account, authorized or denied, will be logged into another S3 bucket
+- That data can be analyzed using data analysis tools...
+- The target logging bucket must be in the same AWS region
+
+## Amazon Athena
+- Serverless query service to analyze data stored in Amazon S3
+- Uses standard SQL language to query the files (built on Presto)
+- Supports CSV, JSON, ORC, Avro, and Parquet
+- Pricing: $5.00 per TB of data scanned
+- Commonly used with Amazon Quicksight for reporting/dashboards
+
+- **``Use cases``**: Business intelligence / analytics / reporting, analyze & query VPC Flow Logs, ELB Logs, CloudTrail trails, etc...
+- **``Exam Tip``**: analyze data in S3 using serverless SQL, use Athena
+
+### Amazon Athena – Performance Improvement
+- **``Use columnar``** data for cost-savings (less scan).
+- **``Compress data``** for smaller retrievals (bzip2, gzip, lz4, snappy, zlip, zstd...).
+- **``Partition``** datasets in S3 for easy querying on virtual columns.
+- **``Use larger files``** (> 128 MB) to minimize overhead.
+
+### Amazon Athena – Federated Query
+Allows you to run SQL queries across data stored in relational, non-relational, object, and custom data sources (AWS or on-premises)
+
+Uses Data Source Connectors that run on AWS Lambda to run Federated Queries (e.g., CloudWatch Logs, DynamoDB, RDS, ...)
+
+Store the results back in Amazon S3
+
 ## [AWS OpsHub](https://docs.aws.amazon.com/snowball/latest/developer-guide/aws-opshub.html)
 AWS OpsHub for `Snow Family`, that you can use to `manage your devices and local AWS services`. You use AWS OpsHub on a client computer to perform tasks such as unlocking and configuring single or clustered devices, transferring files, and launching and managing instances running on Snow Family Devices. You can use AWS OpsHub to manage both the Storage Optimized and Compute Optimized device types and the Snow device. The AWS OpsHub application is available at no additional cost to you.
 
 AWS OpsHub takes all the existing operations available in the Snowball API and presents them as a graphical user interface. This interface helps you quickly migrate data to the AWS Cloud and deploy edge computing applications on Snow Family Devices.
 
 When your Snow device arrives at your site, you download, install, and launch the AWS OpsHub application on a client machine, such as a laptop. After installation, you can unlock the device and start managing it and using supported AWS services locally. AWS OpsHub provides a dashboard that summarizes key metrics such as storage capacity and active instances on your device. It also provides a selection of AWS services that are supported on the Snow Family Devices. Within minutes, you can begin transferring files to the device.
+
+---
+## Amazon FSx – Overview
+**``Launch 3rd party high-performance file systems on AWS``**
+
+### FSx for Lustre
+Lustre is a type of ``parallel distributed`` file system, for large-scale computing. The name Lustre is derived from “Linux” and “cluster.
+
+- **``Machine Learning, High Performance Computing (HPC)``**
+- Video Processing, Financial Modeling, Electronic Design Automation
+- **``Seamless integration with S3``**
+  - Can “read S3” as a file system (through FSx)
+  - Can write the output of the computations back to S3 (through FSx)
+- **``Can be used from on-premises servers (VPN or Direct Connect)``**
+
+#### FSx Lustre - File System Deployment Options
+1. **``Scratch File System``**: Temporary storage
+2. **``Persistent File System``**
+  - Long-term storage
+  - Data is replicated within same AZ
+
+### FSx for Windows File Server
+- **``FSx for Windows``** is a fully managed Windows file system share drive
+- Supports **SMB protocol & Windows NTFS**
+- Microsoft Active Directory integration, ACLs, user quotas
+- **`Can be mounted on Linux EC2 instances`**
+- Supports **`Microsoft's Distributed File System (DFS)`** Namespaces (group files across multiple FS)
+
+### FSx for NetAppONTAP
+- Managed NetApp ONTAP on AWS
+-  File System compatible with **``NFS, SMB, iSCSI protocols``**
+- **``Point-in-time instantaneous cloning (helpful for testingnew workloads)``**
+
+### FSx for OpenZFS
+- Managed OpenZFS file system on AWS
+- File System compatible with **``NFS``** (v3, v4, v4.1, v4.2)
+- **``Point-in-time instantaneous cloning (helpful for testing new workloads)``**
+
+---
+## AWS Storage Gateway
+Bridge between on-premises data and cloud data
+
+- `File Gateway is POSIX compliant (Linux file system)`
+  - POSIX metadata ownership, permissions, and timestamps stored in the object’s metadata in S3
+
+- Reboot Storage Gateway VM: (e.g., maintenance)
+  - `File Gateway`: simply restart the Storage Gateway VM
+  - `Volume and Tape Gateway`:
+    - Stop Storage Gateway Service (AWS Console, VM local Console, Storage Gateway API)
+    - Reboot the Storage Gateway VM
+    - Start Storage Gateway Service (AWS Console, VM local Console, Storage Gateway API)
+
+Types of Storage Gateway:
+
+1. ``S3 File Gateway``
+  - Configured S3 buckets are accessible using the **``NFS and SMB protocol``**
+  - **``Most recently used data is cached in the file gateway``**
+  - Supports S3 Standard, S3 Standard IA, S3 One Zone A, S3 Intelligent Tiering
+  - Transition to S3 Glacier using a Lifecycle Policy
+
+2. ``FSx File Gateway``
+  - Native access to Amazon FSx for Windows File Server
+  - **``Local cache for frequently accessed data``**
+  - **``Windows native compatibility (SMB, NTFS, Active Directory...)``**
+  - Useful for group file shares and home directories
+
+3. ``Volume Gateway``
+- Block storage using **``iSCSI protocol backed by S3``**
+- `Backed by EBS snapshots` which can help restore on-premises volumes!
+- `Cached volumes`: low latency access to most recent data
+- `Stored volumes`: entire dataset is on premise, scheduled backups to S3
+
+4. ``Tape Gateway``
+- Some companies have backup processes using physical tapes (!)
+- With Tape Gateway, companies use the same processes but, in the cloud
+- `Virtual Tape Library (VTL)` backed by Amazon S3 and Glacier
+- Back up data using existing tape-based processes (and iSCSI interface)
+- Works with leading backup software vendors
+
+### Storage Gateway – Activations
+Two ways to get Activation Key:
+- Using the Gateway VM CLI
+- Make a web request to the Gateway VM (Port 80) old way
+
+`Troubleshooting Activation Failures` - 👀 exam
+- Make sure the Gateway VM has `port 80 opened`
+- Check that the Gateway VM has the correct time and synchronizing its time automatically to a `Network Time Protocol (NTP)` server
+
+---
+
+## Amazon CloudFront
+Content Delivery Network (CDN)
+
+- **``Improves read performance, content is cached at the edge``**
+- Improves users experience
+- 216 Point of Presence globally (edge locations)
+- **``DDoS protection (because worldwide), integration with Shield, AWS Web Application Firewall``**
+
+### CloudFront – Origins
+`S3 bucket`
+  - For distributing files and caching them at the edge
+  - Enhanced security with CloudFront **``Origin Access Control (OAC)``**
+  - OAC is replacing Origin Access Identity (OAI)
+  - CloudFront can be used as an ingress (to upload files to S3)
+
+ `Custom Origin (HTTP)`
+  - Application Load Balancer
+  - EC2 instance
+  - S3 website (must first enable the bucket as a static S3 website)
+  - Any HTTP backend you want
+
+## `*Q` AwS Origin Shield
+Enabling the Origin Shield ``feature`` in `CloudFront` helps reduce the load on the origin server by `adding` an additional `caching layer` _between_ `CloudFront edge locations` and `the origin. It improves cache hit ratios and reduces the number of requests hitting the origin by serving content from the Origin Shield cache.
+
+## AWS WAF (Web Application Firewall)
+AWS WAF is a web application firewall that lets you monitor the HTTP and HTTPS requests that are forwarded to an Amazon `CloudFront` distribution, an Amazon `API Gateway` REST API, an `Application Load Balancer`, or an `AWS AppSync GraphQL API`.
+
+### `*Q` [Change AWS Firewall Manager administration account](https://docs.aws.amazon.com/waf/latest/developerguide/fms-change-administrator.html)
+You can designate `only one account in` an `organization as a Firewall Manager administrator account`. To create a new Firewall Manager administrator account, you must revoke the original administrator account first.
+
+### CloudFront Origin Headers vs Cache Behavior
+`Origin Custom Headers`:
+  - Origin-level setting
+  - Set a constant header / header value for all requests to origin
+
+`Behavior setting`:
+  - Cache-related settings
+  - Contains the whitelist of headers to forward
+
+### CloudFront Caching TTL
+``**“Cache-Control: max-age”**`` is preferred to “Expires” header
+
+### CloudFront – Increasing Cache Ratio
+Monitor the CloudWatch metric ``CacheHitRate``
+
+- Specify how long to cache your objects: `Cache-Control max-age` header
+- Specify none or the minimally required ``headers``
+- Specify none or the minimally required ``cookies``
+- Specify none or the minimally required ``query string parameters``
+- Separate static and dynamic distributions (two origins)
+
+## CloudFront with ALB sticky sessions
+- Must forward / whitelist the cookie that controls the session affinity to the origin to allow the session affinity to work
+- Set a TTL to a value lesser than when the authentication cookie expire
+
+``Cookie: AWSALB=...``
 
 ## IAM
 
@@ -684,7 +1069,62 @@ Before you share your products and portfolios to other accounts, you must decide
 
 You can use stack sets to deploy your catalog to many accounts at the same time. If you want to share a reference (an imported version of your portfolio that stays in sync with the original), you can use account-to-account sharing or you can share using AWS Organizations.
 
-## Amazon EFS
+## Amazon EFS – Elastic File System
+- Use cases: content management, web serving, data sharing, Wordpress
+- Uses NFSv4.1 protocol
+- Uses security group to control access to EFS
+- **Compatible with Linux based AMI (not Windows)**
+- Encryption at rest using KMS
+
+- POSIX file system (~Linux) that has a standard file API
+- File system scales automatically, pay-per-use, no capacity planning!
+
+### EFS vs EBS
+
+### EFS - Access Points
+- Easily manage applications access to NFS environments
+- Enforce a POSIX user and group to use when accessing the file system
+- Restrict access to a directory within the file system and optionally specify a different root directory
+- Can restrict access from NFS clients using IAM policies
+
+### EFS - Operations
+- Operations that can be done in place:
+  - Lifecycle Policy (enable IA or change IA settings)
+  - Throughput Mode and Provisioned Throughput Numbers
+  - EFS Access Points
+- Operations that require a migration using DataSync (replicates all file attributes and metadata)
+  - `Migration to encrypted EFS`
+  - `Performance Mode (e.g. Max IO)`
+
+###  Amazon Data Lifecycle Manager - OJO
+ - Automate the creation, retention, and deletion of EBS snapshots and EBS-backed AMIs.
+ - Schedule backups, cross-account snapshot copies, delete outdated backups, ...
+ - Uses resource tags to identify the resources (EC2 instances, EBS volumes).
+ - Can’t be used to manage snapshots/AMIs created outside DLM.
+ - Can’t be used to manage instance-store backed AMIs
+
+### EFS – Storage Classes
+**``Storage Tiers (lifecycle management feature – move file after N days)``**
+  - Standard: for frequently accessed files
+  - Infrequent access (EFS-IA): cost to retrieve files, lower price to store. Enable EFS-IA with a Lifecycle Policy
+
+**``Availability and durability``**
+  - Standard: Multi-AZ, great for prod
+  - One Zone: One AZ, great for dev, backup enabled by default, compatible with IA (EFS One Zone-IA)
+
+- Over 90% in cost savings
+
+### EFS – CloudWatch Metrics
+**``PercentIOLimit``**
+  - How close the file system reaching the I/O limit (General Purpose)
+  - If at 100%, move to Max I/O (migration)
+
+**``BurstCreditBalance``**
+  - The number of burst credits the file system can use to achieve higher throughput levels
+
+**``StorageBytes``**
+  - File system’s size in bytes (15 minutes interval)
+  - Dimensions: Standard, IA, Total (Standard + IA)
 
 ### Enforce creation that is encrypted at rest
 * Use the `elasticfilesystem:Encrypted` IAM condition key in AWS IAM identity-based policies to mandate users for creating only encrypted-at-rest Amazon EFS file systems
@@ -712,12 +1152,6 @@ Amazon Inspector also `integrates` with `AWS Security Hub` to provide a `view` o
 ## AWS Control Tower
 Offers the easiest way to `set up` and `govern` a `secure, multi-account AWS environment`. It establishes a landing zone that is based on the best-practices blueprints and enables governance using guardrails you can choose from a pre-packaged list. The landing zone is a well-architected, multi-account baseline that follows AWS best practices. Guardrails implement governance rules for security, compliance, and operations.
 
-## AWS WAF (Web Application Firewall)
-AWS WAF is a web application firewall that lets you monitor the HTTP and HTTPS requests that are forwarded to an Amazon `CloudFront` distribution, an Amazon `API Gateway` REST API, an `Application Load Balancer`, or an `AWS AppSync GraphQL API`.
-
-### `*Q` [Change AWS Firewall Manager administration account](https://docs.aws.amazon.com/waf/latest/developerguide/fms-change-administrator.html)
-You can designate `only one account in` an `organization as a Firewall Manager administrator account`. To create a new Firewall Manager administrator account, you must revoke the original administrator account first.
-
 ## AWS X-Ray
 1. `S3` - AWS X-Ray integrates with Amazon S3 to trace upstream requests to update your application's S3 buckets.
 1. `Lambda functions` - Lambda runs the X-Ray daemon and records a segment with details about the function invocation and execution.
@@ -725,14 +1159,6 @@ You can designate `only one account in` an `organization as a Firewall Manager a
 
 ## DNS Resolution
 DNS Resolution is used to enable resolution of public DNS hostnames to private IP addresses when queried from the [peered VPC](https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html).
-
-## ASG
-
-### Classic Load Balancer
-
-#### Metrics
-`👀` `SpilloverCount` represents the total `number of requests` that were `rejected` `because` the surge `queue` is `full`.
-To solve this use-case, you need to configure the Auto Scaling groups to scale your instances based on the `SurgeQueueLength` metric.
 
 ## `👀` [Traffic Mirroring](https://docs.aws.amazon.com/vpc/latest/mirroring/what-is-traffic-mirroring.html)
 `Traffic Mirroring provides` the ability to create a copy of a packet flow to examine the contents of a packet. This feature is useful for `threat monitoring`, `content inspection`, and `troubleshooting`.
@@ -767,9 +1193,6 @@ You can also use AWS Budgets to `set reservation utilization or coverage targets
 
 ## 👀 Q AWS Task Orchestrator and Executor (AWSTOE)
 Use the AWS Task Orchestrator and Executor (AWSTOE) application `to orchestrate complex workflows`, `modify system configurations`, and `test your systems without writing code`. This application uses a declarative document schema. Because it is a standalone application, it does not require additional server setup.
-
-## `*Q` AwS Origin Shield
-Enabling the Origin Shield ``feature`` in `CloudFront` helps reduce the load on the origin server by `adding` an additional `caching layer` _between_ `CloudFront edge locations` and `the origin. It improves cache hit ratios and reduces the number of requests hitting the origin by serving content from the Origin Shield cache.
 
 ## 👀 AWS Cost
 In ``AWS Cost`` and ``Usage Reports``, you can choose to have AWS `publish billing reports` to an `Amazon Simple Storage` Service (Amazon S3) bucket that you own. You can receive reports that break down your costs by the hour or month, by product or product resource, or by tags that you define yourself. AWS updates the report in your bucket once a day in a comma-separated value (CSV) format. You can view the reports using spreadsheet software such as Microsoft Excel or Apache OpenOffice Calc or access them from an application using the Amazon S3 API.
@@ -814,28 +1237,6 @@ AWS Cost Explorer provides the following prebuilt reports:
 – EC2 `RI Utilization %` offers relevant data to identify and act on opportunities to increase your Reserved Instance usage efficiency. It’s calculated by dividing Reserved Instance used hours by total Reserved Instance purchased hours.
 
 – EC2 `RI Coverage %` shows how much of your overall instance usage is covered by Reserved Instances. This lets you make informed decisions about when to purchase or modify a Reserved Instance to ensure maximum coverage. It’s calculated by dividing Reserved Instance used hours by total EC2 On-Demand and Reserved Instance hours.
-
-## Systems Manager
-
-👀 AWS Systems Manager provides a unified, centralized way to manage both your Amazon EC2 instances and on-premises servers (including `Raspbian` systems, devices such as `Raspberry Pi` through a single interface). It offers a wide range of capabilities, including `inventory management`, `patch management`, `automation`, and `configuration management`, allowing you to efficiently manage your hybrid infrastructure from a single console. With Systems Manager, you can maintain consistent configurations, apply patches, and automate administrative tasks for your on-premises servers, just like you would for your EC2 instances.
-
-TODO
-gives you visibility and control of your infrastructure on AWS. Systems Manager provides a unified user interface so you can view operational data from multiple AWS services and allows you to automate operational tasks across your AWS resources. With Systems Manager, you can group resources, like Amazon EC2 instances, Amazon S3 buckets, or Amazon RDS instances, by application, view operational data for monitoring and troubleshooting, and take action on your groups of resources. Systems Manager simplifies resource and application management, shortens the time to detect and resolve operational problems, and makes it easy to operate and manage your infrastructure securely at scale.
-
-### 👀 [Fleet Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/fleet.html)
-Helps you remotely `manage` your `server fleet` that runs on `AWS` or on `premises`. With Fleet Manager, you can gather data from individual instances to perform common troubleshooting and management tasks from a single console. However, you cannot use Fleet Manager to upload a script to start or stop instances.
-
-### Recover impaired instances
-A Systems Manager `Automation document` defines the `Automation workflow` (the actions that Systems Manager performs on your managed instances and AWS resources). Automation includes several pre-defined Automation documents that you can use to perform common tasks like restarting one or more EC2 instances or creating an Amazon Machine Image (AMI).
-
-Use the ``AWSSupport-ExecuteEC2Rescue`` document to recover impaired instances.
-
-### 👀 AWS Systems Manager Inventory
-AWS Systems Manager Inventory provides visibility into your `Amazon EC2` and _`on-premises`_ computing environment. You can use Inventory to `collect metadata` from your `managed instances`. You can store this metadata in a central Amazon Simple Storage Service (Amazon S3) bucket, and then use built-in tools to query the data and quickly determine which instances are running the software and configurations required by your software policy, and which instances need to be updated. You can configure Inventory on all of your managed instances by using a one-click procedure. You can also configure and view inventory data from multiple AWS Regions and AWS accounts.
-
-If the pre-configured metadata types collected by Systems Manager Inventory don't meet your needs, then you can create custom inventory. `Custom inventory` is simply a JSON file with information that you provide and add to the managed instance in a specific directory. When Systems Manager Inventory collects data, it captures this custom inventory data.
-
-Systems Manager Inventory collects only metadata from your managed instances. Inventory doesn't access proprietary information or data.
 
 ## 👀 Run Command
 
@@ -926,3 +1327,211 @@ The TagOption library makes it easier to enforce the following:
 – A consistent `taxonomy`
 – Proper tagging of AWS Service Catalog resources
 – Defined, user-selectable options for allowed tags
+
+## AWS System Manager
+👀 AWS Systems Manager provides a unified, centralized way to manage both your Amazon EC2 instances and on-premises servers (including `Raspbian` systems, devices such as `Raspberry Pi` through a single interface). It offers a wide range of capabilities, including `inventory management`, `patch management`, `automation`, and `configuration management`, allowing you to efficiently manage your hybrid infrastructure from a single console. With Systems Manager, you can maintain consistent configurations, apply patches, and automate administrative tasks for your on-premises servers, just like you would for your EC2 instances.
+
+TODO
+gives you visibility and control of your infrastructure on AWS. Systems Manager provides a unified user interface so you can view operational data from multiple AWS services and allows you to automate operational tasks across your AWS resources. With Systems Manager, you can group resources, like Amazon EC2 instances, Amazon S3 buckets, or Amazon RDS instances, by application, view operational data for monitoring and troubleshooting, and take action on your groups of resources. Systems Manager simplifies resource and application management, shortens the time to detect and resolve operational problems, and makes it easy to operate and manage your infrastructure securely at scale.
+
+
+* Helps you manage your **EC2** and **On-Premises** systems at scale.
+* Get operational insights about the state of your infrastructure.
+* Easily detect problems.
+* **Patching automation for enhanced compliance**.
+* Works for both Windows and Linux OS.
+* `Integrated with CloudWatch metrics / dashboards`.
+* `Integrated with AWS Config`.
+* Free service.
+
+### Main Features for the Examen
+- Resource Groups
+- Shared Resources
+  Documents
+- Change Management
+  * Automation
+  * Maintenance Windows
+- Application Management
+  * Parameter Store
+- Node Management
+  * Inventory
+  * Session Manager
+  * Run Command
+  * State Manager
+  * Patch Manager
+
+### 👀 [Fleet Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/fleet.html)
+Helps you remotely `manage` your `server fleet` that runs on `AWS` or on `premises`. With Fleet Manager, you can gather data from individual instances to perform common troubleshooting and management tasks from a single console. However, you cannot use Fleet Manager to upload a script to start or stop instances.
+
+### Recover impaired instances
+A Systems Manager `Automation document` defines the `Automation workflow` (the actions that Systems Manager performs on your managed instances and AWS resources). Automation includes several pre-defined Automation documents that you can use to perform common tasks like restarting one or more EC2 instances or creating an Amazon Machine Image (AMI).
+
+Use the ``AWSSupport-ExecuteEC2Rescue`` document to recover impaired instances.
+
+### 👀 AWS Systems Manager Inventory
+AWS Systems Manager Inventory provides visibility into your `Amazon EC2` and _`on-premises`_ computing environment. You can use Inventory to `collect metadata` from your `managed instances`. You can store this metadata in a central Amazon Simple Storage Service (Amazon S3) bucket, and then use built-in tools to query the data and quickly determine which instances are running the software and configurations required by your software policy, and which instances need to be updated. You can configure Inventory on all of your managed instances by using a one-click procedure. You can also configure and view inventory data from multiple AWS Regions and AWS accounts.
+
+If the pre-configured metadata types collected by Systems Manager Inventory don't meet your needs, then you can create custom inventory. `Custom inventory` is simply a JSON file with information that you provide and add to the managed instance in a specific directory. When Systems Manager Inventory collects data, it captures this custom inventory data.
+
+Systems Manager Inventory collects only metadata from your managed instances. Inventory doesn't access proprietary information or data.
+
+### AWS Tags
+- You can add text key-value pairs called Tags to many AWS resources
+- Commonly used in EC2
+- Free naming, common tags are Name, Environment, Team ...
+- They’re used for
+  - Resource grouping
+  - Automation
+  - Cost allocation
+
+### Resource Groups
+- Create, view or manage logical group of resources thanks to **tags**.
+- Allows creation of logical groups of resources such as
+  - Applications
+  - Different layers of an application stack
+  - Production versus development environments
+- Regional service
+- Works with EC2, S3, DynamoDB, Lambda, etc...
+
+### SSM – Inventory
+1. Collect metadata from your managed instances (EC2/On-premises)
+1. Metadata includes installed software, OS drivers, configurations, installed updates, running services ...
+1. View data in AWS Console or store in S3 and query and analyze using Athena and QuickSight
+1. Specify metadata collection interval (minutes, hours, days)
+1. Query data from multiple AWS accounts and regions
+1. Create Custom Inventory for your custom metadata (e.g., rack location of each managed instance)
+
+
+## Scalability & High Availability
+
+Scalability means that an application / system can handle greater loads by adapting.
+
+**Scalability is linked but different to High Availability**
+
+### Vertical Scalability
+Vertically scalability means increasing the size of the resource (instance)
+
+### Horizontal Scalability
+Horizontal Scalability means increasing the number of instances / systems for your application
+### High Availability & Scalability For EC2
+- Vertical Scaling: Increase instance size (= scale up / down)
+  - From: t2.nano - 0.5G of RAM, 1 vCPU
+  - To: u-12tb1.metal – 12.3 TB of RAM, 448 vCPUs
+- Horizontal Scaling: Increase number of instances (= scale out / in)
+  - Auto Scaling Group
+  - Load Balancer
+- High Availability: Run instances for the same application across multi-AZ
+  - Auto Scaling Group multi-AZ
+  - Load Balancer multi-AZ
+
+
+## Gateway Load Balancer
+Uses the **GENEVE** protocol on port **6081**
+
+## Application Load Balancers
+
+### Monitoring
+* ``**RequestCountPerTarget**``
+* ``**SurgeQueueLength**``: The total of requests (HTTP listener) or connections (TCP listener) that are pending routing to a healthy instance. Help to scale out ASG. Max value is 1024
+* `👀` `SpilloverCount` represents the total `number of requests` that were `rejected` `because` the surge `queue` is `full`.
+To solve this use-case, you need to configure the Auto Scaling groups to scale your instances based on the `SurgeQueueLength` metric.
+
+### Target Groups Settings
+- ``deregisteration_delay.timeout_seconds``: time the load balancer waits before deregistering a target.
+- ``slow_start.duration_seconds``: (see next slide).
+- ``load_balancing.algorithm.type``: how the load balancer selects targets when routing requests (Round Robin, Least Outstanding Requests).
+- ``stickiness.enabled``.
+- ``stickiness.type``: application-based or duration-based cookie.
+- ``stickiness.app_cookie.cookie_name``: name of the application cookie.
+- ``stickiness.app_cookie.duration_seconds``: application-based cookie expiration period.
+- ``stickiness.lb_cookie.duration_seconds``: duration-based cookie expiration period.
+
+## ASG
+
+### Good metrics to scale on
+- CPUUtilization: Average CPU utilization across your instances
+- RequestCountPerTarget: to make sure the number of requests per EC2 instances is stable
+- Average Network In / Out (if you’re application is network bound)
+- Any custom metric (that you push using CloudWatch)
+
+advice
+exam
+
+ApproximateNumberOfMessages
+
+## AWS Auto Scaling
+Backbone service of auto scaling for scalable resources in AWS:
+- ``Amazon EC2 Auto Scaling groups``: Launch or terminate EC2 instances
+- ``Amazon EC2 Spot Fleet requests``: Launch or terminate instances from a Spot Fleet request, or automatically replace instances that get interrupted for price or capacity reasons.
+- ``Amazon ECS``: Adjust the ECS service desired count up or down
+- ``Amazon DynamoDB`` (table or global secondary index):WCU & RCU
+- ``Amazon Aurora``: Dynamic Read Replicas Auto Scaling
+
+
+Application Load Balancer (v2)
+Target Groups
+- EC2 instances (can be managed by an Auto Scaling Group) – HTTP
+- ECS tasks (managed by ECS itself) – HTTP
+- Lambda functions – HTTP request is translated into a JSON event
+- IP Addresses – must be private IPs
+
+- ALB can route to multiple target groups
+- Health checks are at the target group level
+
+
+## UpdatePolicy Attribute
+Use it to handle updates for below resources
+
+* `AWS::AppStream::Fleet`
+* `AWS::AutoScaling::AutoScalingGroup`
+* `AWS::ElastiCache::ReplicationGroup`
+* `AWS::OpenSearchService::Domain`
+* `AWS::Elasticsearch::Domain`
+* `AWS::Lambda::Alias`
+
+### AutoScalingReplacingUpdate policy - `*EXAM`
+### [AutoScalingRollingUpdate policy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-updatepolicy.html)
+With rolling updates, you can specify whether CloudFormation performs updates in batches or all at once for instances that are in an Auto Scaling group. The `AutoScalingRollingUpdate` policy is the only CloudFormation feature that provides such an incremental update throughout the Auto Scaling group.
+### AutoScalingScheduledAction policy
+Applies when you update a stack that includes an Auto Scalling group with an associated scheduled action.
+
+### CloudFormation StackSets
+- Create, update, or delete stacks across multiple accounts and regions with a single operation
+- Administrator account to create StackSets
+- Trusted accounts to create, update, delete stack instances from StackSets
+
+### Lambda Tracing with X-Ray
+- Enable in Lambda configuration (``Active Tracing``)
+- Environment variables to communicate with X-Ray
+  - _X_AMZN_TRACE_ID: contains the tracing header
+  - AWS_XRAY_CONTEXT_MISSING: by default, LOG_ERROR
+  - ``AWS_XRAY_DAEMON_ADDRESS``: the X-Ray Daemon IP_ADDRESS:PORT
+
+## Lambda Function Configuration
+* RAM
+  -The more RAM you add, the more vCPU credits you get
+  - At 1,792 MB, a function has the equivalent of one full vCPU
+- ``If your application is CPU-bound (computation heavy), increase RAM`` - `*EXAM`
+- ``Timeout``: default 3 seconds, maximum is 900 seconds (15 minutes)
+
+*Cold Starts & Provisioned Concurrency*
+- ``Cold Start``:
+  - New instance => code is loaded and code outside the handler run (init)
+  - If the init is large (code, dependencies, SDK...) this process can take some time.
+  - First request served by new instances has higher latency than the rest
+- ``Provisioned Concurrency``:
+  - Concurrency is allocated before the function is invoked (in advance)
+  - So the cold start never happens and all invocations have low latency
+  - Application Auto Scaling can manage concurrency (schedule or target utilization)
+- Note:
+  - Note: cold starts in VPC have been dramatically reduced in Oct & Nov 2019
+  - https://aws.amazon.com/blogs/compute/announcing-improved-vpc-networking-for-aws-lambda-functions/
+
+Lambda Monitoring – CloudWatch Metrics
+- ``Invocations`` – number of times your function is invoked (success/failure)
+- ``Duration`` – amount of time your function spends processing an event
+- ``Errors`` – number of invocations that result in a function error
+- ``Throttles`` – number of invocation requests that are throttled (no concurrency available)
+- ``DeadLetterErrors`` – number of times Lambda failed to send an event to a DLQ (async invocations)
+- ``IteratorAge`` – time between when a Stream receives a record and when the Event Source Mapping sends the event to the function (for Event Source Mapping that reads from Stream)
+- ``ConcurrentExecutions`` – number of function instances that are processing events
