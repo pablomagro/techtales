@@ -28,7 +28,7 @@ AWS Provided metrics (AWS pushes them):
 1. ``Detailed`` Monitoring (paid): metrics are collected at a `1 minute` interval
 1. Includes `CPU, Network, Disk and Status Check Metrics`
 
-Custom metric (yours to push):
+Custom metric (__yours to push__):
 1. Basic Resolution: 1 minute resolution
 1. High Resolution: all the way to 1 second resolution
 1. Include `RAM`, application level metrics
@@ -36,8 +36,97 @@ Custom metric (yours to push):
 
 <u>**RAM is NOT included in the AWS EC2 metrics**</u>
 
+#### CloudWatch Custom Metrics
+You can retrieve custom metrics from your applications or services using the `StatsD` and `collectd` protocols. StatsD is supported on both Linux servers and servers running Windows Server. collectd is supported only on Linux
+
+- Possibility to define and send your own custom metrics to CloudWatch
+- Example: memory (RAM) usage, disk space, number of logged in users ...
+- Use API call ``PutMetricData``
+- Ability to use dimensions (attributes) to segment metrics
+  - Instance.id
+  - Environment.name
+- Metric resolution (``StorageResolution`` API parameter – two possible value):
+  - Standard: 1 minute (60 seconds)
+  - High Resolution: 1/5/10/30 second(s) – Higher cost
+ - Important `👀 Exam`: ``**Accepts metric data points two weeks in the past and two hours in the future (make sure to configure your EC2 instance time correctly)**``
+
+ ### CloudWatch Dashboards
+- Great way to setup custom dashboards for quick access to key metrics and alarms
+- ``**Dashboards are global**``
+- ``**Dashboards can include graphs from different AWS accounts and regions**`` `👀 Exam`
+- You can change the time zone & time range of the dashboards
+- You can setup automatic refresh (10s, 1m, 2m, 5m, 15m)
+- Dashboards can be shared with people who don’t have an AWS account (public, email address, 3rd party SSO provider through Amazon Cognito)
+
+CloudWatch Logs - Sources
+- SDK, CloudWatch Logs Agent, CloudWatch Unified Agent
+- Elastic Beanstalk: collection of logs from application
+- ECS: collection from containers
+- AWS Lambda: collection from function logs
+- VPC Flow Logs: VPC specific logs
+- API Gateway
+- CloudTrail based on filter
+- Route53: Log DNS queries
+
+### CloudWatch Logs Subscriptions
+- **``Get a real-time log events from CloudWatch Logs for processing and analysis``**
+- Send to Kinesis Data Streams, Kinesis Data Firehose, or Lambda
+- ``Subscription Filter ``– filter which logs are events delivered to your destination
+
+- ``Cross-Account Subscription`` – send log events to resources in a different AWS account (KDS, KDF)
+
 ### Alarms
 CloudWatch alarms allow you to monitor metrics and trigger actions based on defined thresholds. In this case, you can create a CloudWatch alarm that monitors the CPU utilization metric of the EC2 instance. When the CPU utilization reaches 100%, the alarm will be triggered, and you can configure actions such as sending notifications or executing automated actions to address the unresponsiveness issue.
+
+### Alarm Targets:
+- ``EC2`` - Stop, Terminate, Reboot, or Recover an EC2 Instance
+- ``EC2 Auto Scaling`` - Trigger Auto Scaling Action, scaling up or down.
+- ``SNS`` - Send notification to SNS (from which you can do pretty much anything)
+
+- ``Composite Alarms are monitoring the states of multiple other alarms``
+
+### EC2 Instance Recovery
+StatusCheckFailed_System
+- Status Check:
+  - `Instance status = check the EC2 VM`
+  - `System status = check the underlying hardware`
+
+- ``Recovery: Same Private, Public, Elastic IP, metadata, placement group``
+
+      👀 Alarms can be created based on CloudWatch Logs Metrics Filters
+
+- Test an alarm using `aws set-alarm-state`
+
+```bash
+👀 aws cloudwatch set-alarm-state --alarm-name "TerminateInHighCPU" --state-value ALARM --state-reason "testing purposes"
+```
+
+### CloudWatch Synthetics
+CloudWatch Synthetics canaries are `automated/configurable scripts` that `monitor` the `availability and performance of applications, endpoints, and APIs`. They are `designed to simulate user interactions with an application and provide insights into its behavior`.
+
+Canaries are created using scripts written in Node.js or Python and are scheduled to run at regular intervals. These scripts perform tasks such as navigating through a website, clicking on specific elements, submitting forms, and validating responses. By executing these predefined actions, canaries can monitor the functionality, responsiveness, and performance of an application or API.
+
+CloudWatch Synthetics canaries collect data on metrics like response time, latency, availability, and success rates. They can also be configured to generate alarms when certain conditions are met, allowing proactive identification and remediation of issues.
+
+#### Reference
+[https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor-check-reference.html](https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor-check-reference.html)
+
+### Amazon EventBridge (formerly CloudWatch Events)
+- Schedule: Cron jobs (scheduled scripts) - Schedule Every hour ->  Trigger script on Lambda function
+- Event Pattern: Event rules to react to a service doing something - IAM Root User Sign in Event ->  SNS Topic with Email Notification
+- Trigger Lambda functions, send SQS/SNS messages...
+
+![EventBridge Rules](./source/images/AWS-EventBridge-Rules.png "EventBridge Rules")
+
+### Service Quotas CloudWatch Alarms
+- Notify you when you’re close to a service quota value threshold
+- Create CloudWatch Alarms on the Service Quotas console
+- Example: Lambda concurrent executions
+- Helps you know if you need to request a quota increase or shutdown resources before limit is reached
+
+### Alternative: Trusted Advisor %252B CW Alarms
+- Limited number of Service Limits checks in Trusted Advisor (~50)
+- Trusted Advisor publishes its check results to CloudWatch
 
 ### `👀` For each production EC2 instance, create an `Amazon CloudWatch alar`m for Status `Check Failed: System`. Set the alarm action to `recover the EC2 instance`. Configure the alarm notification to be published to an Amazon Simple Notification Service (Amazon SNS) topic.
 
@@ -101,42 +190,97 @@ You can create a `count` of `404` errors `and exclude` other `4xx` errors with a
 
 ### Agents
 
-#### Custom Metrics
-You can retrieve custom metrics from your applications or services using the `StatsD` and `collectd` protocols. StatsD is supported on both Linux servers and servers running Windows Server. collectd is supported only on Linux
-
 #### Install Agents to track the state of each of the instances
 You must attach the ``CloudWatchAgentServerRole`` IAM role to the EC2 instance to be able to run the CloudWatch agent on the instance. This role enables the CloudWatch agent to perform actions on the instance.
 
 ### Instal CloudWatch agent
 If your AMI contains a CloudWatch agent, it’s automatically installed on EC2 instances when you create an EC2 Auto Scaling group. With the stock Amazon Linux AMI, you need to install it (AWS recommends to install via yum).
 
-### CloudWatch Synthetics
-CloudWatch Synthetics canaries are automated scripts that monitor the availability and performance of applications, endpoints, and APIs. They are `designed to simulate user interactions with an application and provide insights into its behavior`.
-
-Canaries are created using scripts written in Node.js or Python and are scheduled to run at regular intervals. These scripts perform tasks such as navigating through a website, clicking on specific elements, submitting forms, and validating responses. By executing these predefined actions, canaries can monitor the functionality, responsiveness, and performance of an application or API.
-
-CloudWatch Synthetics canaries collect data on metrics like response time, latency, availability, and success rates. They can also be configured to generate alarms when certain conditions are met, allowing proactive identification and remediation of issues.
-
-#### Reference
-[https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor-check-reference.html](https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor-check-reference.html)
-
 ### Publish custom metrics to CloudWatch.
 You can publish your own metrics to CloudWatch using the AWS CLI or an API. You can view statistical graphs of your published metrics with the AWS Management Console. CloudWatch stores data about a metric as a series of data points. Each data point has an associated time stamp. You can even publish an aggregated set of data points called a statistic set.
 
-The `put-metric-data` ``command`` publishes metric data to Amazon CloudWatch, which associates it with the specified metric. If the specified metric does not exist, CloudWatch creates the metric which can take up to fifteen minutes for the metric to appear in calls to `ListMetrics`.
+The `put-metric-data` ``command`` publishes metric data to Amazon CloudWatch, which associates it with the specified metric. If the specified metric does not exist, CloudWatch creates the metric which can take up to fifteen minutes for the metric to appear in calls to `ListMetrics`..
 
+---
 ## CloudTrail
+``Provides governance, compliance and audit for your AWS Account``
 
-### Q. To ensure that SysOps administrators can easily verify that the CloudTrail log files have not been deleted or changed, the following action should be taken:
-Enable `CloudTrail log file integrity validation` when the trail is created or updated.
+- CloudTrail is `enabled by default`!
+- Get `an history of events / API calls made within your AWS Account` by:
+  - Console
+  - SDK
+  - CLI
+  - AWS Services
+- Can put logs from CloudTrail into CloudWatch Logs or S3
+- ``A trail can be applied to All Regions (default) or a single Region``
+- If a resource is deleted in AWS, investigate CloudTrail first!
 
-``Explanation``: Enabling `CloudTrail log file integrity validation` ensures that the log files are protected against tampering or unauthorized modification. CloudTrail uses SHA-256 hashes to validate the integrity of the log files stored in Amazon S3. By enabling this feature, the SysOps administrators can easily verify the integrity of the log files and ensure that they have not been deleted or changed.
+### CloudTrail Insights
+- 👀 Enable `CloudTrail Insights to detect unusual activity` in your account:
+  - inaccurate resource provisioning
+  - hitting service limits
+  - Bursts of AWS IAM actions
+  - Gaps in periodic maintenance activity
+- CloudTrail Insights analyzes normal management events to create a baseline
+- And then `continuously analyzes write events to detect unusual patterns`.
+  - Anomalies appear in the CloudTrail console
+  - Event is sent to Amazon S3
+  - An EventBridge event is generated (for automation needs)
 
-## `*Q` [AWS Artifact](https://docs.aws.amazon.com/artifact/latest/ug/what-is-aws-artifact.html)
-AWS Artifact `keeps compliance-related reports and agreements`.
+### CloudTrail – Integration with EventBridge
+- Used to react to any API call being made in your account
+- CloudTrail is not “real-time”:
+  - Delivers an event within 15 minutes of an API call
+  - Delivers log files to an S3 bucket every 5 minutes
 
-## 👀 `*Q` AWS Config
-AWS Config `keeps track of` the `configuration` of `your AWS resources and their relationships to other resources`. It can also `evaluate` those AWS `resources for compliance`. This service uses rules that can be configured to evaluate AWS resources against desired configurations.
+### CloudTrail – Organizations Trails
+- A trail that will log all events for all AWS accounts in an AWS Organization
+- Log events for management and member accounts
+- Trail with the same name will be created in every AWS account (IAM permissions)
+- Member accounts can’t remove or modify the organization trail (view only)
+
+### CloudTrail - Log File Integrity Validation
+**``Digest Files``**:
+  - References the log files for the last hour and contains a hash of each
+  - Stored in the same S3 bucket as log files (different folder)
+- ``Helps you determine whether a log file was modified/deleted after CloudTrail delivered it``
+- ``Hashing using SHA-256, Digital Signing using SHA- 256 with RSĂ``
+- `Protect the S3 bucket using bucket policy, versioning, MFA Delete protection, encryption, object lock`
+- Protect files using IAM
+
+  ### Q. To ensure that SysOps administrators can easily verify that the CloudTrail log files have not been deleted or changed, the following action should be taken:
+  Enable `CloudTrail log file integrity validation` when the trail is created or updated.
+
+  ``Explanation``: Enabling `CloudTrail log file integrity validation` ensures that the log files are protected against tampering or unauthorized modification. CloudTrail uses SHA-256 hashes to validate the integrity of the log files stored in Amazon S3. By enabling this feature, the SysOps administrators can easily verify the integrity of the log files and ensure that they have not been deleted or changed
+
+### Cloud Trail - Integration with EventBridge AWS CloudTrail
+* Used to react to any API call being made in your account
+* Cloud Trail is not "real-time":
+  - Delivers an event within 15 minutes of an API call
+  - Delivers log files to an S3 bucket every 5 minutes
+
+### CloudTrail – Organizations Trails
+- A trail that will log all events for all AWS accounts in an AWS Organization
+- Log events for management and member accounts
+- Trail with the same name will be created in every AWS account (IAM permissions)
+- `Member accounts can’t remove or modify the organization trail (view only)`
+
+---
+
+## `👀 *Q` AWS Config
+- Helps with ``auditing`` and recording **``compliance``** of your AWS resources.
+- Helps `record configurations` and changes over time.
+Questions that can be solved by AWS Config:
+  - Is there **unrestricted SSH** access to my security groups?
+  - Do my **buckets have any public access**?
+  - How has my **ALB configuration changed over time**?
+- You can `receive alerts` (SNS notifications) for any changes
+- AWS Config is a `per-region service`.
+- Can be aggregated across regions and accounts.
+- Possibility of storing the configuration data into S3 (analyzed by Athena)
+
+
+AWS Config `keeps track of` the `configuration` of `your AWS resources and their relationships to other resources`. It can also `evaluate` those AWS resources for <u>**`compliance`**</u>. This service uses rules that can be configured to evaluate AWS resources against desired configurations.
 
 For example,
 - can track `changes` to _`CloudFormation stacks`_.
@@ -157,6 +301,51 @@ AWS Config rules use AWS Lambda functions to perform the compliance evaluations,
 s3-bucket-logging-enabled s3-bucket-server-side-encryption-enabled s3-bucket-public-read-prohibited s3-bucket-public-write-prohibited
 These AWS Config rules act as controls to prevent any non-compliant S3 activities.
 
+### Config Rules
+- Can use AWS managed config rules (over 75)
+- Can make **``custom config rules (must be defined in AWS Lambda)``**.
+  - Ex: evaluate if each EBS disk is of type gp2
+  - Ex: evaluate if each EC2 instance is t2.micro
+- Rules can be evaluated / triggered:
+  - For each config change
+  - And / or: at regular time intervals
+- **``AWS Config Rules does not prevent actions from happening (no deny)``**.
+
+### Config Rules – Remediations
+- `Automate remediation of non-compliant resources using SSM Automation Documents`.
+- Use AWS-Managed Automation Documents or create custom Automation Documents
+  - `Tip: you can create custom Automation Documents that invokes Lambda function`.
+- You can set `Remediation Retries` if the resource is still non-compliant after autoremediation.
+
+### Config Rules – Notifications
+ - Use EventBridge to trigger notifications when AWS resources are noncompliant
+ - Ability to send configuration changes and compliance state notifications to SNS (all events – use SNS Filtering or filter at client-side)
+
+### AWS Config – Aggregators
+- The aggregator is created `in one central aggregator account`.
+- Aggregates `rules, resources, etc... across multiple accounts & regions`.
+- If using `AWS Organizations`, no need for individual Authorization
+- Rules are created in each individual source AWS account
+- Can `deploy rules` to multiple target accounts using `CloudFormation StackSets`
+
+## CloudWatch vs CloudTrail vs Config
+- CloudWatch
+  - Performance monitoring (metrics, CPU, network, etc...) & dashboards
+  - Events & Alerting
+  - Log Aggregation & Analysis
+- CloudTrail
+  - Record API calls made within your Account by everyone
+  - Can define trails for specific resources
+  - Global Service
+- Config
+  - Record configuration changes
+  - Evaluate resources against compliance rules
+  - Get timeline of changes and compliance
+---
+## `*Q` [AWS Artifact](https://docs.aws.amazon.com/artifact/latest/ug/what-is-aws-artifact.html)
+AWS Artifact `keeps compliance-related reports and agreements`.
+
+
 ## `*Q` [AWS Inspector](https://aws.amazon.com/inspector/)
 Amazon Inspector is `used for security compliance of instances and applications`.
 
@@ -174,6 +363,151 @@ Correct. Amazon Inspector discovers potential security issues by using security 
 
 For more information about Amazon Inspector, see Amazon Inspector Classic Assessment Templates and Assessment Runs.
 ```
+
+---
+## RDS
+
+### Advantage over using RDS versus deploying
+- RDS is a managed service:
+  - Automated provisioning, OS patching
+  - Continuous backups and restore to specific timestamp (Point in Time Restore)!
+  - Monitoring dashboards
+  - Read replicas for improved read performance
+  - Multi AZ setup for DR (Disaster Recovery)
+  - Maintenance windows for upgrades
+  - Scaling capability (vertical and horizontal)
+  - Storage backed by EBS (gp2 or io1)
+- BUT you can’t SSH into your instances
+
+### RDS Read Replicas for read scalability
+- Up to 15 Read Replicas
+- Within `AZ, Cross AZ or Cross Region`.
+- Replication is `ASYNC`.
+- Replicas can be promoted to their own DB.
+
+### RDS Read Replicas – Network Cost
+- In AWS there’s a network cost when data goes from one AZ to another
+- `For RDS Read Replicas within the same region, you don’t pay that fee`.
+
+### RDS Multi AZ (Disaster Recovery)
+- `SYNC` replication.
+- One DNS name – automatic app failover to standby
+- Increase `availability`.
+- Failover in case of loss of AZ, loss of network, instance or storage failure
+
+`👀 Exam` - `The Read Replicas be setup as Multi AZ for Disaster Recovery (DR)`.
+
+### Lambda in VPC
+- You must define the VPC ID, the Subnets and the Security Groups
+- Lambda will create an ENI (Elastic Network Interface) in your subnets
+- ``AWSLambdaVPCAccessExecutionRole``
+
+### RDS Proxy for AWS Lambda
+- When using Lambda functions with RDS, it opens and maintains a database connection
+- This can result in a ``“TooManyConnections”`` exception
+- With `RDS Proxy`, you no longer need code that handles cleaning up idle connections and managing connection pools
+
+### DB Parameter Groups
+- You can configure the DB engine using Parameter Groups
+- Dynamic parameters are applied immediately
+- Static parameters are applied after instance reboot
+- You can modify parameter group associated with a DB (must reboot)
+
+- *`Must-know parameter`*:
+  - PostgreSQL / SQL Server: `rds.force_ssl=1` => force SSL connections
+  - MySQL / MariaDB: `require_secure_transport`=1 => force SSL connections
+
+### RDS Events & Event Subscriptions
+RDS keeps record of events related to:
+- DB instances
+- Snapshots
+- Parameter groups, security groups ...
+- RDS Event Subscriptions
+  - Subscribe to events to be notified when an event occurs using SNS
+  - Specify the Event Source (instances, SGs, ...) and the Event Category (creation, failover, ...)
+
+- `RDS delivers events to EventBridge`
+
+### RDS with CloudWatch
+CloudWatch metrics associated with RDS (gathered from the hypervisor):
+  - `DatabaseConnections`
+  - `SwapUsage`
+  - `ReadIOPS / WriteIOPS`
+  - `ReadLatency / WriteLatency`
+  - `ReadThroughPut / WriteThroughPut`
+  - `DiskQueueDepth`
+  - `FreeStorageSpace`
+
+- `Enhanced Monitoring` (gathered from an agent on the DB instance).
+  - Useful when you need to see how different processes or threads use the CPU
+- Access to over 50 new CPU, memory, file system, and disk I/O metrics
+
+
+### [RDS storage autoscaling](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PIOPS.StorageTypes.html#USER_PIOPS.Autoscaling)
+With RDS storage autoscaling, you can set the desired maximum storage limit. Autoscaling will manage the storage size. RDS storage autoscaling monitors actual storage consumption and then scales capacity automatically when actual utilization approaches the provisioned storage capacity.
+
+### `👀` `*Q` Enable Enhanced Monitoring
+Amazon RDS provides `metrics` in real time for the operating system (OS) that your DB instance runs on. You can view the metrics for your DB instance using the console. Also, you can consume the Enhanced Monitoring JSON output from Amazon CloudWatch Logs in a monitoring system of your choice.
+
+---
+## Amazon Aurora DB
+- Aurora is a proprietary technology from AWS (not open sourced)
+- Postgres and MySQL are both supported as Aurora DB (that means your drivers will work as if Aurora was a Postgres or MySQL database)
+- Aurora is “AWS cloud optimized” and claims 5x performance improvement over MySQL on RDS, over 3x the performance of Postgres on RDS
+- ``Aurora storage automatically grows in increments of 10GB, up to 128 TB``.
+- Aurora can have up to 15 replicas and the replication process is faster than MySQL (sub 10 ms replica lag)
+- Failover in Aurora is instantaneous. It’s HA (High Availability) native.
+- Aurora costs more than RDS (20% more) – but is more efficient
+
+### Aurora High Availability and Read Scaling
+- One Aurora Instance takes writes (master)
+- ``Support for Cross Region Replication``
+
+    `Shared storage Volume`: Replication + Self Healing + Auto expanding
+
+    Reader Endpoint Connection Load Balancing
+
+### RDS & Aurora Security
+- `At-rest encryption`:
+  - Database master & replicas encryption using AWS KMS - must be defined as launch time
+  - If the master is not encrypted, the read replicas cannot be encrypted
+  To encrypt an un-encrypted database, go through a DB snapshot & restore as encrypted
+- `In-flight encryption`: TLS-ready by default, use the AWS TLS root certificates client-side
+- `IAM Authentication: IAM roles` to connect to your database (instead of username/pw)
+- `Security Groups`: Control Network access to your RDS / Aurora DB
+- `No SSH available except on RDS Custom`
+- `Audit Logs can be enabled and sent to CloudWatch Logs for longer retention`
+
+### Aurora for SysOps
+- You can associate a priority tier (0-15) on each Read Replica
+  - Controls the failover priority
+  - RDS will promote the Read Replica with the highest priority (lowest tier)
+  - If replicas have the same priority, RDS promotes the largest in size
+  - If replicas have the same priority and size, RDS promotes arbitrary replica
+
+- `You can migrate an RDS MySQL snapshot to Aurora MySQL Cluster`
+
+### Connect to Amazon Aurora DB cluster from outside a VPC
+To connect to an Amazon Aurora DB cluster directly from outside the VPC, the instances in the cluster must meet the following requirements:
+
+1. The DB instance must have a public IP address.
+1. The DB instance must be running in a publicly accessible subnet.
+
+For Amazon Aurora DB instances, you can't choose a specific subnet. Instead, choose a DB subnet group when you create the instance. Create a DB subnet group with subnets of similar network configuration. For example, a DB subnet group for Public subnets.
+
+### Metrics to generate reports on the Aurora DB Cluster and its replicas
+1. `AuroraReplicaLagMaximum` - This metric captures the `maximum amount of lag between the primary instance and each Aurora DB instance in the DB cluster`.
+1. `AuroraBinlogReplicaLag` - This metric captures the `amount of time a replica DB cluster running` on Aurora MySQL-Compatible Edition lags behind the source DB cluster.
+This metric reports the value of the Seconds_Behind_Master field of the MySQL SHOW SLAVE STATUS command. This metric is useful for monitoring replica lag between Aurora DB clusters that are replicating across different AWS Regions.
+1. `AuroraReplicaLag` - This metric captures the `amount of lag` an Aurora replica experiences `when replicating updates from the primary instance`.
+1. `InsertLatency` - This metric captures `the average duration of insert operations`.
+
+## 👀  Aurora Reader Endpoint
+To `perform queries`, you can connect to the reader endpoint, with Aurora automatically performing load-balancing among all the Aurora `Replicas`.
+
+A reader endpoint for an Aurora DB cluster provides load-balancing support for read-only connections to the DB cluster. Use the reader endpoint `for read operations`, such as queries. By processing those statements on the read-only Aurora Replicas, this endpoint reduces the overhead on the primary instance. It also helps the cluster to scale the capacity to handle simultaneous SELECT queries, proportional to the number of Aurora Replicas in the cluster. Each Aurora DB cluster has one reader endpoint.
+
+Reference:[Amazon Aurora connection management](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.Endpoints.html)
 
 ## `*Q` [AWS Trusted Advisor](https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html)
 Trusted Advisor provides real-time guidance to help users follow AWS best practices to provision their resources
@@ -194,6 +528,37 @@ Has auto remediate feature for any non-compliant S3 buckets using the following 
 s3-bucket-logging-enabled s3-bucket-server-side-encryption-enabled s3-bucket-public-read-prohibited s3-bucket-public-write-prohibited
 
 These AWS Config rules act as controls to prevent any non-compliant S3 activities.
+
+---
+## Amazon ElastiCache Overview
+- The same way RDS is to get managed Relational Databases...
+- ElastiCache is to get managed `Redis or Memcached`
+- Caches are in-memory databases with really high performance, low latency
+- `Helps reduce load off of databases for read intensive workloads`
+- `Helps make your application stateless`
+- AWS takes care of OS maintenance / patching, optimizations, setup, configuration, monitoring, failure recovery and backups
+
+      Using ElastiCache involves heavy application code changes
+
+### ElastiCache Replication (Redis): Cluster Mode Disabled
+- One primary node, up to 5 replicas
+- Asynchronous Replication
+- The primary node is used for read/write
+- The other nodes are read-only
+- `One shard, all nodes have all the data`
+- Guard against data loss if node failure
+- Multi-AZ enabled by default for failover
+- Helpful to scale read performance
+- Horizontal and vertical
+
+### ElastiCache Replication: Cluster Mode Enabled
+Data is partitioned across shards (helpful to scale writes)
+
+- Automatically increase/decrease the desired shards or replicas
+- Supports both Target Tracking and Scheduled Scaling Policies
+- Works only for Redis with Cluster Mode Enabled
+
+---
 
 ## Memcached
 
@@ -963,38 +1328,6 @@ A tag is a label that you or AWS assigns to an AWS resource. Each tag consists o
 
 ## 👀 `*Q` [AWS Resource Groups Tag Editor](https://docs.aws.amazon.com/ARG/latest/userguide/tag-editor.html)
 With Resource Groups, you can create, maintain, and view a collection of resources that share common tags. Tag Editor manages `tags across services and AWS Regions`. Tag Editor can perform a global search and can edit a large number of tags at one time.
-
-## Aurora DB
-
-### Connect to Amazon Aurora DB cluster from outside a VPC
-To connect to an Amazon Aurora DB cluster directly from outside the VPC, the instances in the cluster must meet the following requirements:
-
-1. The DB instance must have a public IP address.
-1. The DB instance must be running in a publicly accessible subnet.
-
-For Amazon Aurora DB instances, you can't choose a specific subnet. Instead, choose a DB subnet group when you create the instance. Create a DB subnet group with subnets of similar network configuration. For example, a DB subnet group for Public subnets.
-
-### Metrics to generate reports on the Aurora DB Cluster and its replicas
-1. `AuroraReplicaLagMaximum` - This metric captures the `maximum amount of lag between the primary instance and each Aurora DB instance in the DB cluster`.
-1. `AuroraBinlogReplicaLag` - This metric captures the `amount of time a replica DB cluster running` on Aurora MySQL-Compatible Edition lags behind the source DB cluster.
-This metric reports the value of the Seconds_Behind_Master field of the MySQL SHOW SLAVE STATUS command. This metric is useful for monitoring replica lag between Aurora DB clusters that are replicating across different AWS Regions.
-1. `AuroraReplicaLag` - This metric captures the `amount of lag` an Aurora replica experiences `when replicating updates from the primary instance`.
-1. `InsertLatency` - This metric captures `the average duration of insert operations`.
-
-## 👀  Aurora Reader Endpoint
-To `perform queries`, you can connect to the reader endpoint, with Aurora automatically performing load-balancing among all the Aurora `Replicas`.
-
-A reader endpoint for an Aurora DB cluster provides load-balancing support for read-only connections to the DB cluster. Use the reader endpoint `for read operations`, such as queries. By processing those statements on the read-only Aurora Replicas, this endpoint reduces the overhead on the primary instance. It also helps the cluster to scale the capacity to handle simultaneous SELECT queries, proportional to the number of Aurora Replicas in the cluster. Each Aurora DB cluster has one reader endpoint.
-
-Reference:[Amazon Aurora connection management](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.Endpoints.html)
-
-## RDS
-
-### [RDS storage autoscaling](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PIOPS.StorageTypes.html#USER_PIOPS.Autoscaling)
-With RDS storage autoscaling, you can set the desired maximum storage limit. Autoscaling will manage the storage size. RDS storage autoscaling monitors actual storage consumption and then scales capacity automatically when actual utilization approaches the provisioned storage capacity.
-
-### `👀` `*Q` Enable Enhanced Monitoring
-Amazon RDS provides `metrics` in real time for the operating system (OS) that your DB instance runs on. You can view the metrics for your DB instance using the console. Also, you can consume the Enhanced Monitoring JSON output from Amazon CloudWatch Logs in a monitoring system of your choice.
 
 ## OpsWorks
 AWS OpsWorks is a `configuration management service` that provides managed instances of `Chef` and `Puppet`.
