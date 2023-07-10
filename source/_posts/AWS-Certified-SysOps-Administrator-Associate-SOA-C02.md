@@ -322,7 +322,6 @@ AWS Config provides a number of AWS managed rules that address a wide range of s
 Managed rules:
 - `require-tags`: managed rule in AWS Config. This rule checks if a resource contains the tags that you specify.
 
-
 ### Config Rules – Remediations
 Has auto remediate feature for any non-compliant S3 buckets using the following AWS Config rules:
 
@@ -361,6 +360,11 @@ These AWS Config rules act as controls to prevent any non-compliant S3 activitie
   - Record configuration changes
   - Evaluate resources against compliance rules
   - Get timeline of changes and compliance
+
+---
+
+## 👀 Q AWS Task Orchestrator and Executor (AWSTOE)
+Use the [AWS Task Orchestrator and Executor (AWSTOE)](https://docs.aws.amazon.com/imagebuilder/latest/userguide/toe-get-started.html) application `to orchestrate complex workflows`, `modify system configurations`, and `test your systems without writing code`. This application uses a declarative document schema. Because it is a standalone application, it does not require additional server setup.
 
 ---
 
@@ -510,7 +514,7 @@ This metric reports the value of the Seconds_Behind_Master field of the MySQL SH
 1. `AuroraReplicaLag` - This metric captures the `amount of lag` an Aurora replica experiences `when replicating updates from the primary instance`.
 1. `InsertLatency` - This metric captures `the average duration of insert operations`.
 
-## 👀  Aurora Reader Endpoint
+## 👀 Aurora Reader Endpoint
 To `perform queries`, you can connect to the reader endpoint, with Aurora automatically performing load-balancing among all the Aurora `Replicas`.
 
 A reader endpoint for an Aurora DB cluster provides load-balancing support for read-only connections to the DB cluster. Use the reader endpoint `for read operations`, such as queries. By processing those statements on the read-only Aurora Replicas, this endpoint reduces the overhead on the primary instance. It also helps the cluster to scale the capacity to handle simultaneous SELECT queries, proportional to the number of Aurora Replicas in the cluster. Each Aurora DB cluster has one reader endpoint.
@@ -559,14 +563,10 @@ To fix the issue of high Memcached evictions in Amazon ElastiCache, the followin
 The [Evictions metric](https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/CacheMetrics.WhichShouldIMonitor.html#metrics-evictions) for Amazon ElastiCache for Memcached represents the number of nonexpired items that the cache evicted to provide space for new items. If you are experiencing evictions with your cluster, it is usually a sign that you need to scale up (use a node that has a larger memory footprint)
 or scale out (add additional nodes to the cluster) to accommodate the additional data
 
+---
+
 ## [VPC](https://docs.aws.amazon.com/vpc/latest/userguide/how-it-works.html#what-is-privatelink)
 With Amazon Virtual Private Cloud (Amazon VPC), you can launch AWS resources in a logically isolated virtual network that you've defined. This virtual network closely resembles a traditional network that you'd operate in your own data center, with the benefits of using the scalable infrastructure of AWS.
-
-`enableDnsHostnames` – Indicates whether the instances launched in the VPC get public DNS hostnames. If this attribute is true, instances in the VPC get public DNS hostnames, but only `if` the `enableDnsSupport` attribute is also set to `true`.
-
-`enableDnsSupport` – Indicates whether the DNS resolution is supported for the VPC. If this attribute is false, the Amazon-provided DNS server in the VPC that resolves public DNS hostnames to IP addresses is not enabled. If this attribute is true, queries to the Amazon provided DNS server at the 169.254.169.253 IP address, or the reserved IP address at the base of the VPC IPv4 network range plus two will succeed.
-
-By default, both attributes are set to `true` in a default VPC or a VPC created by the VPC wizard. By default, only the `enableDnsSupport` attribute is set to true in a VPC created on the Your VPCs page of the VPC console or using the AWS CLI, API, or an AWS SDK.
 
 ### Configuration
 `Regardless of the type of subnet, the internal IPv4 address range of the subnet is always private`. AWS never announces these address blocks to the internet.
@@ -577,11 +577,180 @@ By default, both attributes are set to `true` in a default VPC or a VPC created 
 
 Reference: [How Amazon VPC works](https://docs.aws.amazon.com/vpc/latest/userguide/how-it-works.html)
 
+![VCP Diagram](../images/AWS-VPC-Diagram.png)
+
+### CIDR – IPv4
+- Classless `Inter-Domain Routing` – a method for allocating IP addresses
+- `Used in Security Groups` rules and `AWS networking` in general
+
+- A CIDR consists of two components
+- *Base IP*
+  - Represents an IP contained in the range (XX.XX.XX.XX)
+  - Example: 10.0.0.0, 192.168.0.0, ...
+
+- *Subnet Mask*
+  - Defines how many bits can change in the IP
+  - Example: /0, /24, /32
+  - Can take two forms:
+    - /8 ó 255.0.0.0
+    - /16 ó 255.255.0.0
+    - /24 ó 255.255.255.0
+    - /32 ó 255.255.255.255
+
+### Public vs. Private IP (IPv4)
+- The Internet Assigned Numbers Authority (IANA) established certain blocks of IPv4 addresses for the use of private (LAN) and public (Internet) addresses
+
+- `Private IP` can only allow certain values:
+  - 10.0.0.0 – 10.255.255.255 (10.0.0.0/8) <- in big networks
+  - 172.16.0.0 – 172.31.255.255 (172.16.0.0/12) <- *AWS default VPC in that range*
+  - 192.168.0.0 – 192.168.255.255 (192.168.0.0/16) <- e.g., home networks
+
+- All the rest of the IP addresses on the Internet are Public
+
+### VPC in AWS – IPv4
+- `VPC = Virtual Private Cloud`
+- You can have multiple VPCs in an AWS region (max. 5 per region – soft limit)
+  - Max. CIDR per VPC is 5, for each CIDR:
+  - Min. size is /28 (16 IP addresses)
+- Max. size is /16 (65536 IP addresses)
+- Because VPC is private, only the Private IPv4 ranges are allowed:
+  - 10.0.0.0 – 10.255.255.255 (10.0.0.0/8)
+  - 172.16.0.0 – 172.31.255.255 (172.16.0.0/12)
+  - 192.168.0.0 – 192.168.255.255 (192.168.0.0/16)
+
+- <u>``Your VPC CIDR should NOT overlap with your other networks (e.g., corporate)``</u>
+
+### VPC – Subnet (IPv4)
+- AWS reserves `5 IP addresses` (`first 4 & last 1`) in each subnet
+- These 5 IP addresses are not available for use and can’t be assigned to anEC2 instance
+- Example: if CIDR block 10.0.0.0/24, then reserved IP addresses are:
+  - **10.0.0.0** – Network Address
+  - **10.0.0.1** – reserved by AWS for the VPC router
+  - **10.0.0.2** – reserved by AWS for mapping to Amazon-provided DNS
+  - **10.0.0.3** – reserved by AWS for future use
+  - **10.0.0.255** – Network Broadcast Address. AWS does not support broadcast in a VPC, therefore the address is reserved
+- `Exam Tip`, if you need 29 IP addresses for EC2 instances:
+  - You can’t choose a subnet of size /27 (32 IP addresses, 32 – 5 = 27 < 29)
+  - You need to choose a subnet of size /26 (64 IP addresses, 64 – 5 = 59 > 29)
+
+### Internet Gateway (IGW)
+- Allows resources (e.g., EC2 instances) in a VPC connect to the Internet
+- It scales horizontally and is highly available and redundant
+- Must be created separately from a VPC
+- One VPC can only be attached to one IGW and vice versa
+
+- Internet Gateways on their own do not allow Internet access...
+- Route tables must also be edited!
+
+### Bastion Hosts
+Is an ec2 instance, it's espcial because it's in a public subnet, with its segurity group
+
+- We can use a Bastion Host to SSH into our private EC2 instances
+- The bastion is in the public subnet which is then connected to all other private subnets
+- `Bastion Host security group must allow` inbound from the internet on port 22 from restricted CIDR, for example the public CIDR of your corporation
+- `Security Group of the EC2 Instances` must allow the Security Group of the Bastion Host, or the *private IP* of the Bastion host
+
+### NAT Instance (outdated, but still at the exam)
+- NAT = Network Address Translation
+- Allows EC2 instances in private subnets toconnect to the Interne
+- Must be launched in a public subnet
+- Must disable EC2 setting: `Source / destination Check`
+- Must have Elastic IP attached to it
+- Route Tables must be configured to route traffic from private subnets to the NAT instance
+
+### NAT Gateway
+- AWS-managed NAT, higher bandwidth, high availability, no administration
+- Pay per hour for usage and bandwidth
+- NATGW is created in a specific Availability Zone, uses an Elastic IP
+- Can’t be used by EC2 instance in the same subnet (only from other subnets)
+- Requires an IGW (Private Subnet => NATGW => IGW)
+- 5 Gbps of bandwidth with automatic scaling up to 45 Gbps
+- No Security Groups to manage / required
+
+### NAT Gateway with High Availability
+- `NAT Gateway is resilient within a single Availability Zone`
+- Must create `multiple NAT Gateways` in `multiple AZs` for fault-tolerance
+- There is no cross-AZ failover needed because if an AZ goes down it doesn't need NAT
+
 ### Connect the Lambda function to a private subnet that has a route to a NAT gateway deployed in a public subnet of the VPC.
 ``Explanation``: By connecting the Lambda function to a private subnet with a route to a NAT gateway, the function can access resources within the VPC while also leveraging the NAT gateway to access the internet and communicate with third-party APIs. The NAT gateway acts as a bridge between the private subnet and the internet, allowing the Lambda function to securely access external resources.
 
-### VPC Endpoint
+#### DNS Resolution in VPC
+- `DNS Resolution (enableDnsSupport)`
+  - Decides if DNS resolution from Route 53 Resolver server is supported for the VPC
+  - True (default): it queries the Amazon Provider DNS Server at `169.254.169.253` or the reserved IP address at the base of the `VPC IPv4 network range plus two (.2)`.
+
+`enableDnsSupport` – Indicates whether the DNS resolution is supported for the VPC. If this attribute is false, the Amazon-provided DNS server in the VPC that resolves public DNS hostnames to IP addresses is not enabled. If this attribute is true, queries to the Amazon provided DNS server at the 169.254.169.253 IP address, or the reserved IP address at the base of the VPC IPv4 network range plus two will succeed.
+
+- `DNS Hostnames (enableDnsHostnames)`
+  - By default,
+  - True => default VPC
+  - False => newly created VPCs
+- Won’t do anything unless enableDnsSupport=true
+- If True, assigns public hostname to EC2 instance if it has a public IPv4
+
+`enableDnsHostnames` – Indicates whether the instances launched in the VPC get public DNS hostnames. If this attribute is true, instances in the VPC get public DNS hostnames, but only `if` the `enableDnsSupport` attribute is also set to `true`.
+
+By default, both attributes are set to `true` in a default VPC or a VPC created by the VPC wizard. By default, only the `enableDnsSupport` attribute is set to true in a VPC created on the Your VPCs page of the VPC console or using the AWS CLI, API, or an AWS SDK.
+
+### DNS Resolution in VPC
+- If you use custom DNS domain names in a Private Hosted Zone in Route 53, you must set both these attributes (enableDnsSupport & enableDnsHostname) to true
+
+### Network Access Control List (NACL)
+- NACL are like a firewall which control traffic from and **to subnets**
+- **One NACL per subnet**, new subnets are assigned the **Default NACL**
+- You define **NACL Rules**:
+  - Rules have a number (1-32766), higher precedence with a lower number
+  - First rule match will drive the decision
+  - Example: if you define #100 ALLOW 10.0.0.10/32 and #200 DENY 10.0.0.10/32, the IP address will be allowed because 100 has a higher precedence over 200
+  - The last rule is an asterisk (*) and denies a request in case of no rule match
+  - AWS recommends adding rules by increment of 100
+- Newly created NACLs will deny everything
+- NACL are a `great way of blocking a specific IP address` at the subnet level
+
+### Default NACL
+- `Accepts everything inbound/outbound` with the subnets it’s associated with
+
+### Ephemeral Ports
+- For any two endpoints to establish a connection, they must use ports
+- Clients connect to a `defined port`, and expect a response on an `ephemeral port`
+- Different Operating Systems use different port ranges, examples:
+  - IANA & MS Windows 10 -> 49152 – 65535
+  - Many Linux Kernels -> 32768 – 60999
+
+| Security Group | NACL |
+| -------------- | ---- |
+| Operates at the instance level | Operates at the subnet level |
+| Supports allow rules only | Supports allow rules and deny rules |
+| ``Stateful``: return traffic is automatically allowed, regardless of any rules | ``Stateless``: return traffic must be explicitly allowed by rules (think of ephemeral ports) |
+| All rules are evaluated before deciding whether to allow traffic | Rules are evaluated in order (lowest to highest) when deciding whether to allow traffic, first match wins |
+| Applies to an EC2 instance when specified by someone | Automatically applies to all EC2 instances in the subnet that it’s associated with |
+
+### VPC – Reachability Analyzer
+- A network diagnostics tool that troubleshoots network connectivity between two endpoints in your VPC(s)
+- It builds a model of the network configuration, then checks the reachability based on these configurations (`it doesn’t send packets`)
+- When the destination is
+  - `Reachable` – it produces hop-by-hop details of the virtual network path
+  - `Not reachable` – it identifies the blocking component(s) (e.g., configuration issues in SGs, NACLs, Route Tables, ...)
+- Use cases: troubleshoot connectivity issues, ensure network configuration is as intended, ...
+
+### VPC Peering
+- Privately connect two VPCs using AWS’ network
+- Make them behave as if they were in the same network
+- Must not have overlapping CIDRs
+- VPC Peering connection is `NOT transitive` (must be established for each VPC that need to communicate with one another)
+- `You must update route tables in each VPC’s subnets to ensure EC2 instances can communicate with each other`
+
+- You can create VPC Peering connection between VPCs in `different AWS accounts/regions`
+- You can reference a security group in a peered VPC (`works cross accounts – same region`)
+
+### VPC Endpoint (AWS PrivateLink)
 A VPC Endpoint allows you to `connect` your `VPC` directly `to AWS services` without the need for `internet gateways`, `NAT gateways`, or `VPN connections`. It enables private communication between your VPC and the AWS service without going over the internet.
+
+- Most secure & scalable way to `expose a service to 1000s of VPC` (own or other accounts)
+- Does `not require VPC peering, internet gateway, NAT, route tables... (magical..)
+- Requires a `network load balancer` (Service VPC) and `ENI` (Customer VPC) `or GWLB`
+- If the NLB is in multiple AZ, and the ENIs in multiple AZ, the solution is fault tolerant!
 
 To configure a VPC Endpoint for accessing AWS Systems Manager APIs, you can follow these steps:
 
@@ -589,8 +758,143 @@ To configure a VPC Endpoint for accessing AWS Systems Manager APIs, you can foll
 1. Update the route tables in your VPC to route traffic destined for the AWS Systems Manager API endpoints to the VPC Endpoint. This ensures that traffic is directed through the VPC Endpoint instead of going over the internet.
 1. Verify that your on-premises instances and AWS managed instances are configured to use the appropriate VPC and route tables.
 
+#### Types of Endpoints
+- `Interface Endpoints (powered by PrivateLink)`
+  - Provisions an ENI (private IP address) as an entry point (must attach a Security Group)
+  - Supports most AWS services
+  - $ per hour + $ per GB of data processed
+- `Gateway Endpoints`
+  - Provisions a gateway and must be used as ``a target in a route table (does not use security groups)``
+  - Supports both S3 and DynamoDB
+  - Free
+
+### Gateway or Interface Endpoint for S3?
+- `Gateway is most likely going to be preferred all the time at the exam`.
+- Cost: free for Gateway, $ for interface endpoint
+- Interface Endpoint is preferred access is `required` from `on premises` (Site to Site VPN or Direct Connect), a different VPC or a different region.
+
+### VPC Flow Logs
+- Capture information about IP traffic going into your interfaces:
+  - VPC Flow Logs
+  - Subnet Flow Logs
+  - Elastic Network Interface (ENI) Flow Logs
+- Helps to monitor & troubleshoot connectivity issues
+- Flow logs data can go to S3, CloudWatch Logs, and Kinesis Data Firehose
+- Captures network information from AWS managed interfaces too: ELB, RDS, ElastiCache, Redshift, WorkSpaces, NATGW, Transit Gateway...
+
+### VPC Flow Logs Syntax
+- `srcaddr & dstaddr` – help identify problematic IP
+- `srcport & dstport` – help identity problematic ports
+- `Action` – success or failure of the request due to Security Group / NACL
+- Can be used for analytics on usage patterns, or malicious behavior
+- `Query VPC flow logs using Athena on S3 or CloudWatch Logs Insights`
+- Flow Logs examples: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-records-examples.html
+
+---
+
+### AWS Site-to-Site VPN
+- `Virtual Private Gateway (VGW)`
+  - VPN concentrator on the AWS side of the VPN connection
+  - VGW is created and attached to the VPC from which you want to create the Site-to-Site VPN connection
+  - Possibility to customize the ASN (Autonomous System Number)
+- `Customer Gateway (CGW)`
+  - Software application or physical device on customer side of the VPN connection
+  - https://docs.aws.amazon.com/vpn/latest/s2svpn/your-cgw.html#DevicesTested
+
+### Site-to-Site VPN Connections
+- `Customer Gateway Device (On-premises)`
+  - 👀 What IP address to use?
+    - Public Internet-routable IP address for your Customer Gateway device
+    - If it’s behind a NAT device that’s enabled for NAT traversal (NAT-T), use the public IP address of the NAT device
+- 👀 `Important step`: enable `Route Propagation` for the Virtual Private Gateway in the route table that is associated with your subnets
+- 👀 If you need to `ping your EC2 instances` from on-premises, make sure you add the `ICMP protocol on the inbound of your security groups`.
+
+#### AWS VPN CloudHub
+- Provide secure communication between multiple sites, if you have multiple VPN connections
+- `Low-cost` hub-and-spoke model for primary or secondary network connectivity between different locations (`VPN only`)
+- It’s a VPN connection so it goes over the `public Internet`
+- To set it up, connect multiple VPN connections on the same VGW, setup dynamic routing and configure route tables
+
+## To create a VPN
+1. Create Customer Gateway
+1. Create Virtual Private Gateway
+1. Use Site-to-Site VPN connection for both VGW and customers Gateway.
+
+---
+
+### Direct Connect (DX)
+- Provides a dedicated `private` connection from a `remote network to your VPC`.
+- Dedicated connection must be setup between your DC and AWS Direct Connect locations
+- You `need` to setup a `Virtual Private Gateway` on your VPC
+- Access public resources (S3) and private (EC2) on same connection
+- Use Cases:
+  - Increase bandwidth throughput - working with large data sets – lower cost
+  - More consistent network experience - applications using real-time data feeds
+  - Hybrid Environments (on prem + cloud)
+- Supports both IPv4 and IPv6
+
+#### Direct Connect Gateway
+`If you want to setup a Direct Connect to one or more VPC in many different regions (same account), you must use a Direct Connect Gateway`.
+
+### Direct Connect – Connection Types
+- `Dedicated Connections`: 1Gbps,10 Gbps and 100 Gbps capacity
+  - Physical ethernet port dedicated to a customer
+  - Request made to AWS first, then completed by AWS Direct Connect Partners
+- `Hosted Connections`: 50Mbps, 500 Mbps, to 10 Gbps
+  - Connection requests are made via AWS Direct Connect Partners
+  - Capacity can be `added or removed on demand`
+  - 1, 2, 5, 10 Gbps available at select AWS Direct Connect Partners
+- Lead times are often longer than 1 `month to establish a new connection` - EXAM
+
+### Direct Connect – Encryption
+- Data in transit is `not encrypted` but is private
+- `AWS Direct Connect + VPN provides` an IPsec-encrypted private connection
+
+### Direct Connect - Resiliency
+`High Resiliency for Critical Workloads`
+
+`Maximum Resiliency for Critical Workloads`
+
+### Site-to-Site VPN connection as a backup
+In case Direct Connect fails, you can `set up a backup Direct Connect` connection (`expensive`), or a `Site-to-Site` VPN connection.
+
+### Transit Gateway
+- `For having transitive peering between thousands of VPC and on-premises, hub-and-spoke (star) connection`
+- `Regional resource`, can work cross-region
+- Share cross-account using Resource Access Manager (RAM)
+- You can peer Transit Gateways across regions
+- Route Tables: limit which VPC can talk with other VPC
+- Works with Direct Connect Gateway, VPN connections
+- Supports `IP Multicast` (not supported by any other AWS service)1
+
+#### Transit Gateway: Site-to-Site VPN ECMP
+- `ECMP = Equal-cost multi-path routing`.
+- Routing strategy to allow to forward a packet over multiple best path.
+* Use case: create multiple Site-to-Site VPN connections `to increase the bandwidth of your connection to AWS`.
+
+### VPC – Traffic Mirroring
+- Capture the traffic
+  - From (Source) – ENIs
+  - To (Targets) – an ENI or a Network Load Balancer
+- Source and Target can be in the same VPC or different VPCs (VPC Peering)
+- Use cases: content inspection, threat  Auto Scaling group monitoring, troubleshooting, ...
+
+### IPv6 in VPC
+- `IPv4 cannot be disabled for your VPC and subnets`
+- You `can enable IPv6` (they’re public IP addresses) to operate in `dual-stack mode`.
+- Your EC2 instances
+- They can communicate using either IPv4 or IPv6
+to the internet through an Internet Gatewaywill get at least a private internal IPv4 and a public IPv6
+
+## IPv6 Troubleshooting
+- `IPv4 cannot be disabled for your VPC and subnets`
+- *So, if you cannot launch an EC2 instance in your subnet*
+  - It’s not because it cannot acquire an IPv6 (the space is very large)
+  - It’s because *there are no available IPv4 in your subnet*
+- `Solution`: create a new IPv4 CIDR in your subnet
+
 ### Egress-only Internet Gateway
-An egress-only internet gateway is a horizontally scaled, redundant, and highly available VPC component that allows outbound communication over IPv6 from instances in your VPC to the internet, and prevents the internet from initiating an IPv6 connection with your instances.
+An egress-only internet gateway is a horizontally scaled, redundant, and highly available VPC component that `allows outbound communication over IPv6 from instances in your VPC to the internet`, and prevents the internet from initiating an IPv6 connection with your instances. You must `update the Route Tables`
 
 An egress-only internet gateway is for use with `IPv6 traffic only`. To enable outbound-only internet communication `over IPv4`, use a `NAT gateway` instead.
 
@@ -607,6 +911,95 @@ The security group for the mount target does not allow inbound NFS connections f
 ``Explanation``: When mounting an Amazon EFS file system from EC2 instances, the security group associated with the mount target should allow inbound NFS (Network File System) connections from the security group used by the EC2 instances. By default, the security group associated with the mount target allows inbound connections from the default security group of the VPC. If the EC2 instances are using a different security group, it needs to be added to the mount target's security group's inbound rules to allow NFS connections.
 
 👀 - Only support `allow` rules. You have to allow incoming traffic from your customers to your instances
+
+### The following provides an overview of the steps to enable your VPC and subnets to use IPv6:
+
+- `Step 1`:
+Associate an IPv6 CIDR Block with Your VPC and Subnets – Associate an Amazon-provided IPv6 CIDR block with your VPC and with your subnets.
+
+- `Step 2`:
+Update Your Route Tables – Update your route tables to route your IPv6 traffic. For a public subnet, create a route that routes all IPv6 traffic from the subnet to the Internet gateway. For a private subnet, create a route that routes all Internet-bound IPv6 traffic from the subnet to an egress-only Internet gateway.
+
+- `Step 3`:
+Update Your Security Group Rules – Update your security group rules to include rules for IPv6 addresses. This enables IPv6 traffic to flow to and from your instances. If you’ve created custom network ACL rules to control the flow of traffic to and from your subnet, you must include rules for IPv6 traffic.
+
+- `Step 4`:
+Change Your Instance Type – If your instance type does not support IPv6, change the instance type. If your instance type does not support IPv6, you must resize the instance to a supported instance type. In the example, the instance is an m3.large instance type, which does not support IPv6. You must resize the instance to a supported instance type, for example, m4.large.
+
+- `Step 5`:
+Assign IPv6 Addresses to Your Instances – Assign IPv6 addresses to your instances from the IPv6 address range of your subnet.
+
+- `Step 6`: (Optional)
+Configure IPv6 on Your Instances – If your instance was launched from an AMI that is not configured to use DHCPv6, you must manually configure your instance to recognize an IPv6 address assigned to the instance.
+
+### VPC Section Summary
+- `CIDR` – IP Range
+- `VPC` – Virtual Private Cloud => we define a list of IPv4 & IPv6 CIDR
+- `Subnets` – tied to an AZ, we define a CIDR
+- `Internet Gateway` – at the VPC level, provide IPv4 & IPv6 Internet Access
+- `Route Tables` – must be edited to add routes from subnets to the IGW, VPC Peering Connections, VPC Endpoints, ...
+- `Bastion Host` – public EC2 instance to SSH into, that has SSH connectivity to EC2 instances in private subnets
+- `NAT Instances` – gives Internet access to EC2 instances in private subnets. Old, must be setup in a public subnet, disable Source / Destination check flag
+- `NAT Gateway` – managed by AWS, provides scalable Internet access to private EC2 instances, IPv4 only
+- `Private DNS` + Route 53 – enable DNS Resolution + DNS Hostnames (VPC)
+-` NACL` – stateless, subnet rules for inbound and outbound, don’t forget Ephemeral Ports
+- `Security Groups` – stateful, operate at the EC2 instance level
+- `Reachability Analyzer` – perform network connectivity testing between AWS resources
+- `VPC Peering` – connect two VPCs with non overlapping CIDR, non-transitive
+- `VPC Endpoints` – provide private access to AWS Services (S3, DynamoDB, CloudFormation, SSM) within a VPC
+- `VPC Flow Logs` – can be setup at the VPC / Subnet / ENI Level, for ACCEPT and REJECT traffic, helps identifying attacks, analyze using Athena or CloudWatch Logs Insights
+- `Site-to-Site VPN` – setup a Customer Gateway on DC, a Virtual Private Gateway on VPC, and site-to-site VPN over public Internet
+- `AWS VPN CloudHub` – hub-and-spoke VPN model to connect your sites
+- `Direct Connect` – setup a Virtual Private Gateway on VPC, and establish a direct private connection to an AWS Direct Connect Location
+- `Direct Connect Gateway` – setup a Direct Connect to many VPCs in different AWS regions
+- `AWS PrivateLink / VPC Endpoint Services`:
+  - Connect services privately from your service VPC to customers VPC
+  - Doesn’t need VPC Peering, public Internet, NAT Gateway, Route Tables
+  - Must be used with Network Load Balancer & ENI
+- `ClassicLink` – connect EC2-Classic EC2 instances privately to your VPC
+- `Transit Gateway` – transitive peering connections for VPC, VPN & DX
+- `Traffic Mirroring` – copy network traffic from ENIs for further analysis
+- `Egress-only Internet Gateway` – like a NAT Gateway, but for IPv6
+
+### Networking Costs in AWS per GB
+- Use Private IP instead of Public IP for good savings and better network  performance
+- Use same AZ for maximum savings (at the cost of high availability) - Exam 👀
+
+### S3 Data Transfer Pricing – Analysis for USA
+- `S3 ingress`: free
+- `S3 to Internet`: $0.09 per GB
+- `S3 Transfer Acceleration`:
+  - Faster transfer times (50 to 500% better)
+  - Additional cost on top of Data Transfer Pricing: +$0.04 to $0.08 per GB
+- `S3 to CloudFront`: $0.00 per GB
+- `CloudFront to Internet`: $0.085 per GB (slightly cheaper than S3)
+  - Caching capability (lower latency)
+  - Reduce costs associated with S3 Requests Pricing (7x cheaper with CloudFront)
+- `S3 Cross Region Replication`: $0.02 per GB
+
+### AWS Network Firewall
+- Protect your entire Amazon VPC
+- From Layer 3 to Layer 7 protection
+- Any direction, you can inspect
+  - VPC to VPC traffic
+  - Outbound to internet
+  - Inbound from internet
+  - To / from Direct Connect & Site-to-Site VPN
+- Internally, the AWS Network Firewall uses the AWS Gateway Load Balancer
+- Rules can be centrally managed cross-account by AWS Firewall Manager to apply to many VPCs
+
+### Network Firewall – Fine Grained Controls
+- Supports 1000s of rules
+- IP & port - example: 10,000s of IPs filtering
+- Protocol – example: block the SMB protocol for outbound communications
+- Stateful domain list rule groups: only allow outbound traffic to *.mycorp.com or third-party software repo
+- General pattern matching using regex
+- `Traffic filtering: Allow, drop, or alert for the traffic that matches the rules`
+- `Active flow inspection` to protect against network threats with intrusion-prevention capabilities (like Gateway Load Balancer, but all managed by AWS)
+
+- Send logs of rule matches to Amazon S3, CloudWatch Logs, Kinesis Data Firehose
+
+---
 
 ## CloudFormation
 
@@ -692,7 +1085,6 @@ Parameters:
   LatestWindowsAMIParameter:
     Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
     Default: /LatestWindowsAMI
-
 
 Parameters:
   LatestWindowsAMIParameter:
@@ -814,8 +1206,14 @@ Create a backup plan in AWS Backup. Assign resources by resource ID, selecting a
 
 - Read more: https://aws.amazon.com/security/penetration-testing/
 
+---
+
 ## `*Q` [AWS Inspector](https://aws.amazon.com/inspector/)
-Amazon Inspector is `used for security compliance of instances and applications`.
+Amazon Inspector is `used for security compliance of instances and applications deployed on AWS`.
+
+Amazon Inspector `checks` for `unintended network accessibility` of your Amazon EC2 instances and _`vulnerabilities`_ on those EC2 instances.
+
+Amazon Inspector also `integrates` with `AWS Security Hub` to provide a `view` of your `security posture across multiple AWS accounts`.
 
 Amazon Inspector is an automated security assessment service that helps you `test` the `network accessibility` of your Amazon EC2 instances and the `security state of your applications running on the instances`.
 
@@ -824,6 +1222,7 @@ An Amazon Inspector assessment report can be generated for an assessment run onc
 You can select from two types of report for your assessment, a findings report or a full report. The findings report contains an executive summary of the assessment, the instances targeted, the rules packages tested, the rules that generated findings, and detailed information about each of these rules along with the list of instances that failed the check. The full report contains all the
 information in the findings report and additionally provides the list of rules that were checked and passed on all instances in the assessment target.
 
+## 👀 Amazon Inspector
 - `Automated Security Assessments`
 - `For EC2 instances`
 - `For Container Images push to Amazon ECR`
@@ -832,8 +1231,9 @@ information in the findings report and additionally provides the list of rules t
 -> `Reporting & integration with AWS Security Hub`
 
 -> `Send findings to Amazon Event Bridge`
+
 ### What does Amazon Inspector evaluate?
-- ``Only for EC2 instances, Container Images & Lambda functions``
+- ``Only for EC2 instances, Container Images & Lambda functions`` - `EXAM`
 
 - Continuous scanning of the infrastructure, only when needed
 
@@ -1978,6 +2378,8 @@ Reference: [Access logs for your Application Load Balancer](https://docs.aws.ama
 ### CloudTrail logs
 `Elastic Load Balancing` is `integrated` with `AWS CloudTrail`, a service that provides a record of actions taken by a user, role, or an AWS service in Elastic Load Balancing. `CloudTrail captures` all `API calls for Elastic Load Balancing as events`. The calls captured include calls from the AWS Management Console and code calls to the Elastic Load Balancing API operations.
 
+---
+
 ## Amazon Machine Images (AMIs)
 
 ### Sharing
@@ -1985,6 +2387,11 @@ The key points to consider before planning the expansion and sharing of Amazon M
 
 1. AMIs are regional resources and can be shared across Regions: AMIs are specific to a particular AWS Region. If you want to use an AMI in a different Region, you need to copy the AMI to that Region. Sharing an AMI across Regions requires creating a new copy in each desired Region.
 2/ You need to share any CMKs used to encrypt snapshots and any Amazon EBS snapshots that the AMI references: If the AMI references Amazon Elastic Block Store (EBS) snapshots, you must also share those snapshots. Additionally, if the snapshots are encrypted using customer-managed customer master keys (CMKs), you need to share the CMKs as well.
+
+- `Application-consistent AMI`: Create the AMI by disabling the `No reboot` option.
+- `Crash-consistent AMI`: If `No reboot` option is selected, the AMI will be crash-consistent (all the volumes are snapshotted at the same time), but not application-consistent (all the operating system buffers are not flushed to disk before the snapshots are created).
+
+---
 
 ## EC2
 
@@ -2076,6 +2483,12 @@ You can configure the AWS Storage Gateway service as a Volume Gateway to present
 
 Reference: [AWS Storage Gateway](https://aws.amazon.com/storagegateway/)
 
+### 👀 Storage Optimized Instances
+Designed for workloads that require high, sequential read and write access to very large data sets on local storage.
+They are optimized to deliver tens of thousands of `low-latency`, `random I/O operations per second (IOPS)` to applications compared with EBS-backed EC2 instances.
+
+---
+
 ## Posts
 1. `RDP traffic`: Port 3389, TCP protocol.
 
@@ -2127,6 +2540,16 @@ Similar to SSE-S3 and also `provides` you with an `audit trail` of when your key
 You can encrypt data client-side and upload the encrypted data to Amazon S3. In this case, you manage the encryption process, the encryption keys, and related tools.
 
 ## AWS Elastic Beanstalk
+
+### deployment policy in Elastic Beanstalk:
+– `All at once`: Deploy the new version to all instances simultaneously. All instances in your environment are out of service for a short time while the deployment occurs.
+
+– `Rolling`: Deploy the new version in batches. Each batch is taken out of service during the deployment phase, reducing your environment’s capacity by the number of instances in a batch.
+
+– `Rolling with additional batch`: Deploy the new version in batches, but first launch a new batch of instances to ensure full capacity during the deployment process.
+
+– `Immutable`: Deploy the new version to a fresh group of instances by performing an immutable update.
+
 With deployment policies such as 'All at once', AWS Elastic Beanstalk performs an in-place update when you update your application versions and your application can become unavailable to users for a short period of time. You can avoid this downtime by performing a blue/green deployment, where you deploy the new version to a separate environment, and then swap CNAMEs (via Route 53) of the two environments to redirect traffic to the new version instantly. In case of any deployment issues, the rollback process is very quick via swapping the URLs for the two environments.
 
 Reference: [Deploying applications to Elastic Beanstalk environments](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.deploy-existing-version.html)
@@ -2136,17 +2559,15 @@ Reference: [Deploying applications to Elastic Beanstalk environments](https://do
 ## [Dedicated Instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/dedicated-instance.html)
 Are Amazon EC2 instances that run in a virtual private cloud (VPC) on `hardware` that's `dedicated` to a `single customer`. Dedicated Instances that belong to different AWS accounts are physically isolated at a hardware level, even if those accounts are linked to a single-payer account. `Note` that Dedicated Instances may share hardware with other instances from the same AWS account that are not Dedicated Instances.
 
-Dedicated Hosts allow you to use your existing per-socket, per-core, or per-VM software licenses, including Windows Server, Microsoft SQL Server, SUSE, and Linux Enterprise Server
-
 ## [Dedicated Host](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/dedicated-hosts-overview.html)
-Is a `physical server` with EC2 instance capacity fully dedicated to your use
+Is a `physical server` with EC2 instance capacity fully dedicated to your use.
+
+Dedicated Hosts allow you to `use your existing per-socket, per-core, or per-VM software licenses, including Windows Server, Microsoft SQL Server, SUSE, and Linux Enterprise Server`.
 
 - Dedicated Hosts `allow` you to `use` your `existing software licenses` on EC2 instances. With a Dedicated Host, you have ``visibility and control`` over how ``instances`` are placed on the server.
 - Dedicated Hosts allow you to use your existing `per-socket`, `per-core`, or `per-VM software licenses`, including `Windows Server`, `Microsoft SQL Server`, `SUSE`, and `Linux Enterprise Server`.
 
 Reference: [Dedicated Hosts](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/dedicated-hosts-overview.html#dedicated-hosts-dedicated-instances)
-
-
 
 ## [AWS CloudHSM (Hardware Security Module)](https://docs.aws.amazon.com/cloudhsm/latest/userguide/clusters.html)
 CloudHSM provides `tamper-resistant hardware` that is `available` in `multiple Availability Zones` (AZs), ensuring `high availability` and `durability of the keys`.
@@ -2230,19 +2651,37 @@ To connect your Amazon EFS file system to your Amazon EC2 instance, you `must cr
 
 Reference: [Creating security groups](https://docs.aws.amazon.com/efs/latest/ug/accessing-fs-create-security-groups.html)
 
-## 👀 Amazon Inspector
-It is an automated security assessment `service` that `helps improve the security and compliance` of `applications deployed on AWS`.
-Amazon Inspector `checks` for `unintended network accessibility` of your Amazon EC2 instances and _`vulnerabilities`_ on those EC2 instances.
-
-Amazon Inspector also `integrates` with `AWS Security Hub` to provide a `view` of your `security posture across multiple AWS accounts`.
+---
 
 ## AWS Control Tower
 Offers the easiest way to `set up` and `govern` a `secure, multi-account AWS environment`. It establishes a landing zone that is based on the best-practices blueprints and enables governance using guardrails you can choose from a pre-packaged list. The landing zone is a well-architected, multi-account baseline that follows AWS best practices. Guardrails implement governance rules for security, compliance, and operations.
 
+---
+
 ## AWS X-Ray
+- Debugging in Production, the good old way:
+  - Test locally
+  - Add log statements everywhere
+  - Re-deploy in production
+- Log formats differ across applications and log analysis is hard.
+- Debugging: one big monolith “easy”, distributed services “hard”
+- No common views of your entire architecture
+
 1. `S3` - AWS X-Ray integrates with Amazon S3 to trace upstream requests to update your application's S3 buckets.
 1. `Lambda functions` - Lambda runs the X-Ray daemon and records a segment with details about the function invocation and execution.
 1. `API Gateway APIs` - You can use X-Ray to trace and analyze user requests as they travel through your Amazon API Gateway APIs to the underlying services.
+
+### AWS X-Ray advantages
+- Troubleshooting performance (bottlenecks)
+- Understand dependencies in a microservice architecture
+- Pinpoint service issues
+- Review request behavior
+- Find errors and exceptions
+- Are we meeting time SLA?
+- Where I am throttled?
+- Identify users that are impacted
+
+---
 
 ## DNS Resolution
 DNS Resolution is used to enable resolution of public DNS hostnames to private IP addresses when queried from the [peered VPC](https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html).
@@ -2277,9 +2716,6 @@ To track the number of Amazon EC2 instances that are connected to a file system,
 Give you the ability to `set custom budgets that alert you` when your costs or `usage exceed` (or are `forecasted` to exceed) your budgeted amount.
 
 You can also use AWS Budgets to `set reservation utilization or coverage targets and receive alerts` when your utilization drops below the threshold you define. Reservation alerts are supported for `Amazon EC2, Amazon RDS, Amazon Redshift, Amazon ElastiCache, and Amazon Elasticsearch reservations`.
-
-## 👀 Q AWS Task Orchestrator and Executor (AWSTOE)
-Use the AWS Task Orchestrator and Executor (AWSTOE) application `to orchestrate complex workflows`, `modify system configurations`, and `test your systems without writing code`. This application uses a declarative document schema. Because it is a standalone application, it does not require additional server setup.
 
 ## 👀 AWS Cost
 In ``AWS Cost`` and ``Usage Reports``, you can choose to have AWS `publish billing reports` to an `Amazon Simple Storage` Service (Amazon S3) bucket that you own. You can receive reports that break down your costs by the hour or month, by product or product resource, or by tags that you define yourself. AWS updates the report in your bucket once a day in a comma-separated value (CSV) format. You can view the reports using spreadsheet software such as Microsoft Excel or Apache OpenOffice Calc or access them from an application using the Amazon S3 API.
@@ -2331,7 +2767,7 @@ Sometimes you want control over the EC2 Instance placement strategy, When you cr
     - `Pros`: Great network (10 Gbps bandwidth between instances with Enhanced Networking enabled - recommended)
     - `Cons`: If the rack fails, all instances fails at the same time
     - `Use` case: Big Data job that needs to complete fast
-  - ``Spread—spreads`` instances across underlying hardware (max 7 instances per group per AZ) – critical applications
+  - ``Spread—spreads`` instances across `underlying hardware` (max 7 instances per group per AZ) – critical applications
     - `Pros`:
       - Can span across Availability Zones (AZ)
       - Reduced risk is simultaneous failure
@@ -2341,7 +2777,7 @@ Sometimes you want control over the EC2 Instance placement strategy, When you cr
     - `Use case`:
       - Application that needs to maximize high availability
       - Critical Applications where each instance must be isolated from failure from each other
-  - ``Partition—spreads`` instances across many different partitions (which rely on different sets of racks) within an AZ. Scales to 100s of EC2 instances per group (Hadoop, Cassandra, Kafka)
+  - ``Partition—spreads`` `instances across many different partitions` (which rely on different sets of racks) within an AZ. Scales to 100s of EC2 instances per group (Hadoop, Cassandra, Kafka)
     - Up to 7 partitions per AZ  Can span across multiple AZs in the same region
     - Up to 100s of EC2 instances
     - The instances in a partition do not share racks with the instances in the other partitions
@@ -2369,10 +2805,6 @@ AWS ``Systems Manager Automation provides a way to automate common operational t
 
 ## AWS System Manager
 👀 AWS Systems Manager provides a unified, centralized way to manage both your Amazon EC2 instances and on-premises servers (including `Raspbian` systems, devices such as `Raspberry Pi` through a single interface). It offers a wide range of capabilities, including `inventory management`, `patch management`, `automation`, and `configuration management`, allowing you to efficiently manage your hybrid infrastructure from a single console. With Systems Manager, you can maintain consistent configurations, apply patches, and automate administrative tasks for your on-premises servers, just like you would for your EC2 instances.
-
-TODO
-gives you visibility and control of your infrastructure on AWS. Systems Manager provides a unified user interface so you can view operational data from multiple AWS services and allows you to automate operational tasks across your AWS resources. With Systems Manager, you can group resources, like Amazon EC2 instances, Amazon S3 buckets, or Amazon RDS instances, by application, view operational data for monitoring and troubleshooting, and take action on your groups of resources. Systems Manager simplifies resource and application management, shortens the time to detect and resolve operational problems, and makes it easy to operate and manage your infrastructure securely at scale.
-
 
 * Helps you manage your **EC2** and **On-Premises** systems at scale.
 * Get operational insights about the state of your infrastructure.
@@ -2493,10 +2925,7 @@ To solve this use-case, you need to configure the Auto Scaling groups to scale y
 - Average Network In / Out (if you’re application is network bound)
 - Any custom metric (that you push using CloudWatch)
 
-advice
-exam
-
-ApproximateNumberOfMessages
+ApproximateNumberOfMessages -
 
 ## AWS Auto Scaling
 Backbone service of auto scaling for scalable resources in AWS:
@@ -2507,8 +2936,7 @@ Backbone service of auto scaling for scalable resources in AWS:
 - ``Amazon Aurora``: Dynamic Read Replicas Auto Scaling
 
 
-Application Load Balancer (v2)
-Target Groups
+### Target Groups
 - EC2 instances (can be managed by an Auto Scaling Group) – HTTP
 - ECS tasks (managed by ECS itself) – HTTP
 - Lambda functions – HTTP request is translated into a JSON event
@@ -2516,7 +2944,6 @@ Target Groups
 
 - ALB can route to multiple target groups
 - Health checks are at the target group level
-
 
 ## UpdatePolicy Attribute
 Use it to handle updates for below resources
@@ -2575,13 +3002,48 @@ Lambda Monitoring – CloudWatch Metrics
 - ``IteratorAge`` – time between when a Stream receives a record and when the Event Source Mapping sends the event to the function (for Event Source Mapping that reads from Stream)
 - ``ConcurrentExecutions`` – number of function instances that are processing events
 
+---
+
+## CodeDeploy
+[CodeDeploy](https://docs.aws.amazon.com/codedeploy/latest/userguide/welcome.html) is a deployment service that automates application deployments to Amazon EC2 instances, on-premises instances, or serverless Lambda functions. It allows you to rapidly release new features, update Lambda function versions, avoid downtime during application deployment, and handle the complexity of updating your applications, without many of the risks associated with error-prone manual deployments.
+
+- *Application*: Container
+- *Deployment Group* : Setup config setting in code deploy
+  - Refers to the set of instances of Lambda functions where you deply the code revision
+  - You can create multiple deployment groups within the application
+
+- *Deployment Configuration*
+  - Set of conditions and deployment rules that CodeDeploy applies during a deployment.
+
+- *Application Specificaton (AppSpec) file*
+  - manages deployment stages as lifecycle event hooks.
 
 ---
 
-## Review
+## ElasticSearch - OpenSearch
+`Amazon ElasticSearch Service` is now `Amazon OpenSearch Service`
 
-The cfn-signal helper script signals AWS CloudFormation to indicate whether Amazon EC2 instances have been successfully created or updated. If you install and configure software applications on instances, you can signal AWS CloudFormation when those software applications are ready.
+- May be called `Amazon ES at the exam`
 
-You use the cfn-signal script in conjunction with a CreationPolicy or an Auto Scaling group with a WaitOnResourceSignals update policy. When AWS CloudFormation creates or updates resources with those policies, it suspends work on the stack until the resource receives the requisite number of signals or until the timeout period is exceeded. For each valid signal that AWS CloudFormation receives, AWS CloudFormation publishes the signals to the stack events so that you track each signal.
+- Managed version of ElasticSearch (open source project)
+- Needs to run on servers (not a serverless offering)
+- Use cases:
+  - Log Analytics
+  - Real Time application monitoring
+  - Security Analytics
+  - Full Text Search
+  - Clickstream Analytics
+  - Indexing
 
- maximum coverage. It’s calculated by dividing Reserved Instance used hours by total EC2 On-Demand and Reserved Instance hours.
+### ElasticSearch Access Policy
+- `IP-based Policies`
+  - Resource-based policies used to restrict access to an ES domain to IP address(es) or CIDR blocks
+  - Allows unsigned requests to an ES domain (e.g., curl, Kibana, ...)
+
+### ElasticSearch – Production Setup
+It’s recommended to:
+- Use *3 dedicated Master nodes*
+- Use at least *2 Data nodes per AZ* (for replication)
+- *Deploy* the domain across *3 AZ*
+- *Create* at least *one replica or each index in the cluster*
+
