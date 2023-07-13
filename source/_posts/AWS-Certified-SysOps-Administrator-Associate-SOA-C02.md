@@ -801,6 +801,8 @@ To configure a VPC Endpoint for accessing AWS Systems Manager APIs, you can foll
   - Software application or physical device on customer side of the VPN connection
   - https://docs.aws.amazon.com/vpn/latest/s2svpn/your-cgw.html#DevicesTested
 
+![AWS Site-to-Site VPN](../images/AWS-Site-to-Site-Connection.png)
+
 ### Site-to-Site VPN Connections
 - `Customer Gateway Device (On-premises)`
   - 👀 What IP address to use?
@@ -833,8 +835,12 @@ To configure a VPC Endpoint for accessing AWS Systems Manager APIs, you can foll
   - Hybrid Environments (on prem + cloud)
 - Supports both IPv4 and IPv6
 
+![Direct Connect](../images/AWS-Direct-Connect-Diagram.png)
+
 #### Direct Connect Gateway
-`If you want to setup a Direct Connect to one or more VPC in many different regions (same account), you must use a Direct Connect Gateway`.
+`If you want to setup a Direct Connect to one or more VPC in many different regions (same account), you must use a Direct Connect Gateway`. - Exam 👀
+
+![Direct Connect Gateway](../images/AWS-Direct-Connet-Gateway.png)
 
 ### Direct Connect – Connection Types
 - `Dedicated Connections`: 1Gbps,10 Gbps and 100 Gbps capacity
@@ -1068,7 +1074,10 @@ Configure IPv6 on Your Instances – If your instance was launched from an AMI t
         Count: 1
 ```
 
-### StackSets
+### CloudFormation StackSets
+- Create, update, or delete stacks across multiple accounts and regions with a single operation
+- Administrator account to create StackSets
+- Trusted accounts to create, update, delete stack instances from StackSets
 
 #### `Use` AWS CloudFormation `StackSets for Multiple Accounts in an AWS Organization`:
 Use AWS CloudFormation `StackSets` to `deploy a template` to `each account` to create the new IAM roles.
@@ -1092,7 +1101,7 @@ Parameters:
     Default: /LatestWindowsAMI
 ```
 
-### `*Q` `UpdatePolicy` attribute
+### `👀 `UpdatePolicy` attribute
 By adding the `UpdatePolicy` attribute in CloudFormation and enabling the WaitOnResourceSignals property, the Auto Scaling group update process will be handled more gracefully. This approach allows CloudFormation to monitor the health and success of each instance during the update process before moving on to the next instance.
 
 Appending a health check at the end of the user data script allows the instance to signal CloudFormation that it has successfully completed its initialization. This helps ensure that the instance is fully operational before proceeding to the next instance in the Auto Scaling group update process.
@@ -1112,6 +1121,26 @@ Appending a health check at the end of the user data script allows the instance 
 
 ### 👀 `DependsOn` attribute
 With the DependsOn attribute, you can specify that the `creation` of a specific resource `follows another`. When you add a DependsOn attribute to a resource, that resource is created only after the creation of the resource specified in the DependsOn attribute.
+
+### Set Tags consistently in AWS across all accounts
+Use the CloudFormation `Resource Tags property` to apply tags to certain resource types upon creation.
+
+```yaml
+Resources:
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0123456789abcdef0
+      InstanceType: t2.micro
+      Tags:
+        - Key: Name
+          Value: MyEC2Instance
+        - Key: Environment
+          Value: Production
+        - Key: CostCenter
+          Value: MyCostCenter
+
+```
 
 ---
 
@@ -1366,6 +1395,7 @@ You can allow IAM users or roles in one AWS account to use a customer master key
 - Great for availability and durability
 
 ---
+
 ## 👀 `AWS Artifact` (Not really a service) - EXAM
 is a service that provides `on-demand` access to AWS `compliance reports` and other relevant documents.
 
@@ -1373,17 +1403,6 @@ is a service that provides `on-demand` access to AWS `compliance reports` and ot
 - `Artifact Agreements` - Allows you to review, accept, and track the status of AWS agreements such as the Business Associate Addendum (BAA) or the Health Insurance Portability and Accountability Act (HIPAA) for an individual account or in your organization -
 
 Can be used to `support internal audit or compliance`.
-
----
-
-## 👀 AWS Service Catalog
-provides a ``TagOption library``. A TagOption is a key-value pair managed in AWS Service Catalog. It is not an AWS tag but serves as a template for creating an AWS tag based on the TagOption.
-
-The TagOption library makes it easier to enforce the following:
-
-– A consistent `taxonomy`
-– Proper tagging of AWS Service Catalog resources
-– Defined, user-selectable options for allowed tags
 
 ---
 
@@ -1676,6 +1695,21 @@ device (usually a mobile phone or hardware) before doing important operations on
 - To use MFA Delete, **``Versioning must be enabled``** on the bucket
 - **``Only the bucket owner (root account) can enable/disable MFA Delete``**
 
+#### Allow access if users are MFA authenticated
+use an MFA condition in a policy to check the following properties:
+
+– Existence—To simply verify that the user did authenticate with MFA, check that the `aws:MultiFactorAuthPresent` key is True in a Bool condition. The key is only present when the user authenticates with short-term credentials. Long-term credentials, such as access keys, do not include this key.
+
+– Duration—If you want to grant access only within a specified time after MFA authentication, use a numeric condition type to compare the aws:MultiFactorAuthAge key’s age to a value (such as 3600 seconds). Note that the `aws:MultiFactorAuthAge` key is not present if MFA was not used.
+
+```json
+"Condition": {
+  "Bool": "{
+    "aws:MultiFactorAuthPresent": "true"
+  }
+}
+```
+
 ### S3 Access Logs
 - For audit purpose, you may want to log all access to S3 buckets
 - Any request made to S3, from any account, authorized or denied, will be logged into another S3 bucket
@@ -1752,6 +1786,8 @@ Lustre is a type of ``parallel distributed`` file system, for large-scale comput
 ---
 ## AWS Storage Gateway
 Bridge between on-premises data and cloud data
+
+![AWS Storage Gateway](../images/AWS-Store-Gateway-Architecture.png)
 
 - `File Gateway is POSIX compliant (Linux file system)`
   - POSIX metadata ownership, permissions, and timestamps stored in the object’s metadata in S3
@@ -1888,7 +1924,7 @@ you plan for `scheduled activities`.
 ## 👀 `*Q` AWS Personal Health Dashboard
 AWS Personal Health Dashboard provides `alerts` and _`remediation guidance`_ when AWS is experiencing `events that may impact you`. While the Service Health Dashboard displays the general status of AWS services, Personal Health Dashboard gives you a personalized view into the _performance and availability_ of the AWS services underlying your AWS resources.
 
-What’s more, Personal Health Dashboard proactively notifies you when AWS experiences any events that may affect you, helping provide quick visibility and guidance to help you minimize the impact of events in progress, and plan for any scheduled changes, such as AWS hardware maintenance.AWS Inspector
+What’s more, Personal Health Dashboard proactively notifies you when AWS experiences any events that may affect you, helping provide quick visibility and guidance to help you minimize the impact of events in progress, and plan for any scheduled changes, such as AWS hardware maintenance.
 
 The `AWS Health API provides` programmatic `access` to the `AWS Health information` that appears in the AWS Personal Health Dashboard. You can use the API operations to get information about events that might affect your AWS services and resources.
 
@@ -1955,7 +1991,7 @@ Offers the easiest way to `set up and govern a secure, multi-account AWS environ
 
 ---
 
-## AWS Service Catalog
+## 👀 AWS Service Catalog
 AWS Service Catalog allows `organizations to create and manage catalogs of IT services that are approved for use on AWS`. These IT services can include everything from virtual machine images, servers, software, and databases to complete multi-tier application architectures. AWS Service Catalog allows you to centrally manage deployed IT services and your applications, resources, and metadata. This helps you achieve `consistent governance` and `meet your compliance requirements` while enabling users to quickly deploy only the approved IT services they need.
 
 #### [Sharing and Importing Portfolios](https://docs.aws.amazon.com/servicecatalog/latest/adminguide/catalogs_portfolios_sharing.html)
@@ -1978,8 +2014,9 @@ Share portfolios with individual AWS accounts or AWS Organizations.
   - Key-value pair managed in AWS Service Catalog
   - Used to create an AWS Tag
 - Can be associated with Portfolios and Products.
-- Use cases: proper resources tagging, defined allowed tags, ...
+- Use cases: `proper resources tagging`, `defined allowed` tags, ...
 - Can be shared with other AWS accounts and AWS Organizations.
+– A consistent `taxonomy`
 
 ---
 
@@ -2499,6 +2536,9 @@ service that automatically `creates` an AWS `security group` in your VPC with ne
 
 Using `AWS Trusted Advisor` can provide additional insights into security best practices and potential misconfigurations, but it may not specifically highlight the security group issue related to AWS Directory Services.
 
+## `*Q` [SAML federation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_saml.html)
+- `SAML federation between AWS and` the corporate `Active Directory and mapping Active Directory groups to IAM groups` is the recommended way to make access more secure and streamlined.
+
 ## Enhanced networking
 ``*Q`` Consider using enhanced networking for the following scenarios of ``network performance issues``:
 
@@ -2518,6 +2558,7 @@ AWS OpsWorks is a `configuration management service` that provides managed insta
 
 ### 👀 Chef Server
 You can `add nodes` automatically to your Chef Server using the `unattended method`. The recommended method of unattended (or automatic) association of new nodes is to `configure` the `Chef Client Cookbook`.
+With this method, a script is used to run the opsworks-cm API associate-node command to associate a new node with your Chef server. Steps are found in the references.
 
 ## `*Q` AWS Service Health Dashboard
 Publishes the most up-to-the-minute information on the status and availability of all AWS services in tabular form for all Regions that AWS is present in. You can check on this page [https://status.aws.amazon.com/](https://status.aws.amazon.com/) to get current status information.
@@ -2694,9 +2735,6 @@ A packet is truncated to the `MTU` value when both of the following are true:
 - The traffic `mirror target is a standalone instance`.
 - The traffic `packet size from the mirror source is greater` than the MTU size for the traffic mirror `target`.
 
-## `*Q` [SAML federation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_saml.html)
-- `SAML federation between AWS and` the corporate `Active Directory and mapping Active Directory groups to IAM groups` is the recommended way to make access more secure and streamlined.
-
 ---
 
 ## 👀 IMPORTANT NOTES 👀
@@ -2872,9 +2910,9 @@ Systems Manager Inventory collects only metadata from your managed instances. In
 1. Query data from multiple AWS accounts and regions
 1. Create Custom Inventory for your custom metadata (e.g., rack location of each managed instance)
 
+---
 
 ## Scalability & High Availability
-
 Scalability means that an application / system can handle greater loads by adapting.
 
 **Scalability is linked but different to High Availability**
@@ -2960,11 +2998,6 @@ Use it to handle updates for below resources
 With rolling updates, you can specify whether CloudFormation performs updates in batches or all at once for instances that are in an Auto Scaling group. The `AutoScalingRollingUpdate` policy is the only CloudFormation feature that provides such an incremental update throughout the Auto Scaling group.
 ### AutoScalingScheduledAction policy
 Applies when you update a stack that includes an Auto Scalling group with an associated scheduled action.
-
-### CloudFormation StackSets
-- Create, update, or delete stacks across multiple accounts and regions with a single operation
-- Administrator account to create StackSets
-- Trusted accounts to create, update, delete stack instances from StackSets
 
 ### Lambda Tracing with X-Ray
 - Enable in Lambda configuration (``Active Tracing``)
