@@ -8,8 +8,7 @@ categories:
   - TypeScript
 ---
 
-# SOLID Principles
-These 5 principles will guide you on how to write better code. Though they come from object-oriented programming.
+These 5 principles will guide you on how to ``write better code``. Though they come from object-oriented programming.
 
 It's much easier to work on small Singly Responsible parts whose changes don't affect any upstream or downstream part.
 
