@@ -1,5 +1,5 @@
 ---
-title: AWS Certified SysOps Administrator – Associate (SOA-C02)
+title: AWS Certified SysOps Administrator - Associate (SOA-C02)
 date: 2023-05-15 13:27:03
 tags:
   - Certifications
@@ -45,9 +45,9 @@ You can retrieve custom metrics from your applications or services using the `St
 - Ability to use dimensions (attributes) to segment metrics
   - Instance.id
   - Environment.name
-- Metric resolution (``StorageResolution`` API parameter – two possible value):
+- Metric resolution (``StorageResolution`` API parameter - two possible value):
   - Standard: 1 minute (60 seconds)
-  - High Resolution: 1/5/10/30 second(s) – Higher cost
+  - High Resolution: 1/5/10/30 second(s) - Higher cost
  - Important `👀 Exam`: **``Accepts metric data points two weeks in the past and two hours in the future (make sure to configure your EC2 instance time correctly)``**
 
  - You can `use AWS CLI or API` to `upload` the `data metrics` to CloudWatch.
@@ -55,6 +55,9 @@ You can retrieve custom metrics from your applications or services using the `St
 ```bash
  aws cloudwatch put-metric-data --metric-name PageViewCount --namespace MyService --value 2 --timestamp 2023-01-01-14T08:00:00.000Z
  ```
+
+ - [high-resolution](https://aws.amazon.com/blogs/aws/new-high-resolution-custom-metrics-and-alarms-for-amazon-cloudwatch/): high-resolution custom metric, your applications can publish metrics to CloudWatch with 1-second resolution.
+  High-Resolution Alarms allow you to react and take actions faster and support the same actions available today with standard 1-minute alarms.
 
  ### CloudWatch Dashboards
 - Great way to setup custom dashboards for quick access to key metrics and alarms
@@ -77,9 +80,9 @@ CloudWatch Logs - Sources
 ### CloudWatch Logs Subscriptions
 - **``Get a real-time log events from CloudWatch Logs for processing and analysis``**
 - Send to Kinesis Data Streams, Kinesis Data Firehose, or Lambda
-- ``Subscription Filter ``– filter which logs are events delivered to your destination
+- ``Subscription Filter ``- filter which logs are events delivered to your destination
 
-- ``Cross-Account Subscription`` – send log events to resources in a different AWS account (KDS, KDF)
+- ``Cross-Account Subscription`` - send log events to resources in a different AWS account (KDS, KDF)
 
 ### Alarms
 CloudWatch alarms allow you to monitor metrics and trigger actions based on defined thresholds. In this case, you can create a CloudWatch alarm that monitors the CPU utilization metric of the EC2 instance. When the CPU utilization reaches 100%, the alarm will be triggered, and you can configure actions such as sending notifications or executing automated actions to address the unresponsiveness issue.
@@ -235,13 +238,13 @@ The [procstat](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Cl
   - Event is sent to Amazon S3
   - An EventBridge event is generated (for automation needs)
 
-### CloudTrail – Integration with EventBridge
+### CloudTrail - Integration with EventBridge
 - Used to react to any API call being made in your account
 - CloudTrail is not “real-time”:
   - Delivers an event within 15 minutes of an API call
   - Delivers log files to an S3 bucket every 5 minutes
 
-### CloudTrail – Organizations Trails
+### CloudTrail - Organizations Trails
 - A trail that will log all events for all AWS accounts in an AWS Organization
 - Log events for management and member accounts
 - Trail with the same name will be created in every AWS account (IAM permissions)
@@ -267,7 +270,7 @@ The [procstat](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Cl
   - Delivers an event within 15 minutes of an API call
   - Delivers log files to an S3 bucket every 5 minutes
 
-### CloudTrail – Organizations Trails
+### CloudTrail - Organizations Trails
 - A trail that will log all events for all AWS accounts in an AWS Organization
 - Log events for management and member accounts
 - Trail with the same name will be created in every AWS account (IAM permissions)
@@ -322,7 +325,7 @@ AWS Config provides a number of AWS managed rules that address a wide range of s
 Managed rules:
 - `require-tags`: managed rule in AWS Config. This rule checks if a resource contains the tags that you specify.
 
-### Config Rules – Remediations
+### Config Rules - Remediations
 Has auto remediate feature for any non-compliant S3 buckets using the following AWS Config rules:
 
 s3-bucket-logging-enabled s3-bucket-server-side-encryption-enabled s3-bucket-public-read-prohibited s3-bucket-public-write-prohibited
@@ -336,11 +339,11 @@ These AWS Config rules act as controls to prevent any non-compliant S3 activitie
 
 ### AWS Config Auto Remediation
 
-### Config Rules – Notifications
+### Config Rules - Notifications
  - Use EventBridge to trigger notifications when AWS resources are noncompliant
- - Ability to send configuration changes and compliance state notifications to SNS (all events – use SNS Filtering or filter at client-side)
+ - Ability to send configuration changes and compliance state notifications to SNS (all events - use SNS Filtering or filter at client-side)
 
-### AWS Config – Aggregators
+### AWS Config - Aggregators
 - The aggregator is created `in one central aggregator account`.
 - Aggregates `rules, resources, etc... across multiple accounts & regions`.
 - If using `AWS Organizations`, no need for individual Authorization
@@ -368,12 +371,8 @@ Use the [AWS Task Orchestrator and Executor (AWSTOE)](https://docs.aws.amazon.co
 
 ---
 
-## `*Q` [AWS Artifact](https://docs.aws.amazon.com/artifact/latest/ug/what-is-aws-artifact.html)
+## `👀` [AWS Artifact](https://docs.aws.amazon.com/artifact/latest/ug/what-is-aws-artifact.html)
 AWS Artifact `keeps compliance-related reports and agreements`.
-
-
-`👀`
-
 
 ---
 ## RDS
@@ -396,13 +395,13 @@ AWS Artifact `keeps compliance-related reports and agreements`.
 - Replication is `ASYNC`.
 - Replicas can be promoted to their own DB.
 
-### RDS Read Replicas – Network Cost
+### RDS Read Replicas - Network Cost
 - In AWS there’s a network cost when data goes from one AZ to another
 - `For RDS Read Replicas within the same region, you don’t pay that fee`.
 
 ### RDS Multi AZ (Disaster Recovery)
 - `SYNC` replication.
-- One DNS name – automatic app failover to standby
+- One DNS name - automatic app failover to standby
 - Increase `availability`.
 - Failover in case of loss of AZ, loss of network, instance or storage failure
 
@@ -447,7 +446,10 @@ CloudWatch metrics associated with RDS (gathered from the hypervisor):
   - `ReadLatency / WriteLatency`
   - `ReadThroughPut / WriteThroughPut`
   - `DiskQueueDepth`
-  - `FreeStorageSpace`
+  - `FreeStorageSpace` - To monitor the available storage space for an RDS DB instance
+  - BinLogDiskUsage: Tracks the amount of disk space occupied by binary logs on the master.
+  - FreeableMemory: Tracks the amount of available random access memory and not the available storage space.
+  - DiskQueueDepth:  Provides the number of outstanding IOs (read/write requests) waiting to access the disk.
 
 - `Enhanced Monitoring` (gathered from an agent on the DB instance). `👀`
   - Useful when you need to see how `different processes or threads use the CPU`.
@@ -469,7 +471,7 @@ With RDS storage autoscaling, you can set the desired maximum storage limit. Aut
 - ``Aurora storage automatically grows in increments of 10GB, up to 128 TB``.
 - Aurora can have up to 15 replicas and the replication process is faster than MySQL (sub 10 ms replica lag)
 - Failover in Aurora is instantaneous. It’s HA (High Availability) native.
-- Aurora costs more than RDS (20% more) – but is more efficient
+- Aurora costs more than RDS (20% more) - but is more efficient
 
 ### Aurora High Availability and Read Scaling
 - One Aurora Instance takes writes (master)
@@ -579,8 +581,8 @@ Reference: [How Amazon VPC works](https://docs.aws.amazon.com/vpc/latest/usergui
 
 ![VCP Diagram](../images/AWS-VPC-Diagram.png)
 
-### CIDR – IPv4
-- Classless `Inter-Domain Routing` – a method for allocating IP addresses
+### CIDR - IPv4
+- Classless `Inter-Domain Routing` - a method for allocating IP addresses
 - `Used in Security Groups` rules and `AWS networking` in general
 
 - A CIDR consists of two components
@@ -601,37 +603,37 @@ Reference: [How Amazon VPC works](https://docs.aws.amazon.com/vpc/latest/usergui
 - The Internet Assigned Numbers Authority (IANA) established certain blocks of IPv4 addresses for the use of private (LAN) and public (Internet) addresses
 
 - `Private IP` can only allow certain values:
-  - 10.0.0.0 – 10.255.255.255 (10.0.0.0/8) <- in big networks
-  - 172.16.0.0 – 172.31.255.255 (172.16.0.0/12) <- *AWS default VPC in that range*
-  - 192.168.0.0 – 192.168.255.255 (192.168.0.0/16) <- e.g., home networks
+  - 10.0.0.0 - 10.255.255.255 (10.0.0.0/8) <- in big networks
+  - 172.16.0.0 - 172.31.255.255 (172.16.0.0/12) <- *AWS default VPC in that range*
+  - 192.168.0.0 - 192.168.255.255 (192.168.0.0/16) <- e.g., home networks
 
 - All the rest of the IP addresses on the Internet are Public
 
-### VPC in AWS – IPv4
+### VPC in AWS - IPv4
 - `VPC = Virtual Private Cloud`
-- You can have multiple VPCs in an AWS region (max. 5 per region – soft limit)
+- You can have multiple VPCs in an AWS region (max. 5 per region - soft limit)
   - Max. CIDR per VPC is 5, for each CIDR:
   - Min. size is /28 (16 IP addresses)
 - Max. size is /16 (65536 IP addresses)
 - Because VPC is private, only the Private IPv4 ranges are allowed:
-  - 10.0.0.0 – 10.255.255.255 (10.0.0.0/8)
-  - 172.16.0.0 – 172.31.255.255 (172.16.0.0/12)
-  - 192.168.0.0 – 192.168.255.255 (192.168.0.0/16)
+  - 10.0.0.0 - 10.255.255.255 (10.0.0.0/8)
+  - 172.16.0.0 - 172.31.255.255 (172.16.0.0/12)
+  - 192.168.0.0 - 192.168.255.255 (192.168.0.0/16)
 
 - <u>``Your VPC CIDR should NOT overlap with your other networks (e.g., corporate)``</u>
 
-### VPC – Subnet (IPv4)
+### VPC - Subnet (IPv4)
 - AWS reserves `5 IP addresses` (`first 4 & last 1`) in each subnet
 - These 5 IP addresses are not available for use and can’t be assigned to anEC2 instance
 - Example: if CIDR block 10.0.0.0/24, then reserved IP addresses are:
-  - **10.0.0.0** – Network Address
-  - **10.0.0.1** – reserved by AWS for the VPC router
-  - **10.0.0.2** – reserved by AWS for mapping to Amazon-provided DNS
-  - **10.0.0.3** – reserved by AWS for future use
-  - **10.0.0.255** – Network Broadcast Address. AWS does not support broadcast in a VPC, therefore the address is reserved
+  - **10.0.0.0** - Network Address
+  - **10.0.0.1** - reserved by AWS for the VPC router
+  - **10.0.0.2** - reserved by AWS for mapping to Amazon-provided DNS
+  - **10.0.0.3** - reserved by AWS for future use
+  - **10.0.0.255** - Network Broadcast Address. AWS does not support broadcast in a VPC, therefore the address is reserved
 - `Exam Tip`, if you need 29 IP addresses for EC2 instances:
-  - You can’t choose a subnet of size /27 (32 IP addresses, 32 – 5 = 27 < 29)
-  - You need to choose a subnet of size /26 (64 IP addresses, 64 – 5 = 59 > 29)
+  - You can’t choose a subnet of size /27 (32 IP addresses, 32 - 5 = 27 < 29)
+  - You need to choose a subnet of size /26 (64 IP addresses, 64 - 5 = 59 > 29)
 
 ### Internet Gateway (IGW)
 - Allows resources (e.g., EC2 instances) in a VPC connect to the Internet
@@ -652,7 +654,7 @@ Is an ec2 instance, it's espcial because it's in a public subnet, with its segur
 
 ### NAT Instance (outdated, but still at the exam)
 - NAT = Network Address Translation
-- Allows EC2 instances in private subnets toconnect to the Interne
+- Allows EC2 instances in private subnets toconnect to the Internet
 - Must be launched in a public subnet
 - Must disable EC2 setting: `Source / destination Check`
 - Must have Elastic IP attached to it
@@ -680,7 +682,7 @@ Is an ec2 instance, it's espcial because it's in a public subnet, with its segur
   - Decides if DNS resolution from Route 53 Resolver server is supported for the VPC
   - True (default): it queries the Amazon Provider DNS Server at `169.254.169.253` or the reserved IP address at the base of the `VPC IPv4 network range plus two (.2)`.
 
-`enableDnsSupport` – Indicates whether the DNS resolution is supported for the VPC. If this attribute is false, the Amazon-provided DNS server in the VPC that resolves public DNS hostnames to IP addresses is not enabled. If this attribute is true, queries to the Amazon provided DNS server at the 169.254.169.253 IP address, or the reserved IP address at the base of the VPC IPv4 network range plus two will succeed.
+`enableDnsSupport` - Indicates whether the DNS resolution is supported for the VPC. If this attribute is false, the Amazon-provided DNS server in the VPC that resolves public DNS hostnames to IP addresses is not enabled. If this attribute is true, queries to the Amazon provided DNS server at the 169.254.169.253 IP address, or the reserved IP address at the base of the VPC IPv4 network range plus two will succeed.
 
 - `DNS Hostnames (enableDnsHostnames)`
   - By default,
@@ -689,7 +691,7 @@ Is an ec2 instance, it's espcial because it's in a public subnet, with its segur
 - Won’t do anything unless enableDnsSupport=true
 - If True, assigns public hostname to EC2 instance if it has a public IPv4
 
-`enableDnsHostnames` – Indicates whether the instances launched in the VPC get public DNS hostnames. If this attribute is true, instances in the VPC get public DNS hostnames, but only `if` the `enableDnsSupport` attribute is also set to `true`.
+`enableDnsHostnames` - Indicates whether the instances launched in the VPC get public DNS hostnames. If this attribute is true, instances in the VPC get public DNS hostnames, but only `if` the `enableDnsSupport` attribute is also set to `true`.
 
 By default, both attributes are set to `true` in a default VPC or a VPC created by the VPC wizard. By default, only the `enableDnsSupport` attribute is set to true in a VPC created on the Your VPCs page of the VPC console or using the AWS CLI, API, or an AWS SDK.
 
@@ -715,8 +717,8 @@ By default, both attributes are set to `true` in a default VPC or a VPC created 
 - For any two endpoints to establish a connection, they must use ports
 - Clients connect to a `defined port`, and expect a response on an `ephemeral port`
 - Different Operating Systems use different port ranges, examples:
-  - IANA & MS Windows 10 -> 49152 – 65535
-  - Many Linux Kernels -> 32768 – 60999
+  - IANA & MS Windows 10 -> 49152 - 65535
+  - Many Linux Kernels -> 32768 - 60999
 
 | Security Group | NACL |
 | -------------- | ---- |
@@ -726,12 +728,12 @@ By default, both attributes are set to `true` in a default VPC or a VPC created 
 | All rules are evaluated before deciding whether to allow traffic | Rules are evaluated in order (lowest to highest) when deciding whether to allow traffic, first match wins |
 | Applies to an EC2 instance when specified by someone | Automatically applies to all EC2 instances in the subnet that it’s associated with |
 
-### VPC – Reachability Analyzer
+### VPC - Reachability Analyzer
 - A network diagnostics tool that troubleshoots network connectivity between two endpoints in your VPC(s)
 - It builds a model of the network configuration, then checks the reachability based on these configurations (`it doesn’t send packets`)
 - When the destination is
-  - `Reachable` – it produces hop-by-hop details of the virtual network path
-  - `Not reachable` – it identifies the blocking component(s) (e.g., configuration issues in SGs, NACLs, Route Tables, ...)
+  - `Reachable` - it produces hop-by-hop details of the virtual network path
+  - `Not reachable` - it identifies the blocking component(s) (e.g., configuration issues in SGs, NACLs, Route Tables, ...)
 - Use cases: troubleshoot connectivity issues, ensure network configuration is as intended, ...
 
 ### VPC Peering
@@ -742,7 +744,7 @@ By default, both attributes are set to `true` in a default VPC or a VPC created 
 - `You must update route tables in each VPC’s subnets to ensure EC2 instances can communicate with each other`
 
 - You can create VPC Peering connection between VPCs in `different AWS accounts/regions`
-- You can reference a security group in a peered VPC (`works cross accounts – same region`)
+- You can reference a security group in a peered VPC (`works cross accounts - same region`)
 
 ### VPC Endpoint (AWS PrivateLink)
 A VPC Endpoint allows you to `connect` your `VPC` directly `to AWS services` without the need for `internet gateways`, `NAT gateways`, or `VPN connections`. It enables private communication between your VPC and the AWS service without going over the internet.
@@ -783,9 +785,9 @@ To configure a VPC Endpoint for accessing AWS Systems Manager APIs, you can foll
 - Captures network information from AWS managed interfaces too: ELB, RDS, ElastiCache, Redshift, WorkSpaces, NATGW, Transit Gateway...
 
 ### VPC Flow Logs Syntax
-- `srcaddr & dstaddr` – help identify problematic IP
-- `srcport & dstport` – help identity problematic ports
-- `Action` – success or failure of the request due to Security Group / NACL
+- `srcaddr & dstaddr` - help identify problematic IP
+- `srcport & dstport` - help identity problematic ports
+- `Action` - success or failure of the request due to Security Group / NACL
 - Can be used for analytics on usage patterns, or malicious behavior
 - `Query VPC flow logs using Athena on S3 or CloudWatch Logs Insights`
 - Flow Logs examples: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-records-examples.html
@@ -830,7 +832,7 @@ To configure a VPC Endpoint for accessing AWS Systems Manager APIs, you can foll
 - You `need` to setup a `Virtual Private Gateway` on your VPC
 - Access public resources (S3) and private (EC2) on same connection
 - Use Cases:
-  - Increase bandwidth throughput - working with large data sets – lower cost
+  - Increase bandwidth throughput - working with large data sets - lower cost
   - More consistent network experience - applications using real-time data feeds
   - Hybrid Environments (on prem + cloud)
 - Supports both IPv4 and IPv6
@@ -842,7 +844,7 @@ To configure a VPC Endpoint for accessing AWS Systems Manager APIs, you can foll
 
 ![Direct Connect Gateway](../images/AWS-Direct-Connet-Gateway.png)
 
-### Direct Connect – Connection Types
+### Direct Connect - Connection Types
 - `Dedicated Connections`: 1Gbps,10 Gbps and 100 Gbps capacity
   - Physical ethernet port dedicated to a customer
   - Request made to AWS first, then completed by AWS Direct Connect Partners
@@ -852,7 +854,7 @@ To configure a VPC Endpoint for accessing AWS Systems Manager APIs, you can foll
   - 1, 2, 5, 10 Gbps available at select AWS Direct Connect Partners
 - Lead times are often longer than 1 `month to establish a new connection` - EXAM
 
-### Direct Connect – Encryption
+### Direct Connect - Encryption
 - Data in transit is `not encrypted` but is private
 - `AWS Direct Connect + VPN provides` an IPsec-encrypted private connection
 
@@ -878,10 +880,10 @@ In case Direct Connect fails, you can `set up a backup Direct Connect` connectio
 - Routing strategy to allow to forward a packet over multiple best path.
 * Use case: create multiple Site-to-Site VPN connections `to increase the bandwidth of your connection to AWS`.
 
-### VPC – Traffic Mirroring
+### VPC - Traffic Mirroring
 - Capture the traffic
-  - From (Source) – ENIs
-  - To (Targets) – an ENI or a Network Load Balancer
+  - From (Source) - ENIs
+  - To (Targets) - an ENI or a Network Load Balancer
 - Source and Target can be in the same VPC or different VPCs (VPC Peering)
 - Use cases: content inspection, threat  Auto Scaling group monitoring, troubleshooting, ...
 
@@ -911,6 +913,10 @@ A Carrier gateway is a highly available virtual appliance that ``provides outbou
 
 ## Security Groups
 
+- `By default`, security groups `allow all outbound traffic`.
+- Security group `rules are always permissive`; you can't create rules that deny access.
+- Security groups are `stateful`
+
 ### The reason for the issue where the new EC2 instances are unable to mount the Amazon EFS file system in a new Availability Zone could be:
 The security group for the mount target does not allow inbound NFS connections from the security group used by the EC2 instances.
 
@@ -921,57 +927,57 @@ The security group for the mount target does not allow inbound NFS connections f
 ### The following provides an overview of the steps to enable your VPC and subnets to use IPv6:
 
 - `Step 1`:
-Associate an IPv6 CIDR Block with Your VPC and Subnets – Associate an Amazon-provided IPv6 CIDR block with your VPC and with your subnets.
+Associate an IPv6 CIDR Block with Your VPC and Subnets - Associate an Amazon-provided IPv6 CIDR block with your VPC and with your subnets.
 
 - `Step 2`:
-Update Your Route Tables – Update your route tables to route your IPv6 traffic. For a public subnet, create a route that routes all IPv6 traffic from the subnet to the Internet gateway. For a private subnet, create a route that routes all Internet-bound IPv6 traffic from the subnet to an egress-only Internet gateway.
+Update Your Route Tables - Update your route tables to route your IPv6 traffic. For a public subnet, create a route that routes all IPv6 traffic from the subnet to the Internet gateway. For a private subnet, create a route that routes all Internet-bound IPv6 traffic from the subnet to an egress-only Internet gateway.
 
 - `Step 3`:
-Update Your Security Group Rules – Update your security group rules to include rules for IPv6 addresses. This enables IPv6 traffic to flow to and from your instances. If you’ve created custom network ACL rules to control the flow of traffic to and from your subnet, you must include rules for IPv6 traffic.
+Update Your Security Group Rules - Update your security group rules to include rules for IPv6 addresses. This enables IPv6 traffic to flow to and from your instances. If you’ve created custom network ACL rules to control the flow of traffic to and from your subnet, you must include rules for IPv6 traffic.
 
 - `Step 4`:
-Change Your Instance Type – If your instance type does not support IPv6, change the instance type. If your instance type does not support IPv6, you must resize the instance to a supported instance type. In the example, the instance is an m3.large instance type, which does not support IPv6. You must resize the instance to a supported instance type, for example, m4.large.
+Change Your Instance Type - If your instance type does not support IPv6, change the instance type. If your instance type does not support IPv6, you must resize the instance to a supported instance type. In the example, the instance is an m3.large instance type, which does not support IPv6. You must resize the instance to a supported instance type, for example, m4.large.
 
 - `Step 5`:
-Assign IPv6 Addresses to Your Instances – Assign IPv6 addresses to your instances from the IPv6 address range of your subnet.
+Assign IPv6 Addresses to Your Instances - Assign IPv6 addresses to your instances from the IPv6 address range of your subnet.
 
 - `Step 6`: (Optional)
-Configure IPv6 on Your Instances – If your instance was launched from an AMI that is not configured to use DHCPv6, you must manually configure your instance to recognize an IPv6 address assigned to the instance.
+Configure IPv6 on Your Instances - If your instance was launched from an AMI that is not configured to use DHCPv6, you must manually configure your instance to recognize an IPv6 address assigned to the instance.
 
 ### VPC Section Summary
-- `CIDR` – IP Range
-- `VPC` – Virtual Private Cloud => we define a list of IPv4 & IPv6 CIDR
-- `Subnets` – tied to an AZ, we define a CIDR
-- `Internet Gateway` – at the VPC level, provide IPv4 & IPv6 Internet Access
-- `Route Tables` – must be edited to add routes from subnets to the IGW, VPC Peering Connections, VPC Endpoints, ...
-- `Bastion Host` – public EC2 instance to SSH into, that has SSH connectivity to EC2 instances in private subnets
-- `NAT Instances` – gives Internet access to EC2 instances in private subnets. Old, must be setup in a public subnet, disable Source / Destination check flag
-- `NAT Gateway` – managed by AWS, provides scalable Internet access to private EC2 instances, IPv4 only
-- `Private DNS` + Route 53 – enable DNS Resolution + DNS Hostnames (VPC)
--` NACL` – stateless, subnet rules for inbound and outbound, don’t forget Ephemeral Ports
-- `Security Groups` – stateful, operate at the EC2 instance level
-- `Reachability Analyzer` – perform network connectivity testing between AWS resources
-- `VPC Peering` – connect two VPCs with non overlapping CIDR, non-transitive
-- `VPC Endpoints` – provide private access to AWS Services (S3, DynamoDB, CloudFormation, SSM) within a VPC
-- `VPC Flow Logs` – can be setup at the VPC / Subnet / ENI Level, for ACCEPT and REJECT traffic, helps identifying attacks, analyze using Athena or CloudWatch Logs Insights
-- `Site-to-Site VPN` – setup a Customer Gateway on DC, a Virtual Private Gateway on VPC, and site-to-site VPN over public Internet
-- `AWS VPN CloudHub` – hub-and-spoke VPN model to connect your sites
-- `Direct Connect` – setup a Virtual Private Gateway on VPC, and establish a direct private connection to an AWS Direct Connect Location
-- `Direct Connect Gateway` – setup a Direct Connect to many VPCs in different AWS regions
+- `CIDR` - IP Range
+- `VPC` - Virtual Private Cloud => we define a list of IPv4 & IPv6 CIDR
+- `Subnets` - tied to an AZ, we define a CIDR
+- `Internet Gateway` - at the VPC level, provide IPv4 & IPv6 Internet Access
+- `Route Tables` - must be edited to add routes from subnets to the IGW, VPC Peering Connections, VPC Endpoints, ...
+- `Bastion Host` - public EC2 instance to SSH into, that has SSH connectivity to EC2 instances in private subnets
+- `NAT Instances` - gives Internet access to EC2 instances in private subnets. Old, must be setup in a public subnet, disable Source / Destination check flag
+- `NAT Gateway` - managed by AWS, provides scalable Internet access to private EC2 instances, IPv4 only
+- `Private DNS` + Route 53 - enable DNS Resolution + DNS Hostnames (VPC)
+-` NACL` - stateless, subnet rules for inbound and outbound, don’t forget Ephemeral Ports
+- `Security Groups` - stateful, operate at the EC2 instance level
+- `Reachability Analyzer` - perform network connectivity testing between AWS resources
+- `VPC Peering` - connect two VPCs with non overlapping CIDR, non-transitive
+- `VPC Endpoints` - provide private access to AWS Services (S3, DynamoDB, CloudFormation, SSM) within a VPC
+- `VPC Flow Logs` - can be setup at the VPC / Subnet / ENI Level, for ACCEPT and REJECT traffic, helps identifying attacks, analyze using Athena or CloudWatch Logs Insights
+- `Site-to-Site VPN` - setup a Customer Gateway on DC, a Virtual Private Gateway on VPC, and site-to-site VPN over public Internet
+- `AWS VPN CloudHub` - hub-and-spoke VPN model to connect your sites
+- `Direct Connect` - setup a Virtual Private Gateway on VPC, and establish a direct private connection to an AWS Direct Connect Location
+- `Direct Connect Gateway` - setup a Direct Connect to many VPCs in different AWS regions
 - `AWS PrivateLink / VPC Endpoint Services`:
   - Connect services privately from your service VPC to customers VPC
   - Doesn’t need VPC Peering, public Internet, NAT Gateway, Route Tables
   - Must be used with Network Load Balancer & ENI
-- `ClassicLink` – connect EC2-Classic EC2 instances privately to your VPC
-- `Transit Gateway` – transitive peering connections for VPC, VPN & DX
-- `Traffic Mirroring` – copy network traffic from ENIs for further analysis
-- `Egress-only Internet Gateway` – like a NAT Gateway, but for IPv6
+- `ClassicLink` - connect EC2-Classic EC2 instances privately to your VPC
+- `Transit Gateway` - transitive peering connections for VPC, VPN & DX
+- `Traffic Mirroring` - copy network traffic from ENIs for further analysis
+- `Egress-only Internet Gateway` - like a NAT Gateway, but for IPv6
 
 ### Networking Costs in AWS per GB
 - Use Private IP instead of Public IP for good savings and better network  performance
 - Use same AZ for maximum savings (at the cost of high availability) - Exam 👀
 
-### S3 Data Transfer Pricing – Analysis for USA
+### S3 Data Transfer Pricing - Analysis for USA
 - `S3 ingress`: free
 - `S3 to Internet`: $0.09 per GB
 - `S3 Transfer Acceleration`:
@@ -994,10 +1000,10 @@ Configure IPv6 on Your Instances – If your instance was launched from an AMI t
 - Internally, the AWS Network Firewall uses the AWS Gateway Load Balancer
 - Rules can be centrally managed cross-account by AWS Firewall Manager to apply to many VPCs
 
-### Network Firewall – Fine Grained Controls
+### Network Firewall - Fine Grained Controls
 - Supports 1000s of rules
 - IP & port - example: 10,000s of IPs filtering
-- Protocol – example: block the SMB protocol for outbound communications
+- Protocol - example: block the SMB protocol for outbound communications
 - Stateful domain list rule groups: only allow outbound traffic to *.mycorp.com or third-party software repo
 - General pattern matching using regex
 - `Traffic filtering: Allow, drop, or alert for the traffic that matches the rules`
@@ -1108,6 +1114,8 @@ Appending a health check at the end of the user data script allows the instance 
 
 ```yml
     CreationPolicy:
+      AutoScalingCreationPolicy:
+        MinSuccessfulInstancesPercent: Integer
       ResourceSignal:
         Count: '3'
         Timeout: PT15M
@@ -1194,16 +1202,16 @@ Create a backup plan in AWS Backup. Assign resources by resource ID, selecting a
 
 ---
 
-## DDoS (Distributed Denial-of-service ) Protection on AWS
+## DDoS (Distributed Denial-of-service) Protection on AWS
 - `AWS Shield Standard`: protects against DDoS attack for your website and applications, for all customers at no additional costs.
 - `AWS Shield Advanced`: 24/7 premium DDoS protection.
 - `AWS WAF`: Filter specific requests based on rules.
 - `CloudFront and Route 53`:
   - Availability protection using global edge network
   - Combined with AWS Shield, provides attack mitigation at the edge
-- Be ready to scale – leverage `AWS Auto Scaling`.
+- Be ready to scale - leverage `AWS Auto Scaling`.
 
-## AWS WAF – Web Application Firewall
+## AWS WAF - Web Application Firewall
 - Protects your web applications from common web exploits (Layer 7)
 - `Layer 7 is HTTP` (vs Layer 4 is TCP)
 - Deploy on `Application Load Balancer, API Gateway, CloudFront`
@@ -1212,7 +1220,7 @@ Create a backup plan in AWS Backup. Assign resources by resource ID, selecting a
   - Rules can include: `IP addresses`, HTTP headers, HTTP body, or URI strings
   - Protects from common attack - `SQL injection` and `Cross-Site Scripting (XSS)`.
   - Size constraints, `geo-match (block countries)`
-  - `Rate-based rules` (to count occurrences of events) – `for DDoS protection`
+  - `Rate-based rules` (to count occurrences of events) - `for DDoS protection`
 
 ## Penetration Testing on AWS Cloud
 - AWS customers are welcome to carry out security assessments or penetration tests against their AWS infrastructure `without prior approval for 8 services`:
@@ -1266,7 +1274,7 @@ information in the findings report and additionally provides the list of rules t
 
 - Continuous scanning of the infrastructure, only when needed
 
-- Package vulnerabilities (EC2, ECR & Lambda) – database of CVE
+- Package vulnerabilities (EC2, ECR & Lambda) - database of CVE
 - Network reachability (EC2)
 
 - A risk score is associated with all vulnerabilities for prioritization
@@ -1280,12 +1288,12 @@ Amazon Inspector discovers potential security issues by using security rules to 
 - Uses Machine Learning algorithms, anomaly detection, 3rd party data
 - One click to enable (30 days trial), no need to install software
 - Input data includes:
-  - `CloudTrail Events Logs` – unusual API calls, unauthorized deployments
-    - `CloudTrail Management Events` – create VPC subnet, create trail, ...
-    - `CloudTrail S3 Data Events` – get object, list objects, delete object, ...
-  - `VPC Flow Logs` – unusual internal traffic, unusual IP address
-  - `DNS Logs` – compromised EC2 instances sending encoded data within DNS queries
-  - `Optional Feature` – EKS Audit Logs, RDS & Aurora, EBS, Lambda, S3 Data Events...
+  - `CloudTrail Events Logs` - unusual API calls, unauthorized deployments
+    - `CloudTrail Management Events` - create VPC subnet, create trail, ...
+    - `CloudTrail S3 Data Events` - get object, list objects, delete object, ...
+  - `VPC Flow Logs` - unusual internal traffic, unusual IP address
+  - `DNS Logs` - compromised EC2 instances sending encoded data within DNS queries
+  - `Optional Feature` - EKS Audit Logs, RDS & Aurora, EBS, Lambda, S3 Data Events...
 - Can setup `EventBridge rules` to be notified in case of findings
 - EventBridge rules can target AWS Lambda or SNS
 - `Can protect against CryptoCurrency attacks (has a dedicated “finding” for it)` - Exam
@@ -1311,10 +1319,10 @@ E.g. AWS Trusted Advisor checks for service `usage` that is more than 80% of the
 - `Fault tolerance`
 - `Service limits`
 
-### Trusted Advisor – Support Plans - Exam
+### Trusted Advisor - Support Plans - Exam
 - 7 CORES CHECKS for Basic & Developer Support plan
   - S3 Bucket Permissions
-  - Security Groups – Specific Ports Unrestricted
+  - Security Groups - Specific Ports Unrestricted
   - IAM Use (one IAM user minimum)
   - MFA on Root Account
   - EBS Public Snapshots
@@ -1363,7 +1371,7 @@ You can `share RDS DB snapshots encrypted with KMS CMK with other accounts`, but
 - Schedule CMK for deletion with a waiting period of 7 to 30 days
 - CMK’s status is “Pending deletion” during the waiting period
 - During the CMK’s deletion waiting period:
-- The CMK can’t be used for cryptographic operations (e.g., can’t decrypt KMS- encrypted objects in S3 – SSE-KMS)
+- The CMK can’t be used for cryptographic operations (e.g., can’t decrypt KMS- encrypted objects in S3 - SSE-KMS)
 - The key is not rotated even if planned
 - You can cancel the key deletion during the waiting period
 - Consider disabling your key instead of deleting it if you’re not sure!
@@ -1390,7 +1398,7 @@ You can allow IAM users or roles in one AWS account to use a customer master key
 - Redshift supports CloudHSM for database encryption and key management
 - `Good option to use with SSE-C encryption`.
 
-### CloudHSM – High Availability
+### CloudHSM - High Availability
 - CloudHSM clusters are spread across Multi AZ (HA)
 - Great for availability and durability
 
@@ -1414,13 +1422,13 @@ Can be used to `support internal audit or compliance`.
 - Secrets are encrypted using KMS
 - Mostly meant for RDS integration
 
-### AWS Secrets Manager – Multi-Region Secrets
+### AWS Secrets Manager - Multi-Region Secrets
 - Replicate Secrets across multiple AWS Regions
 - Secrets Manager keeps read replicas in sync with the primary Secret
 - Ability to promote a read replica Secret to a standalone Secret
 - Use cases: multi-region apps, disaster recovery strategies, multi-region DB...
 
-### Secrets Manager – Monitoring
+### Secrets Manager - Monitoring
 - CloudTrail captures API calls to the Secrets Manager API
 - CloudTrail captures other related events that might have a security or compliance impact on your AWS account or might help you troubleshoot operational problems.
 
@@ -1428,7 +1436,7 @@ Can be used to `support internal audit or compliance`.
   - RotationStarted event
   - RotationSucceeded event
   - ``RotationFailed event``
-  - RotationAbandoned event – a manual change to a secret instead of automated rotation
+  - RotationAbandoned event - a manual change to a secret instead of automated rotation
   - StartSecretVersionDelete event
   - CancelSecretVersionDelete event
 - EndSecretVersionDelete event
@@ -1473,15 +1481,19 @@ AWS Config performs a baseline every six hours to check for new configuration it
 EBS Volumes come in 6 types
 - `gp2 / gp3` (SSD): ``General purpose`` SSD volume that balances price and performance for a wide variety of workloads.
 - `io1 / io2` (SSD): ``Highest-performance`` SSD volume for **mission-critical low-latency or high-throughput workloads**. ``Only multi-attach 16 instances at a time``
-- ``st1`` (HDD): ``Low cost`` HDD volume designed for **frequently accessed, throughput- intensive workloads**
+- ``st1`` (HDD): ``Low cost`` HDD volume designed for **frequently accessed, throughput intensive workloads**
 - ``sc1`` (HDD): ``Lowest cost`` HDD volume designed for **less frequently accessed workloads**
+
+![AWS EBS Types](../images/AWS-EBS-Types.png)
 
 EBS Volumes are characterized in Size | Throughput | IOPS (I/O Ops Per Sec).
 
 **``Only gp2/gp3 and io1/io2 can be used as boot volumes``**
 
+- `EBS-optimized` `instance` uses an optimized configuration stack and provides additional, dedicated capacity for Amazon` EBS I/O`. This optimization provides the best performance for your EBS volumes by minimizing contention between Amazon EBS I/O and other traffic from your instance.
+
 ## Provisioned IOPS SSD (io2 Block Express, io2 & `io1`) volumes
-Provisioned IOPS SSD volumes are designed to deliver a maximum of 256,000 IOPS, 4,000 MB/s of throughput, and 64 TiB in size per volume1. io2 Block Express is the latest generation of the Provisioned IOPS SSD volumes that delivers 4x higher throughput, IOPS, and capacity than regular io2 volumes, along with sub-millisecond latency – at the same price as io2. io2 Block Express provides highest block storage performance for the largest, most I/O- intensive, mission-critical deployments of Oracle, Microsoft SQL Server, SAP HANA, and SAS Analytics
+Provisioned IOPS SSD volumes are designed to deliver a maximum of 256,000 IOPS, 4,000 MB/s of throughput, and 64 TiB in size per volume1. io2 Block Express is the latest generation of the Provisioned IOPS SSD volumes that delivers 4x higher throughput, IOPS, and capacity than regular io2 volumes, along with sub-millisecond latency - at the same price as io2. io2 Block Express provides highest block storage performance for the largest, most I/O- intensive, mission-critical deployments of Oracle, Microsoft SQL Server, SAP HANA, and SAS Analytics
 
 #### General purpose SSD (``gp3 and gp2``) volumes
 General-purpose volumes are backed by solid-state drives (SSDs) and are suitable for a broad range of transactional workloads, virtual desktops, medium sized single instance databases, latency sensitive interactive applications, dev/test environments, and boot volumes.
@@ -1518,7 +1530,7 @@ You can assign a retention period to an object version either explicitly or thro
 1. [https://docs.aws.amazon.com/AmazonS3/latest/dev/replication.html](https://docs.aws.amazon.com/AmazonS3/latest/dev/replication.html)
 
 ### S3 RTC S3 (Replication Time Control)
-S3 Replication Time Control (S3 RTC) helps you meet compliance or business requirements for data replication and provides visibility into Amazon S3 replication times. S3 RTC replicates most objects that you upload to Amazon S3 in seconds, and 99.99 percent of those objects within 15 minutes.
+S3 Replication Time Control (S3 RTC) helps you meet compliance or business requirements for data replication and provides visibility into Amazon S3 replication times. S3 RTC replicates most objects that you upload to Amazon S3 in seconds, and 99.99 percent of those objects within 15 minutes. Amazon S3 events are available through Amazon SQS, Amazon SNS, or AWS Lambda.
 
 Reference: [Using S3 Replication Time Control](https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication-time-control.html#using-s3-events-to-track-rtc)
 
@@ -1568,14 +1580,14 @@ However, you can establish access to Amazon S3 using `Direct Connect` by followi
 
 After the BGP is up and established, the Direct Connect router advertises all global public IP prefixes, including Amazon S3 prefixes. Traffic heading to Amazon S3 is routed through the Direct Connect public virtual interface through a private network connection between AWS and your data center or corporate network.
 
-### Amazon S3 – Security 👀
+### Amazon S3 - Security 👀
 - **``User-Based``**
-  - **IAM Policies** – which API calls should be allowed for a specific user from IAM
+  - **IAM Policies** - which API calls should be allowed for a specific user from IAM
 
 - **``Resource-Based``**
-  - **Bucket Policies** – bucket wide rules from the S3 console - ``allows cross account``
-  - **Object Access Control List (ACL)** – finer grain (can be disabled)
-  - **Bucket Access Control List (ACL)** – less common (can be disabled)
+  - **Bucket Policies** - bucket wide rules from the S3 console - ``allows cross account``
+  - **Object Access Control List (ACL)** - finer grain (can be disabled)
+  - **Bucket Access Control List (ACL)** - less common (can be disabled)
 
 - **``Note``**: an IAM principal can access an S3 object if
   - The user IAM permissions ALLOW it OR the resource policy ALLOWS it
@@ -1591,7 +1603,7 @@ After the BGP is up and established, the Direct Connect router advertises all gl
 
 - Optional Conditions on:
   - Public IP or Elastic IP (not on Private IP)
-  - Source VPC or Source VPC Endpoint – only works with VPC Endpoints
+  - Source VPC or Source VPC Endpoint - only works with VPC Endpoints
   - CloudFront Origin Identity
   - MFA
 
@@ -1623,7 +1635,7 @@ Eg Encrypt un-encrypted objects.
 - You can filter generated report using S3 Select
 - Use cases: `Business`, `Compliance`, `Regulatory` needs, ...
 
-### Amazon S3 Analytics – Storage Class Analysis 👀 OJO
+### Amazon S3 Analytics - Storage Class Analysis 👀 OJO
 - Help you **``decide when to transition objects to the right storage class``**
 - Recommendations for ``Standard`` and ``Standard IA``
 - Does NOT work for One-Zone IA or Glacier
@@ -1643,17 +1655,17 @@ Eg Encrypt un-encrypted objects.
   - Example 1: forbid deleting an archive if less than 1 year old
   - Example 2: implement WORM policy (write once read many)
 
-### Glacier – Notifications for Restore Operations
+### Glacier - Notifications for Restore Operations
 S3 Event Notifications
  - S3 supports the restoration of objects archivedto S3 Glacier storage classes
  - **`s3:ObjectRestore:Post`** => notify when object restoration initiated
  - **``s3:ObjectRestore:Completed``** => notify whenobject restoration completed
 
-### Amazon S3 – Object Encryption
+### Amazon S3 - Object Encryption
 You can encrypt objects in S3 buckets using one of 4 methods
 
 Server-Side Encryption (SSE)
-1. **`Server-Side Encryption with Amazon S3-Managed Keys (SSE-S3)`** – Enabled by Default
+1. **`Server-Side Encryption with Amazon S3-Managed Keys (SSE-S3)`** - Enabled by Default
     - Encrypts S3 objects using keys handled, managed, and owned by AWS
     - Must set header ``"x-amz-server-side-encryption": "AES256"``
 1. **``Server-Side Encryption with KMS Keys stored in AWS KMS (SSE-KMS)``**
@@ -1664,7 +1676,7 @@ Server-Side Encryption (SSE)
     - `HTTPS must be used`
 1. Client-Side Encryption
 
-Amazon S3 – Force Encryption in Transit
+Amazon S3 - Force Encryption in Transit
 aws:SecureTransport
 
 ## CORS
@@ -1680,8 +1692,8 @@ aws:SecureTransport
 - If a client makes a cross-origin request on our S3 bucket, we need to enable the correct CORS headers.
   You can allow for a specific origin or for * (all origins)
 
-### Amazon S3 – MFA Delete
-- **MFA (Multi-Factor Authentication)** – force users to generate a code on a
+### Amazon S3 - MFA Delete
+- **MFA (Multi-Factor Authentication)** - force users to generate a code on a
 device (usually a mobile phone or hardware) before doing important operations on S3
 
 - MFA will be required to:
@@ -1698,9 +1710,9 @@ device (usually a mobile phone or hardware) before doing important operations on
 #### Allow access if users are MFA authenticated
 use an MFA condition in a policy to check the following properties:
 
-– Existence—To simply verify that the user did authenticate with MFA, check that the `aws:MultiFactorAuthPresent` key is True in a Bool condition. The key is only present when the user authenticates with short-term credentials. Long-term credentials, such as access keys, do not include this key.
+- Existence—To simply verify that the user did authenticate with MFA, check that the `aws:MultiFactorAuthPresent` key is True in a Bool condition. The key is only present when the user authenticates with short-term credentials. Long-term credentials, such as access keys, do not include this key.
 
-– Duration—If you want to grant access only within a specified time after MFA authentication, use a numeric condition type to compare the aws:MultiFactorAuthAge key’s age to a value (such as 3600 seconds). Note that the `aws:MultiFactorAuthAge` key is not present if MFA was not used.
+- Duration—If you want to grant access only within a specified time after MFA authentication, use a numeric condition type to compare the aws:MultiFactorAuthAge key’s age to a value (such as 3600 seconds). Note that the `aws:MultiFactorAuthAge` key is not present if MFA was not used.
 
 ```json
 "Condition": {
@@ -1726,13 +1738,13 @@ use an MFA condition in a policy to check the following properties:
 - **``Use cases``**: Business intelligence / analytics / reporting, analyze & query VPC Flow Logs, ELB Logs, CloudTrail trails, etc...
 - **``Exam Tip``**: analyze data in S3 using serverless SQL, use Athena
 
-### Amazon Athena – Performance Improvement
+### Amazon Athena - Performance Improvement
 - **``Use columnar``** data for cost-savings (less scan).
 - **``Compress data``** for smaller retrievals (bzip2, gzip, lz4, snappy, zlip, zstd...).
 - **``Partition``** datasets in S3 for easy querying on virtual columns.
 - **``Use larger files``** (> 128 MB) to minimize overhead.
 
-### Amazon Athena – Federated Query
+### Amazon Athena - Federated Query
 Allows you to run SQL queries across data stored in relational, non-relational, object, and custom data sources (AWS or on-premises)
 
 Uses Data Source Connectors that run on AWS Lambda to run Federated Queries (e.g., CloudWatch Logs, DynamoDB, RDS, ...)
@@ -1747,7 +1759,7 @@ AWS OpsHub takes all the existing operations available in the Snowball API and p
 When your Snow device arrives at your site, you download, install, and launch the AWS OpsHub application on a client machine, such as a laptop. After installation, you can unlock the device and start managing it and using supported AWS services locally. AWS OpsHub provides a dashboard that summarizes key metrics such as storage capacity and active instances on your device. It also provides a selection of AWS services that are supported on the Snow Family Devices. Within minutes, you can begin transferring files to the device.
 
 ---
-## Amazon FSx – Overview
+## Amazon FSx - Overview
 **``Launch 3rd party high-performance file systems on AWS``**
 
 ### FSx for Lustre
@@ -1787,7 +1799,7 @@ Lustre is a type of ``parallel distributed`` file system, for large-scale comput
 ## AWS Storage Gateway
 Bridge between on-premises data and cloud data
 
-![AWS Storage Gateway](../images/AWS-Store-Gateway-Architecture.png)
+![AWS Storage Gateway Architecture](../images/AWS-Store-Gateway-Architecture.png)
 
 - `File Gateway is POSIX compliant (Linux file system)`
   - POSIX metadata ownership, permissions, and timestamps stored in the object’s metadata in S3
@@ -1798,6 +1810,8 @@ Bridge between on-premises data and cloud data
     - Stop Storage Gateway Service (AWS Console, VM local Console, Storage Gateway API)
     - Reboot the Storage Gateway VM
     - Start Storage Gateway Service (AWS Console, VM local Console, Storage Gateway API)
+
+![AWS Storage Gateway](../images/AWS-Store-Gateway.png)
 
 Types of Storage Gateway:
 
@@ -1826,7 +1840,7 @@ Types of Storage Gateway:
 - Back up data using existing tape-based processes (and iSCSI interface)
 - Works with leading backup software vendors
 
-### Storage Gateway – Activations
+### Storage Gateway - Activations
 Two ways to get Activation Key:
 - Using the Gateway VM CLI
 - Make a web request to the Gateway VM (Port 80) old way
@@ -1845,7 +1859,7 @@ Content Delivery Network (CDN)
 - 216 Point of Presence globally (edge locations)
 - **``DDoS protection (because worldwide), integration with Shield, AWS Web Application Firewall``**
 
-### CloudFront – Origins
+### CloudFront - Origins
 `S3 bucket`
   - For distributing files and caching them at the edge
   - Enhanced security with CloudFront **``Origin Access Control (OAC)``**
@@ -1879,7 +1893,7 @@ You can designate `only one account in` an `organization as a Firewall Manager a
 ### CloudFront Caching TTL
 ``**“Cache-Control: max-age”**`` is preferred to “Expires” header
 
-### CloudFront – Increasing Cache Ratio
+### CloudFront - Increasing Cache Ratio
 Monitor the CloudWatch metric ``CacheHitRate``
 
 - Specify how long to cache your objects: `Cache-Control max-age` header
@@ -1903,7 +1917,7 @@ Monitor the CloudWatch metric ``CacheHitRate``
 
 - Previously called AWS Service Health Dashboard
 
-### AWS Health Dashboard – Your Account
+### AWS Health Dashboard - Your Account
 - Previously called `AWS Personal Health Dashboard` (PHD).
 - AWS Account Health Dashboard provides `alerts and remediation guidance` when AWS is experiencing `events that may impact you`.
 - While the Service Health Dashboard displays the general status of AWS services, Account Health Dashboard gives you a `personalized view into the performance and availability of the AWS services underlying your AWS resources`.
@@ -1915,7 +1929,7 @@ you plan for `scheduled activities`.
 - Shows how AWS outages directly impact you & your AWS resources
 - Alert, remediation, proactive, scheduled activitie
 
-### Health Event Notifications
+### Health Event NotificationsC
 - Use `EventBridge to react to changes for AWS Health events` in your AWS account
 - Example: receive email notifications when EC2 instances in your AWS account are scheduled for updates
 - This is possible for Account events (resources that are affected in your account) and Public Events (Regional availability of a service)
@@ -1955,19 +1969,19 @@ Offers `policy-based` management for multiple AWS accounts. With Organizations, 
 ### Security: Service Control Policies (SCP)
 - IAM policies applied to OU or Accounts to restrict Users and Roles.
 - They do not apply to the management account (full admin power).
-- Must have an explicit allow (does not allow anything by default – like IAM).
+- Must have an explicit allow (does not allow anything by default - like IAM).
 
-### AWS Organizations – Reserved Instances
+### AWS Organizations - Reserved Instances
 - For billing purposes, the consolidated billing feature of AWS Organizations treats all the accounts in the organization as one account.
 - This means that ``all accounts`` in the organization can receive the hourly cost benefit of Reserved Instances that are purchased `by any other account`.
 - `The payer account (master account) of an organization` can turn off Reserved Instance (RI) discount and Savings Plans discount sharing for any accounts in that organization, including the payer account
 - This means that RIs and Savings Plans discounts aren't shared between any accounts that have sharing turned off.
 - To share an RI or Savings Plans discount with an account, `both accounts must have sharing turned on`.
 
-### AWS Organizations – IAM Policies
+### AWS Organizations - IAM Policies
 Use `aws:PrincipalOrgID` condition key in your resource-based policies to restrict access to IAM principals from accounts in an AWS Organizat
 
-## AWS Organizations – Tag Policies
+## AWS Organizations - Tag Policies
 - Helps you standardize tags across resources in an AWS Organization
 - Ensure consistent tags, audit tagged resources, maintain proper resources categorization, ...
 - You define tag keys and their allowed values
@@ -2005,10 +2019,10 @@ Before you share your products and portfolios to other accounts, you must decide
 
 - Includes: virtual machines, databases, storage options, etc...
 
-### AWS Service Catalog – Sharing Catalogs
+### AWS Service Catalog - Sharing Catalogs
 Share portfolios with individual AWS accounts or AWS Organizations.
 
-### AWS Service Catalog – TagOptions Library
+### AWS Service Catalog - TagOptions Library
 - Easily manage tags on provisioned products
 - ``TagOption``:
   - Key-value pair managed in AWS Service Catalog
@@ -2016,7 +2030,7 @@ Share portfolios with individual AWS accounts or AWS Organizations.
 - Can be associated with Portfolios and Products.
 - Use cases: `proper resources tagging`, `defined allowed` tags, ...
 - Can be shared with other AWS accounts and AWS Organizations.
-– A consistent `taxonomy`
+- A consistent `taxonomy`
 
 ---
 
@@ -2032,11 +2046,9 @@ Share portfolios with individual AWS accounts or AWS Organizations.
 - The AWS-generated _tag_ `createdBy` defines and applies to supported AWS resources for cost allocation purposes. To use the AWS-generated tags, a management account owner must activate it in the Billing and Cost Management console. When a management account owner activates the tag, it is also activated for all member accounts.
 - `Cost Explorer` is a tool that enables you to view and `analyze your costs and usage`. You can explore your usage and costs using the main graph, the Cost Explorer cost and usage reports, or the Cost Explorer RI reports.
 
-AWS Cost Explorer provides the following prebuilt reports:
-
-– EC2 `RI Utilization %` offers relevant data to identify and act on opportunities to increase your Reserved Instance usage efficiency. It’s calculated by dividing Reserved Instance used hours by total Reserved Instance purchased hours.
-
-– EC2 `RI Coverage %` shows how much of your overall instance usage is covered by Reserved Instances. This lets you make informed decisions about when to purchase or modify a Reserved Instance to ensure
+- AWS Cost Explorer provides the following prebuilt reports:
+  - EC2 `RI Utilization %` offers relevant data to identify and act on opportunities to increase your Reserved Instance usage efficiency. It’s calculated by dividing Reserved Instance used hours by total Reserved Instance purchased hours.
+  - EC2 `RI Coverage %` shows how much of your overall instance usage is covered by Reserved Instances. This lets you make informed decisions about when to purchase or modify a Reserved Instance to ensure
 
 ---
 
@@ -2104,7 +2116,7 @@ To fix this issue, the CTO needs to ensure that an IAM user with full access to 
 ### IAM Access Analyzer
 helps you `identify the resources in your organization and accounts`, such as `Amazon S3 buckets` or `IAM roles`, `shared with an external entity`. This lets you identify unintended access to your resources and data, which is a security risk. Access Analyzer identifies resources shared with external principals by using logic-based reasoning to analyze the resource-based policies in your AWS environment. For each instance of a resource shared outside of your account, Access Analyzer generates a finding.
 
-- `Find out which resources are shared externally`
+- `Find out which resources are shared externally` - OJO
   - S3 Buckets
   - IAM Roles
   - KMS Keys
@@ -2113,8 +2125,6 @@ helps you `identify the resources in your organization and accounts`, such as `A
   - Secrets Manager Secrets
 - Define `Zone of Trust` = AWS Account or AWS Organization
 - Access outside zone of trusts => findings
-
-
 
 ### IAM Policy Types
 You manage access in AWS by creating policies and attaching them to IAM identities (users, groups of users, or roles) or AWS resources. A policy is an object in AWS that, when associated with an identity or resource, defines their permissions. Resource-based policies are JSON policy documents that you attach to a resource such as an Amazon S3 bucket. These policies grant the specified principal permission to perform specific actions on that resource and define under what conditions this applies.
@@ -2150,10 +2160,10 @@ References: [Identity-based policies and resource-based policies](https://docs.a
 
 ## AWS DataSync
 - `Move large amount of data` to and from
-  - `On-premises` / other cloud to AWS (NFS, SMB, HDFS, S3 API...) – needs agent
-  - `AWS to AWS` (different storage services) – no agent needed
+  - `On-premises` / other cloud to AWS (NFS, SMB, HDFS, S3 API...) - needs agent
+  - `AWS to AWS` (different storage services) - no agent needed
 - Can synchronize to:
-  - Amazon S3 (any storage classes – including Glacier)
+  - Amazon S3 (any storage classes - including Glacier)
   - Amazon EFS
   - Amazon FSx (Windows, Lustre, NetApp, OpenZFS...)
 - Replication `tasks can be scheduled hourly, daily, weekly`.
@@ -2164,7 +2174,7 @@ Maybe for `large quantity of data` you can use `AWS Snowcone` with has the `Data
 
 ---
 
-## AWS STS – Security Token Service
+## AWS STS - Security Token Service
 - ``Allows to grant limited and temporary access to AWS resources.``
 - Token is valid for up to one hour (must be refreshed)
 - `AssumeRole`
@@ -2180,7 +2190,7 @@ Maybe for `large quantity of data` you can use `AWS Snowcone` with has the `Data
 
 ---
 
-## Cognito Identity Pools – IAM Roles
+## Cognito Identity Pools - IAM Roles
 - Default IAM roles for authenticated and guest users
 - Define rules to choose the role for each user based on the user’s ID
 - You can partition your users’ access using `policy variables`.
@@ -2212,41 +2222,41 @@ Maybe for `large quantity of data` you can use `AWS Snowcone` with has the `Data
 - The only AWS service which provides 100% availability SLA
 - Why Route 53? 53 is a reference to the traditional DNS port
 
-### Route 53 – Records
+### Route 53 - Records
 - How you want to route traffic for a domain
 - Each record contains:
-  - ``Domain/subdomain Name`` – e.g., example.com
-  - ``Record Type`` – e.g., A or AAAA
-  - ``Value`` – e.g., 12.34.56.78
-  - ``Routing Policy`` – how Route 53 responds to queries
-  - ``TTL`` – amount of time the record cached at DNS Resolvers
+  - ``Domain/subdomain Name`` - e.g., example.com
+  - ``Record Type`` - e.g., A or AAAA
+  - ``Value`` - e.g., 12.34.56.78
+  - ``Routing Policy`` - how Route 53 responds to queries
+  - ``TTL`` - amount of time the record cached at DNS Resolvers
 - Route 53 supports the following DNS record types:
 - (must know) A / AAAA / CNAME / NS
 - (advanced) CAA / DS / MX / NAPTR / PTR / SOA / TXT / SPF / SRV
 
-### Route 53 – Record Types
-- `A` – maps a hostname to IPv4
-- `AAAA` – maps a hostname to IPv6
-- `CNAME` – maps a hostname to another hostname
+### Route 53 - Record Types
+- `A` - maps a hostname to IPv4
+- `AAAA` - maps a hostname to IPv6
+- `CNAME` - maps a hostname to another hostname
   - The target is a domain name which must have an A or AAAA record
   - Can’t create a CNAME record for the top node of a DNS namespace (Zone Apex)
   - Example: you can’t create for example.com, but you can create for www.example.com
-- `NS` – Name Servers for the Hosted Zone
+- `NS` - Name Servers for the Hosted Zone
 - Control how traffic is routed for a domain
 
-### Route 53 – Hosted Zones
+### Route 53 - Hosted Zones
 - A container for records that define how to route traffic to a domain and its subdomains
-- **``Public Hosted Zones``** – contains records that specify how to route traffic on the Internet (public domain names)
+- **``Public Hosted Zones``** - contains records that specify how to route traffic on the Internet (public domain names)
   _application1.mypublicdomain.com_
-- **``Private Hosted Zones``** – contain records that specify how you route traffic within one or more VPCs (private domain names)
+- **``Private Hosted Zones``** - contain records that specify how you route traffic within one or more VPCs (private domain names)
   _application1.company.internal_
 - You pay $0.50 per month per hosted zone
 
-### Route 53 – Records TTL (Time To Live)
-- `High TTL – e.g., 24 hr`
+### Route 53 - Records TTL (Time To Live)
+- `High TTL - e.g., 24 hr`
   - Less traffic on Route 53
   - Possibly outdated records
-- `Low TTL – e.g., 60 sec.`
+- `Low TTL - e.g., 60 sec.`
   - More traffic on Route 53 ($$)
   - Records are outdated for less time
   - Easy to change records
@@ -2265,7 +2275,7 @@ Maybe for `large quantity of data` you can use `AWS Snowcone` with has the `Data
   - Free of charge.
   - Native health check.
 
-### Route 53 – Alias Records
+### Route 53 - Alias Records
 - Maps a hostname to an AWS resource
 - An extension to DNS functionality
 - Automatically recognizes changes in the resource’s IP addresses
@@ -2273,10 +2283,10 @@ Maybe for `large quantity of data` you can use `AWS Snowcone` with has the `Data
 - Alias Record is always of type A/AAAA for AWS resources (IPv4 / IPv6)
 - ``You can’t set the TTL``
 
-## Route 53 – Alias Records Targets
+## Route 53 - Alias Records Targets
 **You cannot set an ALIAS record for an EC2 DNS name** - EXAM
 
-## Route 53 – Routing Policies
+## Route 53 - Routing Policies
 - Define how Route 53 responds to DNS queries
 - Don’t get confused by the word “Routing”
   - It’s not the same as Load balancer routing which routes the traffic
@@ -2290,15 +2300,15 @@ Maybe for `large quantity of data` you can use `AWS Snowcone` with has the `Data
   - Multi-Value Answer
   - Geoproximity (using Route 53 Traffic Flow feature)
 
-### Types of health checks:
-1. `Health checks that monitor an endpoint` – You can configure a health check that monitors an endpoint that you specify either by IP address or by domain name. At regular intervals that you specify, Route 53 submits automated requests over the internet to your application, server, or other resources to verify that it’s reachable, available, and functional. Optionally, you can configure the health check to make requests similar to those that your users make, such as requesting a web page from a specific URL.
-1. `Health checks that monitor other health checks` (calculated health checks) – You can create a health check that monitors whether Route 53 considers other health checks healthy or unhealthy. One situation where this might be useful is when you have multiple resources that perform the same function, such as multiple web servers, and your chief concern is whether some minimum number of your resources are healthy. You can create a  health check for each resource without configuring notifications for those health checks. Then you can create a health check that monitors the status of the other health checks, and that notifies you only when the number of available web resources drops below a specified threshold.
-1. `Health checks that monitor CloudWatch alarms` – You can create CloudWatch alarms that monitor the status of CloudWatch metrics, such as the number of throttled read events for an Amazon DynamoDB database or the number of Elastic Load Balancing hosts that are considered healthy. After you create an alarm, you can create a health check that monitors the same data stream that CloudWatch monitors for the alarm.
+### Types of health checks - OJO
+1. `Health checks that monitor an endpoint` - You can configure a health check that monitors an endpoint that you specify either by IP address or by domain name. At regular intervals that you specify, Route 53 submits automated requests over the internet to your application, server, or other resources to verify that it’s reachable, available, and functional. Optionally, you can configure the health check to make requests similar to those that your users make, such as requesting a web page from a specific URL.
+1. `Health checks that monitor other health checks` (calculated health checks) - You can create a health check that monitors whether Route 53 considers other health checks healthy or unhealthy. One situation where this might be useful is when you have multiple resources that perform the same function, such as multiple web servers, and your chief concern is whether some minimum number of your resources are healthy. You can create a  health check for each resource without configuring notifications for those health checks. Then you can create a health check that monitors the status of the other health checks, and that notifies you only when the number of available web resources drops below a specified threshold.
+1. `Health checks that monitor CloudWatch alarms` - You can create CloudWatch alarms that monitor the status of CloudWatch metrics, such as the number of throttled read events for an Amazon DynamoDB database or the number of Elastic Load Balancing hosts that are considered healthy. After you create an alarm, you can create a health check that monitors the same data stream that CloudWatch monitors for the alarm.
 
-### “Evaluate Target Health”
-You need to set the “Evaluate Target Health” `flag` to `true` on Route 53. This way, Route 53 will check both ALB entry to ensure that your ALBs are responding.
+### “Evaluate Target Health” - OJO
+You need to set the `Evaluate Target Health` flag to `true` on Route 53. This way, Route 53 will check both ALB entry to ensure that your ALBs are responding.
 
-### Routing Policies – Weighted
+### Routing Policies - Weighted
 - Control the % of the requests that go to each specific resource
 - Assign each record a relative weight:
   - traffic (%) = weight for a specific record /sum of all weight records
@@ -2309,29 +2319,29 @@ You need to set the “Evaluate Target Health” `flag` to `true` on Route 53. T
 - `Assign a weight of 0 to a record to stop sending traffic to a resource`.
 - `If all records have weight of 0, then all records will be returned equally`.
 
-### Routing Policies – Latency-based
+### Routing Policies - Latency-based
 - Redirect to the resource that has the least latency close to us
 - Super helpful when latency for users is a priority
 - Latency is based on traffic between users and AWS Regions
 - Germany users may be directed to the US (if that’s the lowest latency)
 - Can be associated with Health Checks (has a failover capability)
 
-### Route 53 – Health Checks
+### Route 53 - Health Checks
 - HTTP Health Checks are only for `public resources`
 - Health Check => Automated DNS Failover:
   1. Health checks that monitor an endpoint (application, server, other AWS resource)
   2. Health checks that monitor other health checks (Calculated Health Checks)
-  3. Health checks that monitor CloudWatch Alarms (full control !!) – e.g., throttles of DynamoDB, alarms on RDS, custom metrics,
+  3. Health checks that monitor CloudWatch Alarms (full control !!) - e.g., throttles of DynamoDB, alarms on RDS, custom metrics,
      ... (helpful for private resources)
 
 - Health Checks are integrated with CW metrics
 
-### Health Checks – Private Hosted Zones
+### Health Checks - Private Hosted Zones
 - Route 53 health checkers are outside the VPC.
 - They `can’t access private` endpoints (private VPC or on-premises resource)
 - You can create a `CloudWatch Metric` and associate a `CloudWatch Alarm`, then create a Health Check that checks the alarm itself.
 
-### Routing Policies – Geolocation
+### Routing Policies - Geolocation
 - Different from Latency-based!
 - This routing is `based on user location`
 - Specify location by Continent, Country or by US State (if there’s overlapping, most precise location selected)
@@ -2339,36 +2349,36 @@ You need to set the “Evaluate Target Health” `flag` to `true` on Route 53. T
 - Use cases: website localization, restrict content distribution, load balancing, ...
 - Can be associated with Health Checks
 
-### Routing Policies – Geoproximity
+### Routing Policies - Geoproximity
 - Route traffic to your resources based on the geographic location of users and resources
 - Ability `to shift more traffic to resources based` on the defined `bias`
 - To change the size of the geographic region, specify `bias` values:
-  - To expand (1 to 99) – more traffic to the resource
-  - To shrink (-1 to -99) – less traffic to the resource
+  - To expand (1 to 99) - more traffic to the resource
+  - To shrink (-1 to -99) - less traffic to the resource
 
 - Resources can be:
   - AWS resources (specify AWS region)
   - Non-AWS resources (specify Latitude and Longitude)
 - You must use Route 53 `Traffic Flow` to use this feature
 
-### Route 53 – Traffic flow
+### Route 53 - Traffic flow
 - Simplify the process of creating and maintaining records in large and complex configurations
 - Visual editor to manage complex routing decision trees
 - Configurations can be saved as `Traffic Flow Policy`
   - Can be applied to different Route 53 Hosted Zones (different domain names)
   - Supports versioning
 
-### Route 53 – Hybrid DNS - OJO
+### Route 53 - Hybrid DNS - OJO
 - By default, Route 53 Resolver automatically answers DNS queries for:
   - Local domain names for EC2 instances
   - Records in Private Hosted Zones
   - Records in public Name Servers
-- ``Hybrid DNS`` – resolving DNS queries between VPC (Route 53 Resolver) and your networks (other DNS Resolvers)
+- ``Hybrid DNS`` - resolving DNS queries between VPC (Route 53 Resolver) and your networks (other DNS Resolvers)
 - Networks can be:
   - VPC itself / Peered VPC
   - On-premises Network (connected through Direct Connect or AWS VPN)
 
-### Route 53 – Resolver Endpoints
+### Route 53 - Resolver Endpoints
 - `Inbound Endpoint`
   - DNS Resolvers on your network can forward DNS queries to Route 53 Resolver
   - Allows your DNS Resolvers to resolve domain names for AWS resources (e.g., EC2 instances) and records in Route 53 Private Hosted Zones
@@ -2381,7 +2391,7 @@ You need to set the “Evaluate Target Health” `flag` to `true` on Route 53. T
 - Create in two AZs for high availability
 - Each Endpoint supports 10,000 queries per second per IP address
 
-### Route 53 – Resolver Rules
+### Route 53 - Resolver Rules
 - Control which DNS queries are forwarded to DNS Resolvers on your network
 - `Conditional Forwarding Rules (Forwarding Rules)`
   - Forward DNS queries for a specified domain and all its subdomains `to target IP addresses`
@@ -2406,9 +2416,9 @@ Elastic Load Balancing application load balancers add a trace ID to incoming HTT
 `Load balancers do not send data to X-Ray`, and do not appear as a node on your service map.
 
 ### ELB access logs
-ELB access logs is an optional feature of Elastic Load Balancing that is disabled by default. The access logs capture detailed information about requests sent to your load balancer. Each log contains information such as the time the request was received, the client's IP address, latencies, request paths, and server responses. You can use these access logs to analyze traffic patterns and troubleshoot issues. Each access log file is automatically encrypted using SSE-S3 before it is stored in your S3 bucket and decrypted when you access it. You do not need to take any action; the encryption and decryption is performed transparently
+ELB access logs is an optional feature of Elastic Load Balancing that is disabled by default. The access logs capture detailed information about requests sent to your load balancer. Each log contains information such as the time the request was received, the `client's IP address, latencies, request paths, and server responses`. You can use these access logs to analyze traffic patterns and troubleshoot issues. Each access log file is automatically encrypted using SSE-S3 before it is stored in your S3 bucket and decrypted when you access it. You do not need to take any action; the encryption and decryption is performed transparently
 
-#### `VPC Flow Logs` only captures information about the `IP traffic` going to and from network interfaces in a VPC
+#### `VPC Flow Logs` only captures information about the `IP traffic` going to and from network interfaces in a VPC - 0JO
 
 Reference: [Access logs for your Application Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-access-logs.html)
 
@@ -2470,7 +2480,7 @@ Reference: [Enable or turn off detailed monitoring for your instances](https://d
 ``InstanceLimitExceeded``: if you get this error, it means that you have reached your limit of `max number of vCPUs` per `region`.
 
 ``InsufficientInstanceCapacity`` : if you get this error, it means `AWS does not have that enough On-Demand capacity`` in the particular AZ where
-the instance is launched
+the instance is launched.
 
 ``Instance Terminates Immediately`` **(goes from pending to terminated)**
 1. You've reached your EBS volume limit.
@@ -2486,15 +2496,15 @@ the instance is launched
 1. CPU load of the instance is high
 
 ### EC2 Instances Purchasing Options
-1. ``On-Demand`` Instances – short workload, predictable pricing, pay by second
+1. ``On-Demand`` Instances - short workload, predictable pricing, pay by second
 1. ``Reserved`` (1 & 3 years)
-1. ``Reserved Instances`` – long workloads
-1. ``Convertible Reserved Instances`` – long workloads with flexible instances
-1. ``Savings Plans (1 & 3 years)`` –commitment to an amount of usage, long workload
-1. ``Spot Instances`` – short workloads, cheap, can lose instances (less reliable)
-1. ``Dedicated Hosts`` – book an entire physical server, control instance placement
-1. ``Dedicated Instances`` – no other customers will share your hardware
-1. ``Capacity Reservations`` – reserve capacity in a specific AZ for any duration
+1. ``Reserved Instances`` - long workloads
+1. ``Convertible Reserved Instances`` - long workloads with flexible instances
+1. ``Savings Plans (1 & 3 years)`` -commitment to an amount of usage, long workload
+1. ``Spot Instances`` - short workloads, cheap, can lose instances (less reliable)
+1. ``Dedicated Hosts`` - book an entire physical server, control instance placement
+1. ``Dedicated Instances`` - no other customers will share your hardware
+1. ``Capacity Reservations`` - reserve capacity in a specific AZ for any duration
 
 ## AWS Storage Gateway
 AWS Storage Gateway is a set of hybrid cloud storage services that provide on-premises access to virtually unlimited cloud storage.
@@ -2503,11 +2513,11 @@ AWS Storage Gateway `uses SSL/TLS` (Secure Socket Layers/Transport Layer Securit
 
 File, Volume and Tape Gateway data is stored in Amazon S3 buckets by AWS Storage Gateway. Tape Gateway supports backing data to Amazon S3 Glacier apart from the standard storage.
 
-Encrypting a file share: For a file share, you can configure your gateway to encrypt your objects with AWS KMS–managed keys by using SSE-KMS.
+Encrypting a file share: For a file share, you can configure your gateway to encrypt your objects with AWS KMS-managed keys by using SSE-KMS.
 
-Encrypting a volume: For cached and stored volumes, you can configure your gateway to encrypt volume data stored in the cloud with AWS KMS–managed keys by using the Storage Gateway API.
+Encrypting a volume: For cached and stored volumes, you can configure your gateway to encrypt volume data stored in the cloud with AWS KMS-managed keys by using the Storage Gateway API.
 
-Encrypting a tape: For a virtual tape, you can configure your gateway to encrypt tape data stored in the cloud with AWS KMS–managed keys by using the Storage Gateway API.
+Encrypting a tape: For a virtual tape, you can configure your gateway to encrypt tape data stored in the cloud with AWS KMS-managed keys by using the Storage Gateway API.
 
 ### Tape Gateway
 Tape Gateway enables you to replace using physical tapes on-premises with virtual tapes in AWS without changing existing backup workflows. Tape Gateway supports all leading backup applications and caches virtual tapes on-premises for low-latency data access. Tape Gateway encrypts data between the gateway and AWS for secure data transfer and compresses data and transitions virtual tapes between Amazon S3 and Amazon S3 Glacier, or Amazon S3 Glacier Deep Archive, to minimize storage costs.
@@ -2583,13 +2593,13 @@ You can encrypt data client-side and upload the encrypted data to Amazon S3. In 
 ## AWS Elastic Beanstalk
 
 ### deployment policy in Elastic Beanstalk:
-– `All at once`: Deploy the new version to all instances simultaneously. All instances in your environment are out of service for a short time while the deployment occurs.
+- `All at once`: Deploy the new version to all instances simultaneously. All instances in your environment are out of service for a short time while the deployment occurs.
 
-– `Rolling`: Deploy the new version in batches. Each batch is taken out of service during the deployment phase, reducing your environment’s capacity by the number of instances in a batch.
+- `Rolling`: Deploy the new version in batches. Each batch is taken out of service during the deployment phase, reducing your environment’s capacity by the number of instances in a batch.
 
-– `Rolling with additional batch`: Deploy the new version in batches, but first launch a new batch of instances to ensure full capacity during the deployment process.
+- `Rolling with additional batch`: Deploy the new version in batches, but first launch a new batch of instances to ensure full capacity during the deployment process.
 
-– `Immutable`: Deploy the new version to a fresh group of instances by performing an immutable update.
+- `Immutable`: Deploy the new version to a fresh group of instances by performing an immutable update.
 
 With deployment policies such as 'All at once', AWS Elastic Beanstalk performs an in-place update when you update your application versions and your application can become unavailable to users for a short period of time. You can avoid this downtime by performing a blue/green deployment, where you deploy the new version to a separate environment, and then swap CNAMEs (via Route 53) of the two environments to redirect traffic to the new version instantly. In case of any deployment issues, the rollback process is very quick via swapping the URLs for the two environments.
 
@@ -2618,7 +2628,7 @@ AWS CloudHSM provides dedicated `hardware security` modules to store and `manage
 
 You can use stack sets to deploy your catalog to many accounts at the same time. If you want to share a reference (an imported version of your portfolio that stays in sync with the original), you can use account-to-account sharing or you can share using AWS Organizations.
 
-## Amazon EFS – Elastic File System
+## Amazon EFS - Elastic File System
 - Use cases: content management, web serving, data sharing, Wordpress
 - Uses NFSv4.1 protocol
 - Uses security group to control access to EFS
@@ -2652,8 +2662,8 @@ You can use stack sets to deploy your catalog to many accounts at the same time.
  - Can’t be used to manage snapshots/AMIs created outside DLM.
  - Can’t be used to manage instance-store backed AMIs
 
-### EFS – Storage Classes
-**``Storage Tiers (lifecycle management feature – move file after N days)``**
+### EFS - Storage Classes
+**``Storage Tiers (lifecycle management feature - move file after N days)``**
   - Standard: for frequently accessed files
   - Infrequent access (EFS-IA): cost to retrieve files, lower price to store. Enable EFS-IA with a Lifecycle Policy
 
@@ -2663,7 +2673,7 @@ You can use stack sets to deploy your catalog to many accounts at the same time.
 
 - Over 90% in cost savings
 
-### EFS – CloudWatch Metrics
+### EFS - CloudWatch Metrics
 **``PercentIOLimit``**
   - How close the file system reaching the I/O limit (General Purpose)
   - If at 100%, move to Max I/O (migration)
@@ -2794,7 +2804,7 @@ For more information about resource groups and tagging, see Tag Editor.
 The management account of an organization can change this setting by turning off `RI` (Reserved Instances) sharing for `an individual member account` the more suitable service is AWS WAF
 
 ##  👀 AWS Shield Advanced
-is more suitable to be used against `distributed denial of service (DDoS`) attacks but not for common web exploits such as `cross-site scripting`, `SQL injection`, and `brute-force HTTP flood attacks`.
+is more suitable to be used against `distributed denial of service (DDoS`) attacks but ``NOT`` for common web exploits such as `cross-site scripting`, `SQL injection`, and `brute-force HTTP flood attacks`.
 
 
 ## 👀 A placement group
@@ -2805,7 +2815,7 @@ Sometimes you want control over the EC2 Instance placement strategy, When you cr
     - `Pros`: Great network (10 Gbps bandwidth between instances with Enhanced Networking enabled - recommended)
     - `Cons`: If the rack fails, all instances fails at the same time
     - `Use` case: Big Data job that needs to complete fast
-  - ``Spread—spreads`` instances across `underlying hardware` (max 7 instances per group per AZ) – critical applications
+  - ``Spread—spreads`` instances across `underlying hardware` (max 7 instances per group per AZ) - critical applications
     - `Pros`:
       - Can span across Availability Zones (AZ)
       - Reduced risk is simultaneous failure
@@ -2825,10 +2835,10 @@ Sometimes you want control over the EC2 Instance placement strategy, When you cr
 
 ## 👀 Network Firewall
 You can use Network Firewall to monitor and protect your Amazon VPC traffic in a number of ways, including the following:
-– Pass traffic through only from known AWS service domains or IP address endpoints, such as Amazon S3.
-– Use custom `lists of known bad domains to limit the types of domain names that your applications can access`.
-– Perform `deep packet inspection` DPI on traffic entering or leaving your VPC.
-– Use stateful protocol detection to filter protocols like HTTPS, independent of the port used.
+- Pass traffic through only from known AWS service domains or IP address endpoints, such as Amazon S3.
+- Use custom `lists of known bad domains to limit the types of domain names that your applications can access`.
+- Perform `deep packet inspection` DPI on traffic entering or leaving your VPC.
+- Use stateful protocol detection to filter protocols like HTTPS, independent of the port used.
 
 ## 👀 Access Analyzer
 helps you identify the resources in your organization and accounts, such as Amazon S3 buckets or IAM roles, `shared with an external entity`. This lets you identify unintended access to your resources and data, which is a security risk. Access Analyzer `identifies resources shared` with `external principals` by using logic-based reasoning to analyze the resource-based policies in your AWS environment. For each instance of a resource shared outside of your account, Access Analyzer generates a finding.
@@ -2902,7 +2912,7 @@ Systems Manager Inventory collects only metadata from your managed instances. In
 - Regional service
 - Works with EC2, S3, DynamoDB, Lambda, etc...
 
-### SSM – Inventory
+### SSM - Inventory
 1. Collect metadata from your managed instances (EC2/On-premises)
 1. Metadata includes installed software, OS drivers, configurations, installed updates, running services ...
 1. View data in AWS Console or store in S3 and query and analyze using Athena and QuickSight
@@ -2925,7 +2935,7 @@ Horizontal Scalability means increasing the number of instances / systems for yo
 ### High Availability & Scalability For EC2
 - Vertical Scaling: Increase instance size (= scale up / down)
   - From: t2.nano - 0.5G of RAM, 1 vCPU
-  - To: u-12tb1.metal – 12.3 TB of RAM, 448 vCPUs
+  - To: u-12tb1.metal - 12.3 TB of RAM, 448 vCPUs
 - Horizontal Scaling: Increase number of instances (= scale out / in)
   - Auto Scaling Group
   - Load Balancer
@@ -2975,10 +2985,10 @@ Backbone service of auto scaling for scalable resources in AWS:
 
 
 ### Target Groups
-- EC2 instances (can be managed by an Auto Scaling Group) – HTTP
-- ECS tasks (managed by ECS itself) – HTTP
-- Lambda functions – HTTP request is translated into a JSON event
-- IP Addresses – must be private IPs
+- EC2 instances (can be managed by an Auto Scaling Group) - HTTP
+- ECS tasks (managed by ECS itself) - HTTP
+- Lambda functions - HTTP request is translated into a JSON event
+- IP Addresses - must be private IPs
 
 - ALB can route to multiple target groups
 - Health checks are at the target group level
@@ -3026,14 +3036,14 @@ Applies when you update a stack that includes an Auto Scalling group with an ass
   - Note: cold starts in VPC have been dramatically reduced in Oct & Nov 2019
   - https://aws.amazon.com/blogs/compute/announcing-improved-vpc-networking-for-aws-lambda-functions/
 
-Lambda Monitoring – CloudWatch Metrics
-- ``Invocations`` – number of times your function is invoked (success/failure)
-- ``Duration`` – amount of time your function spends processing an event
-- ``Errors`` – number of invocations that result in a function error
-- ``Throttles`` – number of invocation requests that are throttled (no concurrency available)
-- ``DeadLetterErrors`` – number of times Lambda failed to send an event to a DLQ (async invocations)
-- ``IteratorAge`` – time between when a Stream receives a record and when the Event Source Mapping sends the event to the function (for Event Source Mapping that reads from Stream)
-- ``ConcurrentExecutions`` – number of function instances that are processing events
+Lambda Monitoring - CloudWatch Metrics
+- ``Invocations`` - number of times your function is invoked (success/failure)
+- ``Duration`` - amount of time your function spends processing an event
+- ``Errors`` - number of invocations that result in a function error
+- ``Throttles`` - number of invocation requests that are throttled (no concurrency available)
+- ``DeadLetterErrors`` - number of times Lambda failed to send an event to a DLQ (async invocations)
+- ``IteratorAge`` - time between when a Stream receives a record and when the Event Source Mapping sends the event to the function (for Event Source Mapping that reads from Stream)
+- ``ConcurrentExecutions`` - number of function instances that are processing events
 
 ---
 
@@ -3073,7 +3083,7 @@ Lambda Monitoring – CloudWatch Metrics
   - Resource-based policies used to restrict access to an ES domain to IP address(es) or CIDR blocks
   - Allows unsigned requests to an ES domain (e.g., curl, Kibana, ...)
 
-### ElasticSearch – Production Setup
+### ElasticSearch - Production Setup
 It’s recommended to:
 - Use *3 dedicated Master nodes*
 - Use at least *2 Data nodes per AZ* (for replication)
