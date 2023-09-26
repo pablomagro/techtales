@@ -2152,7 +2152,9 @@ Use `aws:PrincipalOrgID` condition key in your resource-based policies to restri
 
 ---
 
-## AWS Control Tower -  <- AWS Organizations - 👀 EXAM
+## AWS Control Tower - <- AWS Organizations - 👀 EXAM
+      Offers the easiest way to `set up` and `govern` a `secure, multi-account AWS environment`.
+
 Offers the easiest way to `set up and govern a secure, multi-account AWS environment`. It establishes a landing zone that is `based on the best-practices` blueprints and enables `governance` using `guardrails` you can choose from a pre-packaged list. The landing zone is a well-architected, multi-account baseline that follows AWS best practices. Guardrails implement governance rules for security, compliance, and operations.
 
 - Benefits:
@@ -2167,6 +2169,11 @@ AWS Control Tower provides `three methods for creating member accounts`:
 - Through the `Account Factory console` that is part of `AWS Service Catalog`.
 - Through the `Enroll account feature` within AWS `Control Tower`.
 - From your AWS `Control Tower landing zone’s management account`, using `Lambda` code and `appropriate IAM roles`.
+
+## AWS Control Tower
+
+
+It `establishes a landing zone that` is based on the best-practices blueprints and enables governance using guardrails you can choose from a pre-packaged list. The landing zone is a well-architected, multi-account baseline that follows AWS best practices. Guardrails implement governance rules for security, compliance, and operations.
 
 ---
 
@@ -2890,10 +2897,7 @@ Reference: [Creating security groups](https://docs.aws.amazon.com/efs/latest/ug/
 
 ---
 
-## AWS Control Tower
-Offers the easiest way to `set up` and `govern` a `secure, multi-account AWS environment`.
 
-It `establishes a landing zone that` is based on the best-practices blueprints and enables governance using guardrails you can choose from a pre-packaged list. The landing zone is a well-architected, multi-account baseline that follows AWS best practices. Guardrails implement governance rules for security, compliance, and operations.
 
 ---
 
@@ -3296,14 +3300,12 @@ It’s recommended to:
 ## AWS Systems Manager - AWS Systems Manager OpsCenter
 Provides a central location where operations engineers and IT professionals can manage operational work items (OpsItems) related to AWS resources.
 
-An OpsItem is any operational issue or interruption that needs investigation and remediation. Using OpsCenter, you can view contextual investigation data about each OpsItem, including related OpsItems and related resources. You can also run Systems Manager Automation runbooks to resolve OpsItems.
+An `OpsItem` is any operational issue or interruption that needs investigation and remediation. Using OpsCenter, you can view contextual investigation data about each OpsItem, including related OpsItems and related resources. You can also run Systems Manager Automation runbooks to resolve OpsItems.
 
 ---
 
 ## Amazon [EMR](https://aws.amazon.com/emr/) - Optional
 is the industry-leading cloud big data solution for petabyte-scale data processing, interactive analytics, and machine learning using open-source frameworks such as Apache Spark, Apache Hive, and Presto.
-
-a point-in-time recovery in Amazon Aurora means restoring the database to a new DB cluster from a snapshot. Take note that the requirement is to ensure the restore procedure is done on the same DB instance.
 
 ---
 
@@ -3339,22 +3341,23 @@ S3 Object Lock provides two retention modes:
 
 5. If you have an Lambda which processes/updates an S3 object and writes the updated object back to the same S3 bucket, you might want to consider [ways to avoid recursive Lambda calls on the same S3 bucket](https://aws.amazon.com/blogs/compute/avoiding-recursive-invocation-with-amazon-s3-and-aws-lambda/). Generally using a separate bucket is preferred. If you must use the same bucket you can consider some of the following options:
 
-  (1) Using a prefix or suffix in the S3 event notification
-  (2) Using object metadata to identify the original S3 object
-  (3) Using an Amazon DynamoDB table to filter duplicate events
+  - (1) Using a prefix or suffix in the S3 event notification
+  - (2) Using object metadata to identify the original S3 object
+  - (3) Using an Amazon DynamoDB table to filter duplicate events
 
-6. If you have an on premise server with a fixed IP address and you are migrating this to an EC2 behind a load balancer, you should consider using an A record as an A Record maps to one or more IP Addresses. A CNAME record should not be used as it maps an alias name to another name (Not an IP Address)
+6. If you have an on premise server with a fixed IP address and you are migrating this to an EC2 behind a load balancer,
+you should consider using an A record as an A Record maps to one or more IP Addresses. A CNAME record should not be used as it maps an alias name to another name (Not an IP Address)
 
 7. If you have some existing EC2 and you are a client who wishes to convert some of these to Fargate. You should consider [Cost Savings Plans](https://aws.amazon.com/savingsplans/) and [different scenarios](https://docs.aws.amazon.com/savingsplans/latest/userguide/sp-applying.html) to reduce costs ensure that there are no unused reservations. Options to be considered:
 
-- Compute Savings Plan with no upfront costs.
-- Compute Savings Plan with partial upfront costs.
-- EC2 Instance Savings Plans.
+  - Compute Savings Plan with no upfront costs.
+  - Compute Savings Plan with partial upfront costs.
+  - EC2 Instance Savings Plans.
 
 8. If there are many EC2s behind an autoscaler that are failing intermittently and it will take weeks to solve the actual issue. Some ways to deal with this could include:
 
-  (a) Use CloudWatch agent with health checks and restart them
-  (b) AWS System State Manager/AWS System Session Manager to check the status of these applications every 5 minutes and restart them.
+  - (a) Use CloudWatch agent with health checks and restart them
+  - (b) AWS System State Manager/AWS System Session Manager to check the status of these applications every 5 minutes and restart them.
 
 9. Given S3 bucket and enabled `S3 Object Lock in governance` mode to ensure data integrity and retention that adheres to the write-once-read-many (WORM) model.
 
@@ -3364,10 +3367,10 @@ Two interesting questions from my exam:
 
 1. How to configure ECS to have flow logs ONLY FROM CONTAINERS (two answers) options:
 
-a) use aws vpc network mode
-b) something
-c) use bridge network mode
-d) enable container ENI flow logs
+a) use aws vpc network mode.
+b) something.
+c) use bridge network mode.
+d) enable container ENI flow logs.
 
 The first one seems to be quite simple, in awsvpc mode each container has it's own elastic network interface and you can have flow flog for ENI. So that seems to be the correct answer.
 
