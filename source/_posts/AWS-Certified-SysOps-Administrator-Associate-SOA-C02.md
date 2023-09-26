@@ -3367,36 +3367,36 @@ Two interesting questions from my exam:
 
 1. How to configure ECS to have flow logs ONLY FROM CONTAINERS (two answers) options:
 
-a) use aws vpc network mode.
-b) something.
-c) use bridge network mode.
-d) enable container ENI flow logs.
+  - a) use aws vpc network mode.
+  - b) something.
+  - c) use bridge network mode.
+  - d) enable container ENI flow logs.
 
 The first one seems to be quite simple, in awsvpc mode each container has it's own elastic network interface and you can have flow flog for ENI. So that seems to be the correct answer.
 
 2. Someone created a lambda that is triggered by S3 PutObject event and this lambda writes new file to the same bucket. How should the admin stop the loop (one answer)
 
-a) set reserved concurrency to 0
-b) deny the lambda bucket access
-c) something
-d) something
+  - a) set reserved concurrency to 0
+  - b) deny the lambda bucket access
+  - c) something
+  - d) something
 
 https://docs.aws.amazon.com/lambda/latest/dg/configuration-concurrency.html
 "To throttle a function, set the reserved concurrency to zero" so i guess setting it to 0 is the right answer.
 
 3. What would a sysops need to connect to a managed kubernetes service from his own machine after he set the cluster up
 
-a) kubeconfig
-b) kube-proxy.yaml
-c) something
-d) something
+  - a) kubeconfig
+  - b) kube-proxy.yaml
+  - c) something
+  - d) something
 
 I also remember that there was one question about
 - `S3 Object Lock` and one answer was `with Governance mode and the other one with Compliance mode`
 
 ### Review berfore exam
 
- - `Amazon Inspector` - Amazon Inspector is an automated security assessment service that helps improve the security and compliance of applications deployed on AWS. Amazon Inspector automatically assesses applications for exposure, vulnerabilities, and deviations from best practices. After performing an assessment, Amazon Inspector produces a detailed list of security findings prioritized by level of severity.
+ - `Amazon Inspector` - Amazon Inspector is an automated **`security assessment service that helps improve the security and compliance of applications deployed on AWS`**. Amazon Inspector automatically assesses applications for exposure, vulnerabilities, and deviations from best practices. After performing an assessment, Amazon Inspector **``produces a detailed list of security findings``** prioritized by level of severity.
 
 - `AWS Control Tower` - AWS Control Tower offers the easiest way to set up and govern a secure, multi-account AWS environment. It establishes a landing zone that is based on the best-practices blueprints and enables governance using guardrails you can choose from a pre-packaged list. The landing zone is a well-architected, multi-account baseline that follows AWS best practices. Guardrails implement governance rules for security, compliance, and operations.
 
@@ -3424,23 +3424,25 @@ I also remember that there was one question about
 
 Q) Provides the most detailed information about your AWS Bill and can generate reports with hourly, daily, or monthly granularity. Reports are stored in your selected S3 bucket and can be analyzed using Amazon Athena, Amazon Redshift or Amazon QuickSight
 
-AWS Cost and Usage Report
+    AWS Cost and Usage Report
 
 Q) An easy-to-use interface that lets you visualize your AWS costs and provides a set of ready-to-use default reports to help you get started.
 
-AWS Cost Explorer
+    AWS Cost Explorer
 
 Q) To provide them a way to `get billing updates more than once a month. using a spreadsheet`
   - Configure your `AWS Cost and Usage Report` to generate and publish billing reports in CSV format to an S3 bucket every day.
   - AWS Budgets simply gives you the ability to set custom budgets that alert you when your costs or usage exceed or forecasted to exceed your budgeted amount
 
 Q) Best way to properly get `billing reports for the different company departments`, with the least possible administrative overhead?
-`Cost Allocation Tags`
+
+    Cost Allocation Tags
 
 A tag is a label that you or AWS assigns to an AWS resource. Each tag consists of a key and a value. For each resource, each tag key must be unique, and each tag key can have only one value. You can use tags to organize your resources, and cost allocation tags to track your AWS costs on a detailed level. After you activate cost allocation tags, AWS uses the cost allocation tags to organize your resource costs on your cost allocation report, to make it easier for you to categorize and track your AWS costs.
 
 Q) To see a `report showing the allocation of costs for these EIPs` by department.
-Define Cost Allocation Tags and generate a report using Cost Explorer
+
+    Define Cost Allocation Tags and generate a report using Cost Explorer
 
 ### Tags
 
@@ -3474,7 +3476,7 @@ difficult to forecast.
 
 Q) A type of Performance Mode in Amazon EFS that provides the lowest per-operation latency
 
-      Max Throughput
+    Max Throughput
 
 Q) A networking service that provides static IP addresses that act as a fixed entry point to your applications and eliminate the complexity of managing specific IP addresses for different AWS Regions and Availability Zones.
 
