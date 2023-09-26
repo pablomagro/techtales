@@ -81,7 +81,6 @@ CloudWatch Logs - Sources
 - **``Get a real-time log events from CloudWatch Logs for processing and analysis``**
 - Send to Kinesis Data Streams, Kinesis Data Firehose, or Lambda
 - ``Subscription Filter ``- filter which logs are events delivered to your destination
-
 - ``Cross-Account Subscription`` - send log events to resources in a different AWS account (KDS, KDF)
 
 ### Alarms
@@ -196,7 +195,7 @@ Snapshots are incremental backups, which means that only the blocks on the devic
 
 Reference: [Schedule Automated Amazon EBS Snapshots Using CloudWatch Events](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/TakeScheduledSnapshot.html)
 
-### *Q [Filters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringLogData.html)
+### [Filters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringLogData.html) - QUESTION
 You can create a `count` of `404` errors `and exclude` other `4xx` errors with a filter pattern on 404 errors.
 
 ### Agents
@@ -212,6 +211,50 @@ The `put-metric-data` ``command`` publishes metric data to Amazon CloudWatch, wh
 
 ### Collect process metrics with the ``procstat`` plugin
 The [procstat](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-procstat-process-metrics.html) plugin enables you to `collect metrics from individual processes`. It is supported on Linux servers and on servers running Windows Server 2012 or later.
+
+### [Dashboard Body Structure and Syntax](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/CloudWatch-Dashboard-Body-Structure.html) - EXAM
+A `DashboardBody` is a string in JSON format. It can include an array of between 0 and 500 widget objects, as well as a few other parameters. The dashboard must include a widgets array, but that array can be empty.
+
+When deploying resources using AWS CloudFormation, the goal is often to define as much of the desired infrastructure as possible directly within the template. This is achieved by taking the JSON representation of the prototype dashboard and embedding it directly within the CloudFormation template using the DashboardBody property.
+
+```yml
+Resources:
+  MyCloudWatchDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName: MyDashboard
+      DashboardBody: |
+        {
+          "widgets": [
+            {
+              "type": "text",
+              "x": 0,
+              "y": 0,
+              "width": 12,
+              "height": 1,
+              "properties": {
+                "markdown": "### My Dashboard"
+              }
+            },
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 1,
+              "width": 12,
+              "height": 6,
+              "properties": {
+                "metrics": [["AWS/EC2", "CPUUtilization", "InstanceId", "i-1234567890abcdef0"]],
+                "title": "EC2 CPU Utilization",
+                "period": 300,
+                "stat": "Average",
+                "region": "us-east-1",
+                "yAxis": {"left": {"min": 0, "max": 100}}
+              }
+            }
+          ]
+        }
+
+```
 
 ---
 
@@ -343,6 +386,8 @@ These AWS Config rules act as controls to prevent any non-compliant S3 activitie
 ### Config Rules - Notifications
  - Use EventBridge to trigger notifications when AWS resources are noncompliant
  - Ability to send configuration changes and compliance state notifications to SNS (all events - use SNS Filtering or filter at client-side)
+ - `👀 QUESTION`
+  - If there are EC2s that are terminated in an environment, you should use the **`[EIP-attached Config rule](https://docs.aws.amazon.com/config/latest/developerguide/eip-attached.html)`** to find EIPs that are unattached in your environment.
 
 ### AWS Config - Aggregators
 - The aggregator is created `in one central aggregator account`.
@@ -506,6 +551,11 @@ To connect to an Amazon Aurora DB cluster directly from outside the VPC, the ins
 1. The DB instance must be running in a publicly accessible subnet.
 
 For Amazon Aurora DB instances, you can't choose a specific subnet. Instead, choose a DB subnet group when you create the instance. Create a DB subnet group with subnets of similar network configuration. For example, a DB subnet group for Public subnets.
+
+### Aurora Replicas - TODO
+Aurora Replicas are independent endpoints in an Aurora DB cluster, best used for scaling read operations and increasing availability. Up to 15 Aurora Replicas can be distributed across the Availability Zones that a DB cluster spans within an AWS Region. The DB cluster volume is made up of multiple copies of the data for the DB cluster. However, the data in the cluster volume is represented as a single, logical volume to the primary instance and to Aurora Replicas in the DB cluster.
+
+Alternatively, you can also use Amazon Aurora Multi-Master which is a feature of the Aurora MySQL-compatible edition that adds the ability to scale out write performance across multiple Availability Zones, allowing applications to direct read/write workloads to multiple instances in a database cluster and operate with higher availability.
 
 ### Metrics to generate reports on the Aurora DB Cluster and its replicas
 1. `AuroraReplicaLagMaximum` - This metric captures the `maximum amount of lag between the primary instance and each Aurora DB instance in the DB cluster`.
@@ -988,7 +1038,7 @@ Configure IPv6 on Your Instances - If your instance was launched from an AMI tha
   - Reduce costs associated with S3 Requests Pricing (7x cheaper with CloudFront)
 - `S3 Cross Region Replication`: $0.02 per GB
 
-### AWS Network Firewall - 👀 OJO
+### AWS Network Firewall - 👀 OJO QUESTION
 - `Protect your entire Amazon VPC`
   - Pass traffic through only from known AWS service domains or IP address endpoints, such as Amazon S3.
   - Use custom `lists of known bad domains to limit the types of domain names that your applications can access`.
@@ -1096,7 +1146,7 @@ Use AWS CloudFormation `StackSets` to `deploy a template` to `each account` to c
 
 ``Reference``: [New: Use AWS CloudFormation StackSets for Multiple Accounts in an AWS Organization](https://aws.amazon.com/blogs/aws/new-use-aws-cloudformation-stacksets-for-multiple-accounts-in-an-aws-organization/)
 
-### `*Q` To lunch the last AMI.
+### `QUESTION` To lunch the last AMI.
 Use the Parameters section in the template to specify the Systems Manager (SSM) Parameter, which contains the latest version of the Windows regional AMI ID.
 
 ```YAML
@@ -1217,13 +1267,19 @@ Parameters:
   - Transition to Cold Storage (Never, Days, Weeks, Months, Years)
   - Retention Period (Always, Days, Weeks, Months, Year
 
-`👀 *Q`
+### `👀 QUESTIONUESTION`
 AWS Backup is a fully managed and cost-effective backup service that simplifies and `automates data` backup across AWS services including `Amazon EBS`, `Amazon EC2`, `Amazon RDS`, `Amazon Aurora`, `Amazon DynamoDB`, `Amazon EFS`, and AWS `Storage Gateway`. In addition, AWS Backup `leverages` AWS `Organizations` to implement and maintain a central view of backup policy across resources in a multi-account AWS environment. Customers `simply tag` and associate their `AWS resources` with backup policies managed by AWS Backup for Cross-Region data replication.
 
-### `👀 *Q`  For the production account, a SysOps administrator must ensure that all data is backed up daily for all current and future Amazon EC2 instances and Amazon Elastic File System (Amazon EFS) file systems. Backups must be retained for 30 days
+### `👀 QUESTIONUESTION`  For the production account, a SysOps administrator must ensure that all data is backed up daily for all current and future Amazon EC2 instances and Amazon Elastic File System (Amazon EFS) file systems. Backups must be retained for 30 days
 Create a backup plan in AWS Backup. Assign resources by resource ID, selecting all existing EC2 and EFS resources that are running in the account. Edit the backup plan daily to include any new resources. Schedule the backup plan to run every day with a lifecycle policy to expire backups after 30 days.
 
 ``Explanation``: AWS Backup provides a centralized and automated solution for backing up data. By creating a backup plan and assigning resources by resource ID, you can easily include all existing EC2 instances and EFS file systems in the backup process. Editing the backup plan daily ensures that any new resources are automatically included in the backups. By scheduling the backup plan to run every day and configuring a lifecycle policy to expire backups after 30 days, you meet the requirement of daily backups with a retention period of 30 days.
+
+### AWS Backup does not reboot EC2 instances - `👀 QUESTIONUESTION`
+AWS Backup does not reboot EC2 instances at any time. To maintain the file integrity of images created, you have to apply the reboot parameter when taking images.
+
+To create a Lambda function that calls the `CreateImage API with a reboot parameter` and then `schedule the function to run on a daily basis via Amazon EventBridge` (Amazon CloudWatch Events).
+
 
 ### AWS Backup Vault Lock
 - Enforce a WORM (Write On1ce Read Many) state for all the backups that you store in your AWS Backup Vault
@@ -1340,7 +1396,7 @@ Amazon Inspector discovers potential security issues by using security rules to 
 
 ---
 
-## Amazon GuardDuty -  👀
+## Amazon GuardDuty -  👀 EXAM
 - `Intelligent Threat discovery to protect your AWS Account`.
 - Uses Machine Learning algorithms, anomaly detection, 3rd party data
 - One click to enable (30 days trial), no need to install software
@@ -1364,7 +1420,7 @@ Amazon Inspector discovers potential security issues by using security rules to 
 
 ---
 
-## `*Q` [AWS Trusted Advisor](https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html)
+## `QUESTION` [AWS Trusted Advisor](https://docs.aws.amazon.com/awssupport/latest/user/trusted-advisor.html)
 Trusted Advisor provides real-time guidance to help users follow AWS best practices to provision their resources. `Hight level account assessment`.
 
 E.g. AWS Trusted Advisor checks for service `usage` that is more than 80% of the `service limit`.
@@ -1513,16 +1569,40 @@ Can be used to `support internal audit or compliance`.
   - Integration with CloudFormation
   - Pull screcte from SSM Parater Store
 
+### SSM - Patch Manager
+- Patch Baseline
+- Defines which patches should and shouldn’t be installed on your instances
+- Ability to create custom Patch Baselines (specify approved/rejected patches)
+- Patches can be auto-approved within days of their release
+- By default, install only critical patches and patches related to security
+- Patch Group
+- Associate a set of instances with a specific Patch Baseline
+- **`Example: create Patch Groups for different environments (dev, test, prod)`**
+- Instances should be defined with the tag key **`Patch Group`**.
+- An instance can only be in one Patch Group
+- Patch Group can be registered with only one Patch Baseline
+
+### SSM - [Patch Manager Patch Baselines](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-patch.html)
+- **Pre-Defined Patch Baseline**
+  - Managed by AWS for different Operating Systems (can’t be modified)
+  - A**WS-RunPatchBaseline (SSM Document)** - apply both operating system and application patches (Linux, macOS, Windows Server)
+
+- **Custom Patch Baseline**
+  - Create your own Patch Baseline and choose which patches to auto-approve
+  - Operating System, allowed patches, rejected patches, ...
+  - Ability to specify custom and alternative patch repositories
+
+A patch group is essentially an association of EC2 instances that share the same patching requirements. Within Patch Manager, a patch baseline is a set of rules that dictate which patches should be installed. By using separate patch baselines for each group, it provides granular control over the patching process
 ---
 
 ## EBS
-`*Q`
+`QUESTION`
 - Use `separate` Amazon EBS `volumes` for the `operating system` and `your data`, even though root volume persistence feature is available.
 - EBS snapshots `only capture data that has been written to your Amazon EBS volume`, which might exclude any data that has been locally cached by your application or operating system.
 - By default, `data` on a `non-root EBS volume` is `preserved` even if the instance is `shutdown or terminated`.
     By default, when you attach a non-root EBS volume to an instance, its `DeleteOnTermination` attribute is `set` to `false`. Therefore, the default is to preserve these volumes. After the instance terminates, you can take a snapshot of the preserved volume or attach it to another instance. You must delete a volume to avoid incurring further charges.
 
-### `*Q.` To set up a backup strategy for an Amazon Elastic Block Store (Amazon EBS) volume storing a custom database on an Amazon EC2 instance, the following action should be taken:
+### `QUESTION.` To set up a backup strategy for an Amazon Elastic Block Store (Amazon EBS) volume storing a custom database on an Amazon EC2 instance, the following action should be taken:
 Create an Amazon `Data Lifecycle Manager (Amazon DLM)` policy to `take` a `snapshot of the EBS` volume on a `recurring schedule`.
 
 ``Explanation``: Amazon Data Lifecycle Manager (Amazon DLM) allows you to create automated snapshot lifecycle policies for your Amazon EBS volumes. By creating an Amazon DLM policy, you can define the desired backup schedule and retention period for the EBS volume. The policy will then automatically create snapshots according to the defined schedule. This ensures that regular backups are taken and can be used for data recovery if needed.
@@ -1573,7 +1653,7 @@ Reference: [Amazon EBS features](https://aws.amazon.com/ebs/features/)
 
 ## S3
 
-### `*Q` [S3 inventory](https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-inventory.html)
+### `QUESTION` [S3 inventory](https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-inventory.html)
 Is one of the tools Amazon S3 provides to help manage your storage. You can use it `to audit and report on the replication and encryption status of your objects` for business, compliance, and regulatory needs.
 You can also simplify and speed up business workflows and big data jobs using Amazon S3 inventory, which provides a scheduled alternative to the Amazon S3 synchronous List API operation.
 
@@ -1617,7 +1697,7 @@ You should note that `only` the bucket owner (`root account`) `can enable MFA De
 ### Vault Lock Policy
 S3 Glacier Vault Lock `allows` you to easily deploy and `enforce compliance controls for individual S3 Glacier vaults` with a `vault lock policy`. You `can specify controls` such as `“write once read many” (WORM)` in a vault lock policy and lock the policy from future edits. Once locked, the policy can no longer be changed.
 
-### `*Q` Snowball Edge
+### `QUESTION` Snowball Edge
 AWS Snowball is a service designed for large-scale data transfers. Snowball Edge appliances are rugged, petabyte-scale data transfer devices that can be used for offline data migration. By using multiple instances of the AWS Snowball client and multiple Snowball Edge Appliances, the company can achieve fast and cost-effective data migration.
 
 Using multiple instances of the AWS Snowball client and Snowball Edge Appliances `allows` for `parallel data transfers`, significantly `reducing the migration time`. It also `avoids` the need for `network-based transfers`, which could be slower and potentially costly due to data transfer charges.
@@ -1627,7 +1707,7 @@ Using multiple instances of the AWS Snowball client and Snowball Edge Appliances
 #### Amazon S3 Standard-Infrequent Access (S3 Standard-IA)
 S3 Standard-IA is for data that is accessed less frequently, but requires rapid access when needed. S3 Standard-IA offers the high durability, high throughput, and low latency of S3 Standard, with a low per GB storage price and per GB retrieval charge.
 
-### `*Q` Access to Amazon S3 via Direct Connect
+### `QUESTION` Access to Amazon S3 via Direct Connect
 It's not possible to directly access an S3 bucket through a private virtual interface (VIF) using Direct Connect. This is true even if you have an Amazon Virtual Private Cloud (Amazon VPC) endpoint for Amazon S3 in your VPC because `VPC endpoint connections can't extend outside of a VPC`. Additionally, Amazon S3 resolves to public IP addresses, even if you enable a VPC endpoint for Amazon S3.
 
 However, you can establish access to Amazon S3 using `Direct Connect` by following these steps (This configuration doesn't require a VPC endpoint for Amazon S3, because traffic doesn't traverse the VPC):
@@ -1769,9 +1849,9 @@ device (usually a mobile phone or hardware) before doing important operations on
 #### Allow access if users are MFA authenticated
 use an MFA condition in a policy to check the following properties:
 
-- Existence—To simply verify that the user did authenticate with MFA, check that the `aws:MultiFactorAuthPresent` key is True in a Bool condition. The key is only present when the user authenticates with short-term credentials. Long-term credentials, such as access keys, do not include this key.
+- Existence-To simply verify that the user did authenticate with MFA, check that the `aws:MultiFactorAuthPresent` key is True in a Bool condition. The key is only present when the user authenticates with short-term credentials. Long-term credentials, such as access keys, do not include this key.
 
-- Duration—If you want to grant access only within a specified time after MFA authentication, use a numeric condition type to compare the aws:MultiFactorAuthAge key’s age to a value (such as 3600 seconds). Note that the `aws:MultiFactorAuthAge` key is not present if MFA was not used.
+- Duration-If you want to grant access only within a specified time after MFA authentication, use a numeric condition type to compare the aws:MultiFactorAuthAge key’s age to a value (such as 3600 seconds). Note that the `aws:MultiFactorAuthAge` key is not present if MFA was not used.
 
 ```json
 "Condition": {
@@ -1939,7 +2019,7 @@ Enabling the Origin Shield ``feature`` in `CloudFront` helps reduce the load on 
 ## AWS WAF (Web Application Firewall)
 AWS WAF is a web application firewall that lets you monitor the HTTP and HTTPS requests that are forwarded to an Amazon `CloudFront` distribution, an Amazon `API Gateway` REST API, an `Application Load Balancer`, or an `AWS AppSync GraphQL API`.
 
-### `*Q` [Change AWS Firewall Manager administration account](https://docs.aws.amazon.com/waf/latest/developerguide/fms-change-administrator.html)
+### `QUESTION` [Change AWS Firewall Manager administration account](https://docs.aws.amazon.com/waf/latest/developerguide/fms-change-administrator.html)
 You can designate `only one account in` an `organization as a Firewall Manager administrator account`. To create a new Firewall Manager administrator account, you must revoke the original administrator account first.
 
 ### CloudFront Origin Headers vs Cache Behavior
@@ -1963,8 +2043,8 @@ Monitor the CloudWatch metric ``CacheHitRate``
 - Specify none or the minimally required ``query string parameters``
 - Separate static and dynamic distributions (two origins)
 
-## CloudFront with ALB sticky sessions
-- Must forward / whitelist the cookie that controls the session affinity to the origin to allow the session affinity to work
+## CloudFront with **ALB sticky sessions** - EXAM QUESTION
+-` Must forward / whitelist the cookie that controls the session affinity to the origin` to allow the session affinity to work
 - Set a TTL to a value lesser than when the authentication cookie expire
 
 ``Cookie: AWSALB=...``
@@ -1996,7 +2076,7 @@ you plan for `scheduled activities`.
 - This is possible for Account events (resources that are affected in your account) and Public Events (Regional availability of a service)
 - Use cases: send notifications, capture event information, take corrective action...
 
-## 👀 `*Q` AWS Personal Health Dashboard
+## 👀 `QUESTION` AWS Personal Health Dashboard
 AWS Personal Health Dashboard provides `alerts` and _`remediation guidance`_ when AWS is experiencing `events that may impact you`. While the Service Health Dashboard displays the general status of AWS services, Personal Health Dashboard gives you a personalized view into the _performance and availability_ of the AWS services underlying your AWS resources.
 
 What’s more, Personal Health Dashboard proactively notifies you when AWS experiences any events that may affect you, helping provide quick visibility and guidance to help you minimize the impact of events in progress, and plan for any scheduled changes, such as AWS hardware maintenance.
@@ -2105,7 +2185,7 @@ Before you share your products and portfolios to other accounts, you must decide
 ### AWS Service Catalog - Sharing Catalogs
 `Share portfolios` with `individual AWS accounts or AWS Organizations`.
 
-### AWS Service Catalog - TagOptions Library
+### AWS Service Catalog - TagOptions Library - EXAM
 - Easily manage tags on provisioned products
 - ``TagOption``:
   - Key-value pair managed in AWS Service Catalog
@@ -2147,7 +2227,7 @@ Before you share your products and portfolios to other accounts, you must decide
 - `Same options as AWS Cost Explorer!`
 - 2 budgets are free, then $0.02/day/budget
 
-### Cost Allocation Tags
+### Cost Allocation Tags - EXAM
 - Use `cost allocation tags` to track your AWS costs on a detailed level
 - `AWS generated tags`
   - Automatically applied to the resource you create
@@ -2156,7 +2236,7 @@ Before you share your products and portfolios to other accounts, you must decide
   - Defined by the user
   - Starts with Prefix `user:`
 
-### Cost and Usage Reports
+### Cost and Usage Reports - EXAM
 - Dive deeper into your AWS costs and usage
 - The AWS Cost & Usage Report contains `the most comprehensive set of AWS cost and usage data available`
 - Includes additional metadata about AWS services, pricing, and reservations (`e.g., Amazon EC2 Reserved Instances (RIs)`)
@@ -2164,10 +2244,10 @@ Before you share your products and portfolios to other accounts, you must decide
   - service category used by an account
   - in hourly or daily line items
   - any tags that you have activated for cost allocation purposes
-- Can be configured for daily exports to S3
+- `Can be configured for daily exports to S3`
 - Can be integrated with Athena, Redshift or QuickSight
 
-### AWS Compute Optimizer - 👀 EXAM OJO - 👀
+### [AWS Compute Optimizer](https://docs.aws.amazon.com/compute-optimizer/latest/ug/what-is-compute-optimizer.html) - 👀 EXAM OJO - 👀
 - `Reduce costs and improve performance by` recommending optimal AWS resources for your workloads
 - `Helps you choose optimal configurations and right-size your workloads (over/under provisioned)` - 👀 EXAM
 - Uses Machine Learning to analyze your `resources configurations and their utilization CloudWatch metrics`
@@ -2193,7 +2273,7 @@ To fix this issue, the CTO needs to ensure that an IAM user with full access to 
 - `IAM Credentials Report (account-level)`
   - a report that lists all your account's users and the status of their various credentials
 
-- `IAM Access Advisor (user-level)`
+- `IAM Access Advisor (user-level)` - QUESTION
   - Access advisor shows the service permissions granted to a user and when those services were last accessed.
   - You can use this in1formation to revise your policies.
 
@@ -2465,7 +2545,7 @@ You need to set the `Evaluate Target Health` flag to `true` on Route 53. This wa
   - VPC itself / Peered VPC
   - On-premises Network (connected through Direct Connect or AWS VPN)
 
-### Route 53 - Resolver Endpoints
+### Route 53 - Resolver Endpoints - QUESTION
 - `Inbound Endpoint`
   - DNS Resolvers on your network can forward DNS queries to Route 53 Resolver
   - Allows your DNS Resolvers to resolve domain names for AWS resources (e.g., EC2 instances) and records in Route 53 Private Hosted Zones
@@ -2559,7 +2639,7 @@ You can specify one of the following allocation strategies:
 - `lowestPrice`
 - `InstancePoolsToUseCount`
 
-### `*Q` Get public IP address
+### `QUESTION` Get public IP address
 EC2 instances in AWS have `metadata` associated with them that can be accessed from within the instance. This metadata includes information about the instance, such as its IP address, instance type, security groups, and more.
 
 Can make an HTTP GET request to a specific URL provided by the instance metadata service. The URL is http://169.254.169.254/latest/meta-data/public-ipv4.
@@ -2640,11 +2720,11 @@ service that automatically `creates` an AWS `security group` in your VPC with ne
 
 Using `AWS Trusted Advisor` can provide additional insights into security best practices and potential misconfigurations, but it may not specifically highlight the security group issue related to AWS Directory Services.
 
-## `*Q` [SAML federation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_saml.html)
+## `QUESTION` [SAML federation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_saml.html)
 - `SAML federation between AWS and` the corporate `Active Directory and mapping Active Directory groups to IAM groups` is the recommended way to make access more secure and streamlined.
 
 ## Enhanced networking
-``*Q`` Consider using enhanced networking for the following scenarios of ``network performance issues``:
+``QUESTION`` Consider using enhanced networking for the following scenarios of ``network performance issues``:
 
 1. If your packets-per-second rate reaches its ceiling, consider moving to enhanced networking. If your rate reaches its ceiling, you've likely reached the upper thresholds of the virtual network interface driver.
 1. If your throughput is near or exceeding 20K packets per second (PPS) on the VIF driver, it's a best practice to use enhanced networking.
@@ -2654,7 +2734,7 @@ All current generation instance types support enhanced networking, except for T2
 ## Cost Allocation Tags
 A tag is a label that you or AWS assigns to an AWS resource. Each tag consists of a key and a value. For each resource, each tag key must be unique, and each tag key can have only one value. You can use tags to organize your resources, and cost allocation tags to track your AWS costs on a detailed level. After you activate cost allocation tags, AWS uses the cost allocation tags to organize your resource costs on your cost allocation report, to make it easier for you to categorize and track your AWS costs.
 
-## 👀 `*Q` [AWS Resource Groups Tag Editor](https://docs.aws.amazon.com/ARG/latest/userguide/tag-editor.html)
+## 👀 `QUESTION` [AWS Resource Groups Tag Editor](https://docs.aws.amazon.com/ARG/latest/userguide/tag-editor.html)
 With Resource Groups, you can create, maintain, and view a collection of resources that share common tags. Tag Editor manages `tags across services and AWS Regions`. Tag Editor can perform a global search and can edit a large number of tags at one time.
 
 ## OpsWorks
@@ -2664,13 +2744,13 @@ AWS OpsWorks is a `configuration management service` that provides managed insta
 You can `add nodes` automatically to your Chef Server using the `unattended method`. The recommended method of unattended (or automatic) association of new nodes is to `configure` the `Chef Client Cookbook`.
 With this method, a script is used to run the opsworks-cm API associate-node command to associate a new node with your Chef server. Steps are found in the references.
 
-## `*Q` AWS Service Health Dashboard
+## `QUESTION` AWS Service Health Dashboard
 Publishes the most up-to-the-minute information on the status and availability of all AWS services in tabular form for all Regions that AWS is present in. You can check on this page [https://status.aws.amazon.com/](https://status.aws.amazon.com/) to get current status information.
 
 ## 👀 Cost Allocation Tags - Account Level
 A tag is a label that you or AWS assigns to an AWS resource. Each tag consists of a key and a value. For each resource, each tag key must be unique, and each tag key can have only one value. You can use tags to organize your resources, and cost allocation tags to track your AWS costs on a detailed level. After you activate cost allocation tags, AWS uses the cost allocation tags to organize your resource costs on your cost allocation report, to make it easier for you to categorize and track your AWS costs.
 
-## [Protecting data using encryption](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingEncryption.html)
+## [Protecting data using encryption](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingEncryption.html) - QUESTION
 
 ### SSE-S3 - Server-Side Encryption with Amazon S3-Managed Keys (SSE-S3)
 Using SSE-S3 each object is encrypted with a unique key employing strong multi-factor encryption. As an additional safeguard, it encrypts the key itself with a master key that it regularly rotates. Amazon S3 server-side encryption uses one of the strongest block ciphers available, 256-bit Advanced Encryption Standard (AES-256), to encrypt your data.
@@ -2811,7 +2891,9 @@ Reference: [Creating security groups](https://docs.aws.amazon.com/efs/latest/ug/
 ---
 
 ## AWS Control Tower
-Offers the easiest way to `set up` and `govern` a `secure, multi-account AWS environment`. It establishes a landing zone that is based on the best-practices blueprints and enables governance using guardrails you can choose from a pre-packaged list. The landing zone is a well-architected, multi-account baseline that follows AWS best practices. Guardrails implement governance rules for security, compliance, and operations.
+Offers the easiest way to `set up` and `govern` a `secure, multi-account AWS environment`.
+
+It `establishes a landing zone that` is based on the best-practices blueprints and enables governance using guardrails you can choose from a pre-packaged list. The landing zone is a well-architected, multi-account baseline that follows AWS best practices. Guardrails implement governance rules for security, compliance, and operations.
 
 ---
 
@@ -2924,11 +3006,11 @@ is more suitable to be used against `distributed denial of service (DDoS`) attac
 is a logical `grouping` of `instances` `within` a `single Availability Zone`. By placing the EC2 instances in a placement group, you can ensure that the instances are physically located close to each other, which can significantly `reduce network latency between them`. This can `improve the performance` of inter-instance communication and reduce the overall latency in data transfer.
 
 Sometimes you want control over the EC2 Instance placement strategy, When you create a placement group, you specify one of the following strategies for the group:
-  - ``Cluster—clusters`` instances into a `low-latency` group in a `single Availability Zone`.
+  - ``Cluster-clusters`` instances into a `low-latency` group in a `single Availability Zone`.
     - `Pros`: Great network (10 Gbps bandwidth between instances with Enhanced Networking enabled - recommended)
     - `Cons`: If the rack fails, all instances fails at the same time
     - `Use` case: Big Data job that needs to complete fast
-  - ``Spread—spreads`` instances across `underlying hardware` (max 7 instances per group per AZ) - critical applications
+  - ``Spread-spreads`` instances across `underlying hardware` (max 7 instances per group per AZ) - critical applications
     - `Pros`:
       - Can span across Availability Zones (AZ)
       - Reduced risk is simultaneous failure
@@ -2938,7 +3020,7 @@ Sometimes you want control over the EC2 Instance placement strategy, When you cr
     - `Use case`:
       - Application that needs to maximize high availability
       - Critical Applications where each instance must be isolated from failure from each other
-  - ``Partition—spreads`` `instances across many different partitions` (which rely on different sets of racks) within an AZ. Scales to 100s of EC2 instances per group (Hadoop, Cassandra, Kafka)
+  - ``Partition-spreads`` `instances across many different partitions` (which rely on different sets of racks) within an AZ. Scales to 100s of EC2 instances per group (Hadoop, Cassandra, Kafka)
     - Up to 7 partitions per AZ  Can span across multiple AZs in the same region
     - Up to 100s of EC2 instances
     - The instances in a partition do not share racks with the instances in the other partitions
@@ -3021,6 +3103,11 @@ Systems Manager Inventory collects only metadata from your managed instances. In
 1. Query data from multiple AWS accounts and regions
 1. Create Custom Inventory for your custom metadata (e.g., rack location of each managed instance)
 
+## AWS Systems Manager - Distributor
+Allows you to securely distribute and install software packages, like your custom software’s .msi installer, across a large set of instances.
+
+### AWS Systems Manager State Manager
+Uses associations to enforce a desired state for your instances. By setting up an association to run the AWS-ConfigureAWSPackage document, you’re effectively telling the Systems Manager to install or update the specified package (in this case, your custom software) on instances with the specified tags
 ---
 
 ## Scalability & High Availability
@@ -3052,9 +3139,9 @@ Uses the **GENEVE** protocol on port **6081**
 
 ### Monitoring
 * ``**RequestCountPerTarget**``
-* ``**SurgeQueueLength**``: The total of requests (HTTP listener) or connections (TCP listener) that are pending routing to a healthy instance. Help to scale out ASG. Max value is 1024
-* `👀` `SpilloverCount` represents the total `number of requests` that were `rejected` `because` the surge `queue` is `full`.
+* `👀 EXAM` `SpilloverCount` represents the total `number of requests` that were `rejected` `because` the surge `queue` is `full`.
 To solve this use-case, you need to configure the Auto Scaling groups to scale your instances based on the `SurgeQueueLength` metric.
+* ``**SurgeQueueLength**``: The total of requests (HTTP listener) or connections (TCP listener) that are pending routing to a healthy instance. Help to scale out ASG. Max value is 1024
 
 ### Target Groups Settings
 - ``deregisteration_delay.timeout_seconds``: time the load balancer waits before deregistering a target.
@@ -3193,6 +3280,26 @@ It’s recommended to:
 
 ---
 
+## AWS IAM Identity Center (successor to AWS Single Sign-On) - EXAM
+- One login (single sign-on) for all your
+  - **`AWS accounts in AWS Organizations`**
+  - Business cloud applications (e.g., Salesforce, Box, Microsoft 365, ...)
+  - SAML2.0-enabled applications
+  - EC2 Windows Instances
+
+- Identity providers
+- Built-in identity store in IAM Identity Center
+- 3rd party: Active Directory (AD), OneLogin, Okta...
+
+---
+
+## AWS Systems Manager - AWS Systems Manager OpsCenter
+Provides a central location where operations engineers and IT professionals can manage operational work items (OpsItems) related to AWS resources.
+
+An OpsItem is any operational issue or interruption that needs investigation and remediation. Using OpsCenter, you can view contextual investigation data about each OpsItem, including related OpsItems and related resources. You can also run Systems Manager Automation runbooks to resolve OpsItems.
+
+---
+
 ## Amazon [EMR](https://aws.amazon.com/emr/) - Optional
 is the industry-leading cloud big data solution for petabyte-scale data processing, interactive analytics, and machine learning using open-source frameworks such as Apache Spark, Apache Hive, and Presto.
 
@@ -3200,11 +3307,181 @@ a point-in-time recovery in Amazon Aurora means restoring the database to a new 
 
 ---
 
- ## AWS Global Accelerator
- service that `improves` the `availability and performance of your applications with local or global users`. It provides static IP addresses that act as a fixed entry point to your application endpoints in a single or multiple AWS Regions, such as your Application Load Balancers, Network Load Balancers or Amazon EC2 instances. AWS Global Accelerator will not help in accelerating the file transfer speeds into S3 for the given use-case.
+## AWS Global Accelerator
+service that `improves` the `availability and performance of your applications with local or global users`. It provides static IP addresses that act as a fixed entry point to your application endpoints in a single or multiple AWS Regions, such as your Application Load Balancers, Network Load Balancers or Amazon EC2 instances. AWS Global Accelerator will not help in accelerating the file transfer speeds into S3 for the given use-case.
 
 Global Accelerator service does not work with S3. It only supports endpoints like application load balancers, network load balancers, EC2 instances, or elastic IP addresses.
 
---
+---
 
-## AWS Systems Manager OpsCenter
+## ASG WARM Pool
+A warm pool gives your the ability to decrease latency for apps tat have exceptionally long boot times, eg because instance need to write mssive amountos of data to disk.
+
+---
+
+## Other Quetions - [Link](https://collin-smith.medium.com/passing-the-aws-certified-sysops-administrator-associate-certification-in-2023-a1e5f08d1b12)
+
+1. If an S3 Bucket implemented [Governance Mode S3 Object Locking](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock-overview.html) and you wanted to bypass this you. You must have the `s3:BypassGovernanceRetention` permission and must explicitly include `x-amz-bypass-governance-retention:true` as a request header with any request that requires overriding governance mode.
+
+S3 Object Lock provides two retention modes:
+
+- Governance mode
+- Compliance mode
+
+* In `compliance mode`, a protected object version `can’t be overwritten or deleted by any user`, including the root user in your AWS account.
+* In `governance mode`, users `can’t overwrite or delete an object` version or alter its lock settings unless **`they have special permissions`**.
+
+2. If you encounter the **`OUTDATED`** status when running a [CloudFormation StackSet](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-concepts.html) for one region. According to [Troubleshooting AWS CloudFormation StackSets](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-troubleshooting.html) coud be a result that “the template could be trying to create global resources that must be unique but aren’t, such as S3 buckets.”
+
+3. If you had a single AWS Aurora cluster with one writer and reader and you were encountering memory issues, you might want to deal with this using AWS Aurora DB Multi-Master. However, I believe the AWS Aurora DB Multi-Master has been phased out. You can read further on trouble shooting [AWS Aurora Memory Issues](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_Troubleshooting.html).
+
+4. If there are EC2s that are terminated in an environment, you should use the EIP-attached Config rule to find EIPs that are unattached in your environment.
+
+5. If you have an Lambda which processes/updates an S3 object and writes the updated object back to the same S3 bucket, you might want to consider [ways to avoid recursive Lambda calls on the same S3 bucket](https://aws.amazon.com/blogs/compute/avoiding-recursive-invocation-with-amazon-s3-and-aws-lambda/). Generally using a separate bucket is preferred. If you must use the same bucket you can consider some of the following options:
+
+  (1) Using a prefix or suffix in the S3 event notification
+  (2) Using object metadata to identify the original S3 object
+  (3) Using an Amazon DynamoDB table to filter duplicate events
+
+6. If you have an on premise server with a fixed IP address and you are migrating this to an EC2 behind a load balancer, you should consider using an A record as an A Record maps to one or more IP Addresses. A CNAME record should not be used as it maps an alias name to another name (Not an IP Address)
+
+7. If you have some existing EC2 and you are a client who wishes to convert some of these to Fargate. You should consider [Cost Savings Plans](https://aws.amazon.com/savingsplans/) and [different scenarios](https://docs.aws.amazon.com/savingsplans/latest/userguide/sp-applying.html) to reduce costs ensure that there are no unused reservations. Options to be considered:
+
+- Compute Savings Plan with no upfront costs.
+- Compute Savings Plan with partial upfront costs.
+- EC2 Instance Savings Plans.
+
+8. If there are many EC2s behind an autoscaler that are failing intermittently and it will take weeks to solve the actual issue. Some ways to deal with this could include:
+
+  (a) Use CloudWatch agent with health checks and restart them
+  (b) AWS System State Manager/AWS System Session Manager to check the status of these applications every 5 minutes and restart them.
+
+9. Given S3 bucket and enabled `S3 Object Lock in governance` mode to ensure data integrity and retention that adheres to the write-once-read-many (WORM) model.
+
+### More questions from Reddit
+
+Two interesting questions from my exam:
+
+1. How to configure ECS to have flow logs ONLY FROM CONTAINERS (two answers) options:
+
+a) use aws vpc network mode
+b) something
+c) use bridge network mode
+d) enable container ENI flow logs
+
+The first one seems to be quite simple, in awsvpc mode each container has it's own elastic network interface and you can have flow flog for ENI. So that seems to be the correct answer.
+
+2. Someone created a lambda that is triggered by S3 PutObject event and this lambda writes new file to the same bucket. How should the admin stop the loop (one answer)
+
+a) set reserved concurrency to 0
+b) deny the lambda bucket access
+c) something
+d) something
+
+https://docs.aws.amazon.com/lambda/latest/dg/configuration-concurrency.html
+"To throttle a function, set the reserved concurrency to zero" so i guess setting it to 0 is the right answer.
+
+3. What would a sysops need to connect to a managed kubernetes service from his own machine after he set the cluster up
+
+a) kubeconfig
+b) kube-proxy.yaml
+c) something
+d) something
+
+I also remember that there was one question about
+- `S3 Object Lock` and one answer was `with Governance mode and the other one with Compliance mode`
+
+### Review berfore exam
+
+ - `Amazon Inspector` - Amazon Inspector is an automated security assessment service that helps improve the security and compliance of applications deployed on AWS. Amazon Inspector automatically assesses applications for exposure, vulnerabilities, and deviations from best practices. After performing an assessment, Amazon Inspector produces a detailed list of security findings prioritized by level of severity.
+
+- `AWS Control Tower` - AWS Control Tower offers the easiest way to set up and govern a secure, multi-account AWS environment. It establishes a landing zone that is based on the best-practices blueprints and enables governance using guardrails you can choose from a pre-packaged list. The landing zone is a well-architected, multi-account baseline that follows AWS best practices. Guardrails implement governance rules for security, compliance, and operations.
+
+- `AWS Service Catalog` - AWS Service Catalog allows organizations to create and manage catalogs of IT services that are approved for use on AWS. These IT services can include everything from virtual machine images, servers, software, and databases to complete multi-tier application architectures. AWS Service Catalog allows you to centrally manage deployed IT services and your applications, resources, and metadata. This helps you achieve consistent governance and meet your compliance requirements while enabling users to quickly deploy only the approved IT services they need.
+
+- ``Checks Security``
+
+  - Security Checks inspect the AWS aws and make "Recommendations": `AWS Trusted Advisor`
+    - AWS Config unlike does recommendations
+  - `AWS Inspector` targets `only EC2 instances` that run on a number of supported operating systems.
+
+- ``Systems Manager``
+
+- Build `automation to configure and manage instances and AWS resources`.
+  - Create custom runbooks or use pre-defined runbooks maintained by AWS.
+  - Receive notifications about Automation tasks and runbooks by using Amazon EventBridge.
+  - Monitor Automation progress and details by using the AWS Systems Manager console.
+
+### Checks Health
+
+- AWS Personal Health Dashboard (Use the Personal Health Dashboard which provides information about AWS Health events that can affect your account)
+    to be notified of any issues that occur in the underlying hardware that hosts the AWS resources.
+
+### Costs
+
+Q) Provides the most detailed information about your AWS Bill and can generate reports with hourly, daily, or monthly granularity. Reports are stored in your selected S3 bucket and can be analyzed using Amazon Athena, Amazon Redshift or Amazon QuickSight
+
+AWS Cost and Usage Report
+
+Q) An easy-to-use interface that lets you visualize your AWS costs and provides a set of ready-to-use default reports to help you get started.
+
+AWS Cost Explorer
+
+Q) To provide them a way to `get billing updates more than once a month. using a spreadsheet`
+  - Configure your `AWS Cost and Usage Report` to generate and publish billing reports in CSV format to an S3 bucket every day.
+  - AWS Budgets simply gives you the ability to set custom budgets that alert you when your costs or usage exceed or forecasted to exceed your budgeted amount
+
+Q) Best way to properly get `billing reports for the different company departments`, with the least possible administrative overhead?
+`Cost Allocation Tags`
+
+A tag is a label that you or AWS assigns to an AWS resource. Each tag consists of a key and a value. For each resource, each tag key must be unique, and each tag key can have only one value. You can use tags to organize your resources, and cost allocation tags to track your AWS costs on a detailed level. After you activate cost allocation tags, AWS uses the cost allocation tags to organize your resource costs on your cost allocation report, to make it easier for you to categorize and track your AWS costs.
+
+Q) To see a `report showing the allocation of costs for these EIPs` by department.
+Define Cost Allocation Tags and generate a report using Cost Explorer
+
+### Tags
+
+Q) Tags are consistently applied when your resources are created in AWS across all accounts.
+
+    A: AWS Service Catalog to tag the provisioned resources with corresponding unique identifiers for portfolio, product, and users.
+    A: AWS CloudFormation Resource Tags property to apply tags to certain resource types upon creation.
+
+### Other
+
+Q) Provides the most detailed information about your AWS Bill and can generate reports with hourly, daily, or monthly granularity. Reports are stored in your selected S3 bucket and can be analyzed using Amazon Athena, Amazon Redshift or Amazon QuickSight
+
+    AWS Cost and Usage Report
+
+Q) An easy-to-use interface that lets you visualize your AWS costs and provides a set of ready-to-use default reports to help you get started.
+
+    AWS Cost Explorer
+
+Q) An Amazon EFS performance mode that is designed for highly parallelized workloads that can tolerate high latencies:
+
+    Max I/0
+
+Q) A type of Amazon EFS Throughput Mode that is recommended if you want a throughput that scales with the amount of storage in your file system.
+
+    Bursting Throughput
+
+Q) One of the Throughput Modes in Amazon EFS that is recommended if you have spiky or unpredictable workloads and performance requirements that are
+difficult to forecast.
+
+    Elastic Throughput
+
+Q) A type of Performance Mode in Amazon EFS that provides the lowest per-operation latency
+
+      Max Throughput
+
+Q) A networking service that provides static IP addresses that act as a fixed entry point to your applications and eliminate the complexity of managing specific IP addresses for different AWS Regions and Availability Zones.
+
+    AWS Global Accelerator
+
+Q) Automatically collects log data from your AWS resources and uses machine learning, statistical analysis, and graph theory to build a linked set of data that enables you to easily conduct faster and more efficient security investigations.
+
+    Amazon Detective
+
+Q) Responds recursively to DNS queries from AWS resources for public records, Amazon VPC-specific DNS names, and Amazon Route 53 private hosted zones, and is available by default in all VPCs.
+
+    AWS Route 53 Resolver
+
