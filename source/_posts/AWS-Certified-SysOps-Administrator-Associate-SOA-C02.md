@@ -3317,7 +3317,7 @@ Global Accelerator service does not work with S3. It only supports endpoints lik
 ---
 
 ## ASG WARM Pool
-A warm pool gives your the ability to decrease latency for apps tat have exceptionally long boot times, eg because instance need to write mssive amountos of data to disk.
+A warm pool gives your the ability to decrease latency for apps that have exceptionally long boot times, eg because instance need to write massive amounts of data to disk.
 
 ---
 
@@ -3489,4 +3489,91 @@ Q) Automatically collects log data from your AWS resources and uses machine lear
 Q) Responds recursively to DNS queries from AWS resources for public records, Amazon VPC-specific DNS names, and Amazon Route 53 private hosted zones, and is available by default in all VPCs.
 
     AWS Route 53 Resolver
+
+---
+Parquet
+
+CloudWatch Agent
+
+CloudWatch Insight
+
+S3 + CloudFormation
+
+Athena Sources S3 CloudWatch
+
+Status Checks
+
+AMI Sharing other Account List of AMI
+
+EC2 Image Builder
+
+SSM Parameter Store
+
+SSM – Run Command
+
+TTL Route 53 CloudFront
+
+A
+CNAME to ALB could be IP o name
+
+www.example.com
+example
+
+CloudFront – Origins
+
+Network Load Balancer
+
+Sticky Sessions (Session Affinity)
+
+ESB Faster In wake up
+
+CloudFormation
+    set Cloudformation dnsprivate name ip?
+
+    Cross Stack Reference
+
+    Retaining Data on Deletes ec2 whole instance
+
+    StackSets
+
+    AWS::SecretsManager::RotationSchedule
+
+
+CloudFront with ALB sticky sessions
+Improve Cache
+
+Lambda
+
+ASG WARM Pool
+
+AWS IAM Identity Center issue with group permissions
+
+instance type reserved changeable
+
+EBS resizing
+
+• FSR helps you to create a volume from a snapshot
+that is fully initialized at creation (no I/O latency)
+
+EFS
+
+Share EBS
+
+Share an Amazon EBS snapshot
+
+Share
+
+s3 host web site and CloudFront
+
+Poolicies with root accounts
+
+S3 Performance
+• Multi-Part upload:
+• S3 Transfer Acceleration
+
+ AWS::SecretsManager::RotationSchedule
+
+ VPC Flow Logs Syntax
+
+Volume Gateway for on-promises locally
 
