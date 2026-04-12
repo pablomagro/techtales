@@ -14,28 +14,33 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v2
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '20'
 
-      - name: Cache NPM dependencies
-        uses: actions/cache@v2
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
         with:
-          path: node_modules
-          key: ${{ runner.OS }}-npm-cache
+          version: 9
+
+      - name: Cache pnpm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.OS }}-pnpm-cache-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.OS }}-npm-cache
+            ${{ runner.OS }}-pnpm-cache-
 
       - name: Install Dependencies
-        run: npm install
+        run: pnpm install --frozen-lockfile
 
       - name: Clean & Build
-        run: npm run clean:generate
+        run: pnpm run clean:generate
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
