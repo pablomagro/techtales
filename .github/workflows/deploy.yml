@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - master
-    pull_request:
+  pull_request:
+    branches:
+      - master
 
 jobs:
   pages:
@@ -18,10 +20,10 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Use Node.js 20.x
+      - name: Use Node.js ${{ vars.DEFAULT_NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: ${{ vars.DEFAULT_NODE_VERSION }}
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
