@@ -1,38 +1,39 @@
+header-bar-height = 56px
+
 #header
-  height: banner-height
-  position: relative
+  height: header-bar-height
   background: #111
-  border-bottom: none
-
-#header-outer
-  height: 100%
-  position: relative
-
-#header-inner
   position: relative
   overflow: hidden
+
+#header-outer
+  height: header-bar-height
+  position: relative
 
 #banner
   display: none
 
 #header-title
-  height: banner-height
+  position: absolute
+  top: 0
+  left: 50%
+  transform: translateX(-50%)
+  height: header-bar-height
   display: flex
   align-items: center
-  justify-content: center
-  position: absolute
-  left: 50%
-  top: 0
-  transform: translateX(-50%)
+  float: none
+  width: auto
 
-$logo-text
+#logo-wrap
+  margin: 0
+  padding: 0
+  font-size: 1em
+
+#logo
   text-decoration: none
   color: #fff
   font-weight: 700
-
-#logo
-  @extend $logo-text
-  font-size: 1.1em
+  font-size: 1em
   letter-spacing: -0.01em
 
 #subtitle
@@ -41,39 +42,47 @@ $logo-text
 #subtitle-wrap
   display: none
 
+#header-inner
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  height: header-bar-height
+  display: flex
+  align-items: center
+  float: none
+  width: auto
+
 #main-nav
-  float: left
-  margin-left: -15px
+  display: flex
+  align-items: center
+  height: header-bar-height
+  margin: 0
 
 $nav-link
-  float: left
-  color: rgba(255, 255, 255, 0.6)
-  opacity: 1
+  color: rgba(255, 255, 255, 0.55)
   text-decoration: none
   text-shadow: none
   transition: color 0.2s
   display: flex
   align-items: center
-  height: banner-height
-  padding: 0 15px
+  height: header-bar-height
+  padding: 0 14px
+  float: none
   &:hover
     color: #fff
 
 .nav-icon
   @extend $nav-link
   font-family: font-icon
-  text-align: center
-  font-size: font-size
-  width: font-size
-  height: font-size
-  padding: 20px 15px
-  position: relative
+  font-size: 14px
   cursor: pointer
 
 .main-nav-link
   @extend $nav-link
-  font-weight: 300
-  letter-spacing: 1px
+  font-size: 0.85em
+  font-weight: 400
+  letter-spacing: 0.5px
   @media mq-mobile
     display: none
 
@@ -82,11 +91,13 @@ $nav-link
   &:before
     content: "\f0c9"
   @media mq-mobile
-    display: block
+    display: flex
 
 #sub-nav
-  float: right
-  margin-right: -15px
+  display: flex
+  align-items: center
+  height: header-bar-height
+  margin-left: auto
 
 #nav-rss-link
   &:before

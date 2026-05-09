@@ -15,7 +15,7 @@ timezone: Pacific/Auckland
 # URL
 ## Configuring a public web address.
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: https://blog.pablo-magro-gaspar.site
+url: https://blog.pmagas.com
 # url: https://github.com/pablomagro/techtales.git
 root: /
 permalink: :year/:month/:day/:title/
