@@ -1,6 +1,8 @@
 <% if (pagination == 2){ %>
+  <% var postIndex = 0; %>
   <% page.posts.each(function(post){ %>
-    <%- partial('article', {post: post, index: true}) %>
+    <%- partial('article', {post: post, index: true, featured: postIndex === 0 && page.current === 1}) %>
+    <% postIndex++; %>
   <% }) %>
 <% } else { %>
   <% var last; %>

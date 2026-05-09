@@ -1,4 +1,4 @@
-<article id="<%= post.layout %>-<%= post.slug %>" class="article article-type-<%= post.layout %>"
+<article id="<%= post.layout %>-<%= post.slug %>" class="article article-type-<%= post.layout %><%= locals.featured ? ' article-featured' : '' %>"
   itemscope itemtype="http://schema.org/Blog" id="post-hexo-tags-structureddata-keywords" class="article article-type-post" itemprop="blogPost">
   <div class="article-meta">
     <%- partial('post/date', {class_name: 'article-date', date_format: null}) %>
@@ -8,6 +8,9 @@
     <%- partial('post/gallery') %>
     <% if (post.link || post.title){ %>
       <header class="article-header">
+        <% if (locals.featured && index){ %>
+          <span class="article-badge">Latest Post</span>
+        <% } %>
         <%- partial('post/title', {class_name: 'article-title'}) %>
       </header>
     <% } %>
