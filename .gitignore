@@ -53,5 +53,6 @@ public/
 # SSH key files
 *.pem
 
-# Pakacges intallerss
-pnpm-lock.yaml
+# Package lock files (keep pnpm-lock.yaml committed for CI --frozen-lockfile)
+package-lock.json
+yarn.lock
