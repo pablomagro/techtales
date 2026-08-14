@@ -446,6 +446,12 @@ Copy line up:
 
 Ctrl+i
 
+## Fonts
+
+### [Fira Code](https://github.com/tonsky/FiraCode)
+
+Free, open-source monospaced font with programming ligatures - sequences like `->`, `<=`, or `:=` render as single, cohesive glyphs, reducing visual noise while the underlying code stays plain ASCII. Widely adopted and works in most editors and terminals.
+
 ### [Multi-cursor modifier](https://code.visualstudio.com/docs/editor/codebasics#_multicursor-modifier)
 
 If you'd like to change the modifier key for applying multiple cursors to Cmd+Click on macOS and Ctrl+Click on Windows and Linux, you can do so with the **editor.multiCursorModifier** [setting](https://code.visualstudio.com/docs/getstarted/settings). This lets users coming from other editors such as Sublime Text or Atom continue to use the keyboard modifier they are familiar with.

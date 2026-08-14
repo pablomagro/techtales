@@ -18,3 +18,7 @@ categories:
 1. **medusa**
    - Website: [medusaJS.com](https://medusaJS.com/)
    - Description: Headless e-commerce engine. the Open Source logo Shopify -> Alternative
+
+1. **Node.js Best Practices (Spanish translation)**
+   - Website: [nodebestpractices - spanish-translation branch](https://github.com/goldbergyoni/nodebestpractices/tree/spanish-translation)
+   - Description: Spanish translation of the widely-used `nodebestpractices` guide by Yoni Goldberg - 100+ battle-tested practices covering project structure, error handling, code style, testing, security, performance, and Docker.

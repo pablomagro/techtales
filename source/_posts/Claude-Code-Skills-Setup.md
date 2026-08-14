@@ -48,6 +48,16 @@ claude mcp add context7 -- npx -y @upstash/context7-mcp@latest
 
 Invoke with: `/context7`
 
+### PM Skills
+
+Open-source library of 1,098 professional agent skills (markdown-based) spanning business domains (PRDs, postmortems) and everyday tasks (lease decoding, salary negotiation). Works with Claude, ChatGPT, Gemini, Cursor and Codex; no lock-in since skills are just text files.
+
+```bash
+npx pm-claude-skills add
+```
+
+Or install via `/plugin` inside Claude Code and search for **pm-skills**.
+
 ## Official Claude Plugin
 
 ### Code Simplifier

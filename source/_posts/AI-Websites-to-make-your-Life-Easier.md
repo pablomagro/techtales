@@ -7,6 +7,15 @@ categories:
   - AI
 ---
 
+## AI App Builders
+- v0 by Vercel: AI-powered web development platform that turns prompts into working full-stack apps, with one-click Vercel deployment and GitHub integration. Great for fast prototyping, less suited for complex production codebases without cleanup. [v0](https://v0.app/pmagas)
+- Atoms (by MetaGPT): Multi-agent platform aiming to take an idea all the way to a "profitable business" - UI, workflows, and deployment included. Evolved from the MetaGPT open-source framework and MGX. Interesting but still early; treat "ready to turn a profit" claims with skepticism. [Atoms](https://atoms.dev/metagpt)
+
+## AI Chat & Agents
+- Flowith: Self-described "Agentic Workspace" for running AI agents on tasks. Documentation is sparse, so maturity is hard to judge - worth a quick trial before committing. [Flowith](https://flowith.io/blank)
+- Msty: Privacy-focused AI ecosystem with four components - Studio (private chat workspace), Go (bounded task agents), Nexus (model/credential gateway), and Stack (governed knowledge layer). Aimed at teams needing SSO, audit logs, and zero telemetry. Recommended if you need multi-model flexibility with real governance controls. [Msty](https://msty.ai/)
+- Venice AI: "Private, uncensored" AI chat and image generation with no login required. Good for quick, no-friction conversations without content filtering, but use with care since "uncensored" cuts both ways. [Venice AI](https://venice.ai/chat/agent)
+
 ## Communication & Meetings
 - Fireflies AI: Automatically record and search your meetings with AI. [Fireflies AI](https://fireflies.ai/)
 
@@ -21,6 +30,15 @@ categories:
 - MagicaI AI: Save multiple hours by automating boring and repetitive tasks. [MagicaI AI](https://magical.ai/)
 - Ellie AI: An email writing assistant that learns from your writing style. [Ellie AI](https://www.ellie.ai/)
 - Resume Worded AI: 10x your resume and LinkedIn profile. [Resume Worded AI](https://resumeworded.com/)
+
+## Learning
+- Class Central - Free Certificates report: Class Central aggregates online courses from providers like Coursera, edX, and MIT OpenCourseWare; this tag tracks courses currently offering free certificates. Excellent for upskilling without paying for verification. [Class Central - Free Certificates](https://www.classcentral.com/report/tag/free-certificates/)
+
+## Storage
+- Filen: Zero-knowledge, end-to-end encrypted cloud storage (AES-256), open source, GDPR compliant, hosted in Germany. Includes a network drive, encrypted notes, encrypted chat, and SDKs/WebDAV/S3 support. Strongly recommended as a privacy-respecting alternative to Dropbox/Google Drive. [Filen](https://filen.io/)
+
+## Cloud Cost Management
+- Pump: Free cloud cost optimization platform for AWS, GCP, and Azure. Connects with read-only permissions, offers spend visibility, automated savings (~30% average), and compliance scanning. No contracts or credit card required - low-risk to try. [Pump](https://www.pump.co/)
 
 ## Research & Productivity
 - Glean AI: An AI tool to find exactly what you need. [Glean AI](https://glean.co/)
