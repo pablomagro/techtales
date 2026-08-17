@@ -49,6 +49,7 @@ categories:
 ## Creative Arts
 - DALL*E 2: Create art from text. [DALL*E 2](https://openai.com/dall-e-2/)
 - Inkscape: Free alternative to Adobe Illustrator. [Inkscape](https://inkscape.org/)
+- Penpot: Open-source, web-based design and prototyping tool - a free alternative to Figma with no vendor lock-in, self-hostable, and built on open web standards (SVG). [Penpot](https://penpot.app/)
 - Diagram: Create icons from text. [Diagram](https://diagram.com/)
 - Synthesia: Avatar with speech. Create videos from plain text in minutes. [Synthesia](https://synthesia.io/)
 - Unfakepng: Convert fake PNGs. [Unfakepng](https://unfakepng.com/)
