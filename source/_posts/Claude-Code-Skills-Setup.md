@@ -58,6 +58,16 @@ npx pm-claude-skills add
 
 Or install via `/plugin` inside Claude Code and search for **pm-skills**.
 
+### Security Audit
+
+[Cloudflare's security-audit skill](https://github.com/cloudflare/security-audit-skill) turns the agent into a security auditor: reconnaissance, coverage-led hunting, candidate validation, and independently verified findings, written out as `REPORT.md` / `FINDINGS-DETAIL.md`.
+
+```bash
+npx skills add https://github.com/cloudflare/security-audit-skill --skill security-audit -g -y
+```
+
+Trigger it with a prompt like `security audit this codebase`.
+
 ## Official Claude Plugin
 
 ### Code Simplifier
@@ -69,6 +79,30 @@ claude plugin install code-simplifier
 ```
 
 Invoke with: `/simplify`
+
+## MCP Plugins
+
+### Context Mode — Reduce Context Window Usage
+
+[Context Mode](https://github.com/mksglu/context-mode) is an MCP server that sandboxes tool output (98% reduction — a 315 KB session becomes 5.4 KB) and persists session memory across context compactions, so Claude doesn't forget which files it was editing.
+
+```bash
+/plugin marketplace add mksglu/context-mode
+/plugin install context-mode@context-mode
+```
+
+Verify with `/context-mode:ctx-doctor`, check savings with `/context-mode:ctx-stats`.
+
+### Engram — Persistent Memory
+
+[Engram](https://openengram.ai/) is a self-hosted, open-source memory server (Apache 2.0): it extracts facts, preferences, and decisions from conversations, consolidates them nightly, and recalls them across sessions and even across different models (Claude, ChatGPT, Gemini).
+
+```bash
+# MCP server for Claude Desktop, Cursor, Windsurf, and any MCP client
+git clone https://github.com/openengram/engram-mcp
+```
+
+Runs entirely on your machine — no cloud account required; used via `engram.remember(...)` / `engram.recall(...)`.
 
 ## Quick Reference — All Skills
 
@@ -88,7 +122,10 @@ Invoke with: `/simplify`
 | Code Review (receive) | `/receiving-code-review` |
 | Finish Branch | `/finishing-a-development-branch` |
 | Context7 Docs | `/context7` |
+| Security Audit | prompt: "security audit this codebase" |
 | Code Simplifier | `/simplify` |
+| Context Mode | `/context-mode:ctx-stats` |
+| Engram Memory | MCP tools: `remember` / `recall` |
 
 ## Extra Tools
 
