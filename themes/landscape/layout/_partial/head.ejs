@@ -32,6 +32,10 @@
   <% if (config.highlight.enable){ %>
     <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
   <% } %>
+  <script>
+    // Before first paint: avoids light flash
+    try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
   <%- css('css/style') %>
   <%- partial('google-analytics') %>
 </head>

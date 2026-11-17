@@ -22,6 +22,46 @@ input, button
        url(font-icon-path + ".ttf?v=#" + font-icon-version) format("truetype"),
        url(font-icon-path + ".svg#fontawesomeregular?v=#" + font-icon-version) format("svg")
 
+:root
+  color-scheme: light
+  --color-default: #1a1a1a
+  --color-grey: #999
+  --color-border: #e0e0e0
+  --color-link: #2563eb
+  --color-background: #f0f0f0
+  --color-sidebar-text: #888
+  --color-footer-background: #e8e8e8
+  --color-card: #fff
+  --color-card-shadow: #ddd
+  --color-emboss: #fff
+  --color-sidebar-background: transparent
+  --sidebar-padding: 0
+  --theme-icon: "\f186"
+
+dark-palette()
+  color-scheme: dark
+  --color-default: #e4e4e7
+  --color-grey: #9a9aa2
+  --color-border: #3a3a41
+  --color-link: #60a5fa
+  --color-background: #1e1e22
+  --color-sidebar-text: #8a8a92
+  --color-footer-background: #232328
+  --color-card: #2a2a30
+  --color-card-shadow: #000
+  --color-emboss: transparent
+  --color-sidebar-background: #26262b
+  --sidebar-padding: 15px
+  --theme-icon: "\f185"
+
+// Toggle choice wins over OS setting
+:root[data-theme="dark"]
+  dark-palette()
+
+@media (prefers-color-scheme: dark)
+  :root:not([data-theme="light"])
+    dark-palette()
+
 html, body, #container
   height: 100%
 

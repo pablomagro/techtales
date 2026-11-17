@@ -16,7 +16,7 @@
   float: left
   line-height: 1em
   color: #ccc
-  text-shadow: 0 1px #fff
+  text-shadow: 0 1px color-emboss
   margin-left: 8px
   &:before
     content: "\2022"
@@ -138,13 +138,13 @@
   border-radius: 15px
   background: color-background
   color: color-grey
-  text-shadow: 0 1px #fff
+  text-shadow: 0 1px color-emboss
   text-decoration: none
   &:hover
     background: color-link
     color: #fff
     text-decoration: none
-    text-shadow: 0 1px darken(color-link, 20%)
+    text-shadow: 0 1px rgba(0, 0, 0, 0.2)
 
 .article-footer
   clearfix()
@@ -193,11 +193,11 @@
       content: ""
       border-radius: 50%
       background: color-border
-      box-shadow: 0 1px 2px #fff
+      box-shadow: 0 1px 2px color-emboss
 
 .article-nav-link-wrap
   text-decoration: none
-  text-shadow: 0 1px #fff
+  text-shadow: 0 1px color-emboss
   color: color-grey
   box-sizing: border-box
   margin-top: block-margin
@@ -238,7 +238,7 @@
 .article-share-box
   position: absolute
   display: none
-  background: #fff
+  background: color-card
   box-shadow: 1px 2px 10px rgba(0, 0, 0, 0.2)
   border-radius: 3px
   margin-left: -145px
@@ -270,8 +270,8 @@ $article-share-link
   display: block
   float: left
   position: relative
-  color: #999
-  text-shadow: 0 1px #fff
+  color: color-grey
+  text-shadow: 0 1px color-emboss
   &:before
     font-size: 20px
     font-family: font-icon
