@@ -2,16 +2,20 @@
 support-for-ie = false
 vendor-prefixes = webkit moz ms official
 
-// Colors
-color-default = #1a1a1a
-color-grey = #999
-color-border = #e0e0e0
-color-link = #2563eb
-color-background = #f0f0f0
-color-sidebar-text = #888
+// Colors: CSS vars so dark mode can swap them; palettes in style.styl
+color-default = var(--color-default)
+color-grey = var(--color-grey)
+color-border = var(--color-border)
+color-link = var(--color-link)
+color-background = var(--color-background)
+color-sidebar-text = var(--color-sidebar-text)
+color-sidebar-background = var(--color-sidebar-background)
 color-widget-background = #e8e8e8
 color-widget-border = #ddd
-color-footer-background = #e8e8e8
+color-footer-background = var(--color-footer-background)
+color-card = var(--color-card)
+color-card-shadow = var(--color-card-shadow)
+color-emboss = var(--color-emboss)
 color-mobile-nav-background = #191919
 color-twitter = #00aced
 color-facebook = #3b5998
